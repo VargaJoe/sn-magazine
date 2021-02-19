@@ -8,8 +8,10 @@ export const SideMenu = () => {
   useEffect(() => {
     async function loadChildrenOfSamplews() {
       const result = await repo.loadCollection({
-        path: `/Root/Content/SampleWorkspace`,
+        path: `/Root/Content/mangajanlo`,
         oDataOptions: {
+          query: "TypeIs:LeisureCategory AND Hidden:0 .AUTOFILTERS:OFF",
+				  orderby: ['PublishDate', 'DisplayName'],
           select: "all", 
         },
       });
