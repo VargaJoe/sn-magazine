@@ -1,5 +1,5 @@
 {
-	"apiUrl" : 			"https://joe.sensenet.cloud",
+	"apiUrl" : 			"https://dev.demo.sensenet.com",
 	"dataPath" :		"/Root/Content/SampleWorkspace",
 	"categoryType" :	"Folder"
 
