@@ -9,7 +9,7 @@ const Data = {
 	public: [
 		{
 			exact: true,
-			path: '/asd',
+			path: '/:categoryName',
 			component: ContentWrapper
 		},
 		{
