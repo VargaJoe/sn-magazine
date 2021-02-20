@@ -1,11 +1,11 @@
-export function FolderContent() {
+export function MissingContent() {
 
   return (
     <div className="w3-row-padding">
       <div className="w3-col m12">
         <div className="w3-card w3-round w3-white">
           <div className="w3-container w3-padding">
-            <p>component not supported, fallback to folder</p>
+            <p>component not exists</p>
           </div>
         </div>
       </div>
@@ -13,4 +13,4 @@ export function FolderContent() {
   );
 }
 
-export default FolderContent
+export default MissingContent

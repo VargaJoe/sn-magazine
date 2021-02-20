@@ -12,19 +12,30 @@ export const ContentWrapper = (props) => {
   const { categoryName } = useParams();
   // const prevProps = useRef(props);
 
-  console.log("props:");
-  console.log(props);
+  // console.log("props:");
+  // console.log(props);
 
   useEffect(() => {   
     async function loadContent() {
-      const result = await repo.load({
-        idOrPath: `/Root/Content/mangajanlo`,
+      // const result = 
+      await repo.load({
+        idOrPath: `/Root/Content/mangajanlo/${categoryName}`,
         oDataOptions: {
           select: "all", 
         },
+      }).then(result => {
+        addComponent(result.d.Type);
+      })
+      .catch(error => {
+        addComponent("missing");
       });
-      setData(result.d);
+      // setData(result.d);
       setDataFetched(true);
+
+      // console.log("result");
+      // console.log(result);
+
+      // addComponent(result.d.Type);
     }    
     loadContent();
 
@@ -40,19 +51,19 @@ export const ContentWrapper = (props) => {
         .catch(error => {
           console.error(`"${type}" not yet supported`);
           if (type !== defaultComponent) {
-            console.error(`"${defaultComponent}" to be loaded`);
+            console.log(`fallback to ${defaultComponent} component`);
             addComponent(defaultComponent)
           }
         });
     };
-    addComponent(categoryName);
+    
   }, [categoryName, repo]);
 
   if (!isDataFetched) {
     return null;
   } 
 
-  console.log(categoryName);
+  // console.log(categoryName);
 
   // if (dynacompo === undefined) {
   //   console.log("dynacompo");
