@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useRepository } from "@sensenet/hooks-react";
 
+const DATA = require('../config.json');
+
 export const SideMenu = () => {
   const repo = useRepository();
   const [data, setData] = useState();
@@ -8,10 +10,12 @@ export const SideMenu = () => {
   useEffect(() => {
     async function loadChildrenOfSamplews() {
       const result = await repo.loadCollection({
-        path: `/Root/Content/mangajanlo`,
+        path: `${DATA.dataPath}`,
         oDataOptions: {
-          query: "TypeIs:LeisureCategory AND Hidden:0 .AUTOFILTERS:OFF",
-				  orderby: ['PublishDate', 'DisplayName'],
+          // query: "TypeIs:LeisureCategory AND Hidden:0 .AUTOFILTERS:OFF",
+          query: `TypeIs:${DATA.categoryType} AND Hidden:0 .AUTOFILTERS:OFF`,
+          orderby: ['DisplayName'],
+				  // orderby: ['PublishDate', 'DisplayName'],
           select: "all", 
         },
       });

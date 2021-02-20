@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useRepository } from "@sensenet/hooks-react";
 
+const DATA = require('../config.json');
+
 export const SideReviews = () => {
   const repo = useRepository();
   const [data, setData] = useState();
@@ -8,9 +10,9 @@ export const SideReviews = () => {
   useEffect(() => {
     async function loadChildrenOfSamplews() {
       const result = await repo.loadCollection({
-        path: `/Root/Content/mangajanlo`,
+        path: `${DATA.dataPath}`,
         oDataOptions: {
-          query: "TypeIs:LeisureArticle AND NOT Type:LeisureArticle AND Hidden:0 .AUTOFILTERS:OFF",
+          // query: "TypeIs:LeisureArticle AND NOT Type:LeisureArticle AND Hidden:0 .AUTOFILTERS:OFF",
 				  orderby: [['PublishDate', 'desc']],
           top: 5,
           select: "all", 

@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useRepository } from "@sensenet/hooks-react";
 
+const DATA = require('../config.json');
+
 export const SideTranslations = () => {
   const repo = useRepository();
   const [data, setData] = useState();
@@ -8,7 +10,7 @@ export const SideTranslations = () => {
   useEffect(() => {
     async function loadChildrenOfSamplews() {
       const result = await repo.loadCollection({
-        path: `/Root/Content/mangajanlo`,
+        path: `${DATA.dataPath}`,
         oDataOptions: {
           query: "TypeIs:LeisureTranslation AND Hidden:0 .AUTOFILTERS:OFF",
 				  orderby: [['PublishDate', 'desc']],

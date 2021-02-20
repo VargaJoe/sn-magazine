@@ -5,7 +5,7 @@ export function FolderContent() {
       <div className="w3-col m12">
         <div className="w3-card w3-round w3-white">
           <div className="w3-container w3-padding">
-            <p>component not supported, fallback to folder</p>
+            <p>default folder view</p>
           </div>
         </div>
       </div>

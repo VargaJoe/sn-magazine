@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import { useRepository } from "@sensenet/hooks-react";
 import { useParams } from 'react-router-dom';
 
+const DATA = require('../config.json');
 const defaultComponent = 'folder';
+
 export const ContentWrapper = (props) => {
   const repo = useRepository();
-  const [data, setData] = useState();
+  // const [data, setData] = useState();
   const [isDataFetched, setDataFetched] = useState();
   const [dynacompo, setCompo] = useState();
   // const [catName, setCategory] = useState();
@@ -19,7 +21,7 @@ export const ContentWrapper = (props) => {
     async function loadContent() {
       // const result = 
       await repo.load({
-        idOrPath: `/Root/Content/mangajanlo/${categoryName}`,
+        idOrPath: `${DATA.dataPath}/${categoryName}`,
         oDataOptions: {
           select: "all", 
         },
@@ -39,18 +41,19 @@ export const ContentWrapper = (props) => {
     }    
     loadContent();
 
-    async function addComponent(type) {
-      console.log(`Loading ${type} component...`);
+    async function addComponent(compo) {
+      compo = compo.toLowerCase();
+      console.log(`Loading ${compo} component...`);
       
-      import(`./content/content-${type}.js`)
+      import(`./content/content-${compo}.js`)
         .then(compo => {
           console.log(compo.default);
           setCompo(compo.default);
           }
         )
         .catch(error => {
-          console.error(`"${type}" not yet supported`);
-          if (type !== defaultComponent) {
+          console.error(`"${compo}" not yet supported`);
+          if (compo !== defaultComponent) {
             console.log(`fallback to ${defaultComponent} component`);
             addComponent(defaultComponent)
           }
