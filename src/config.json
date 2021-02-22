@@ -1,6 +1,6 @@
 {
 	"apiUrl" : 			"https://joe.sensenet.cloud",
-	"dataPath" :		"/Root/Content/mangajanlo",
-	"categoryType" :	"LeisureCategory",
-	"articleType" :	"LeisureArticle"
+	"dataPath" :		"/Root/Content/SampleWorkspace",
+	"categoryType" :	"Folder",
+	"articleType" :	"GenericContent"
 } 

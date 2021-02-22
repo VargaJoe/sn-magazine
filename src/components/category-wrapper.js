@@ -28,7 +28,7 @@ export const CategoryWrapper = () => {
           console.error(`"${compo}" not yet supported`);
           if (compo !== defaultComponent) {
             console.log(`fallback to ${defaultComponent} component`);
-            // addComponent(defaultComponent);
+            addComponent(defaultComponent);
           }
         });
     };
