@@ -1,14 +1,5 @@
-import { useEffect, useState } from 'react';
-import { useRepository } from '@sensenet/hooks-react';
-
-const DATA = require('../../config.json');
-
-export const MemoListContent = () => {
+export const EventListContent = () => {
   console.log('inside smartfolder');
-  // const repo = useRepository();
-  const [data, setData] = useState();
-
-  // ide jonne useeffect-ben ay elemek betoltese
 
   return (
     <>
@@ -18,7 +9,7 @@ export const MemoListContent = () => {
           <div className="w3-col m12">
             <div className="w3-card w3-round w3-white">
               <div className="w3-container w3-padding">
-                <p>memolist</p>
+                <p>eventlist</p>
               </div>
             </div>
           </div>
@@ -30,4 +21,4 @@ export const MemoListContent = () => {
   );
 };
 
-export default MemoListContent;
+export default EventListContent;

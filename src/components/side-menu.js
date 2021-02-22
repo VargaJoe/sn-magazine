@@ -34,7 +34,9 @@ export const SideMenu = () => {
         {data?.map((child) => (        
           <p key={`sidemenu-${child.Id}`}>
             {/* <i className="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i>  */}
-            {child.DisplayName}
+            <a key={`sidemenu-link-${child.Id}`} href={'/' + child.Name} className="side-menu-link">
+              {child.DisplayName}
+            </a>
           </p>
         ))}
       </div>
@@ -44,3 +46,5 @@ export const SideMenu = () => {
     </div>
   );
 }
+
+export default SideMenu;
