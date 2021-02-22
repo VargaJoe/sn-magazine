@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { lazy, useCallback, useEffect, useState } from 'react';
 import { useRepository } from '@sensenet/hooks-react';
 import { useParams } from 'react-router-dom';
 
@@ -6,56 +6,42 @@ const DATA = require('../config.json');
 
 const defaultComponent = 'folder';
 
+const importView = component =>
+  lazy(() =>
+    import(`./content/content-${component}`).catch(() =>
+      import(`./content/content-${defaultComponent}`)
+    )
+  );
+
 export const CategoryWrapper = () => {
   const repo = useRepository();
-  // const [data, setData] = useState();
-  const [isDataFetched, setDataFetched] = useState();
-  const [dynacompo, setCompo] = useState();
+  const [dynacompo, setCompo] = useState([]);
   const { categoryName } = useParams();
-  // const prevProps = useRef(props);
 
-  useEffect(() => {
-    const addComponent = async (compo) => {
-      const compoLower = compo.toLowerCase();
-      console.log(`Loading ${compo} component...`);
-
-      import(`./content/content-${compoLower}.js`)
-        .then((data) => {
-          console.log(data.default);
-          setCompo(data.default);
-        })
-        .catch(() => {
-          console.error(`"${compo}" not yet supported`);
-          if (compo !== defaultComponent) {
-            console.log(`fallback to ${defaultComponent} component`);
-            addComponent(defaultComponent);
-          }
-        });
-    };
-    const loadContent = async () => {
-      const result = await repo.load({
-        idOrPath: `${DATA.dataPath}/${categoryName}`,
-        oDataOptions: {
-          select: 'all',
-        },
-      });
-      if (result?.d?.Type) {
-        addComponent(result.d.Type);
-        setDataFetched(true);
-      } else {
-        addComponent('missing');
-      }
-      // setData(result.d);
-    };
-
-    loadContent();
+  const loadContent = useCallback(async () => {
+    const result = await repo.load({
+      idOrPath: `${DATA.dataPath}/${categoryName}`,
+      oDataOptions: {
+        select: 'all',
+      },
+    });
+    if (result?.d?.Type) {
+      const View = importView(result.d.Type.toLowerCase());
+      setCompo(<View key={result.d.Id} />);
+    } else {
+      const View = importView('missing');
+      setCompo(<View key={'1'} />);
+    }
   }, [categoryName, repo]);
 
-  if (!isDataFetched) {
-    return null;
-  }
+  useEffect(() => {
+    loadContent();
+  }, [categoryName, loadContent, repo]);
 
-  if (dynacompo === undefined || dynacompo.length === 0) return <div>Loading...</div>;
 
-  return <div>{dynacompo}</div>;
+  return (
+    <React.Suspense fallback='Loading views...'>
+        <div className='container'>{dynacompo}</div>
+    </React.Suspense>
+  )
 };
