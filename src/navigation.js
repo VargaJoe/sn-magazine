@@ -1,16 +1,17 @@
 // import Home from './Home';
-import { ContentIntro } from './content-intro';
-import { ContentWrapper } from './content-wrapper';
+import { ContentIntro } from './components/content-intro';
+import { CategoryWrapper } from './components/category-wrapper';
+import { ContentWrapper } from './components/content-wrapper';
 // import Category from './Category';
 // import Translateds from './Translateds';
-import { Missing } from './missing';
+import { Missing } from './components/missing';
 
 const Data = {
 	public: [
 		{
 			exact: true,
 			path: '/:categoryName',
-			component: ContentWrapper
+			component: CategoryWrapper
 		},
 		{
 			exact: true,

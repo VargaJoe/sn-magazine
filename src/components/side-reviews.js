@@ -29,7 +29,7 @@ export const SideReviews = () => {
         <div className="w3-container">
           <p>Latest reviews:</p>
           {data?.map((child) => (        
-          <div>
+          <div key={`sidereview-${child.Id}`}>
           <p><strong>{child.DisplayName}</strong></p>
           {/* <p>Friday 15:00</p> */}
           {/* <hr/> */}

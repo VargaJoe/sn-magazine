@@ -1,28 +1,28 @@
-export function MissingContent() {
+import { useState, useEffect } from "react";
+import { useRepository } from "@sensenet/hooks-react";
+
+export function SmartFolderContent() {
+  console.log("inside smartfolder");
+  const repo = useRepository();
+  const [data, setData] = useState();
   return (
     <>
       {/* Middle Column */}
-      <div className="w3-col m7">
+      <div className="w3-col m9">
         <div className="w3-row-padding">
           <div className="w3-col m12">
             <div className="w3-card w3-round w3-white">
               <div className="w3-container w3-padding">
-                <p>component not exists</p>
+                <p>smartfolder</p>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <br/>
+      <br />
       {/* End Middle Column */}
-
-      {/* Right Column */}
-      <div className="w3-col m2">
-        
-      </div>
-      {/* End Right Column */}
     </>
   );
 }
 
-export default MissingContent;
+export default SmartFolderContent;

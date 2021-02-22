@@ -32,7 +32,7 @@ export const SideMenu = () => {
       <hr/>
       <div className="side-menu-uppercase">
         {data?.map((child) => (        
-          <p>
+          <p key={`sidemenu-${child.Id}`}>
             {/* <i className="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i>  */}
             {child.DisplayName}
           </p>
