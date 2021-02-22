@@ -54,7 +54,15 @@ export function LeisureCategoryContent() {
       {/* Middle Column */}
       <div className="w3-col m7">
         {/* {dynacompo} */}
-        category
+        <div className="w3-row-padding">
+          <div className="w3-col m12">
+            <div className="w3-card w3-round w3-white">
+              <div className="w3-container w3-padding">
+                <p>category view</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <br/>
       {/* End Middle Column */}
