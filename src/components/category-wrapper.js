@@ -19,19 +19,21 @@ export const CategoryWrapper = () => {
   const { categoryName } = useParams();
 
   const loadContent = useCallback(async () => {
-    const result = await repo.load({
+    await repo.load({
       idOrPath: `${DATA.dataPath}/${categoryName}`,
       oDataOptions: {
         select: 'all',
       },
-    });
-    if (result?.d?.Type) {
-      const View = importView(result.d.Type.toLowerCase());
-      setCompo(<View key={result.d.Id} />);
-    } else {
+    }).then(result => {
+      if (result?.d?.Type) {
+        const View = importView(result.d.Type.toLowerCase());
+        setCompo(<View key={result.d.Id} />);
+      }
+    })
+    .catch(error => {
       const View = importView('missing');
       setCompo(<View key={'1'} />);
-    }
+    });
   }, [categoryName, repo]);
 
   useEffect(() => {
