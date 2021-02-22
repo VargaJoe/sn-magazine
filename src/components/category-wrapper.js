@@ -33,18 +33,23 @@ export const CategoryWrapper = () => {
         });
     };
     const loadContent = async () => {
-      const result = await repo.load({
+      //const result = 
+      await repo.load({
         idOrPath: `${DATA.dataPath}/${categoryName}`,
         oDataOptions: {
           select: 'all',
         },
-      });
-      if (result?.d?.Type) {
-        addComponent(result.d.Type);
+      }).then(result => {
+        if (result?.d?.Type) {
+          addComponent(result.d.Type);
+          setDataFetched(true);
+        }
+      })
+      .catch(error => {
         setDataFetched(true);
-      } else {
         addComponent('missing');
-      }
+      });
+      
       // setData(result.d);
     };
 
