@@ -76,3 +76,7 @@
 .side-menu-uppercase {
   text-transform: uppercase;
 }
+
+.side-menu-link { 
+  text-decoration: none; 
+}

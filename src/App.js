@@ -1,28 +1,11 @@
 import "./App.css";
 import { SideMenu } from "./components/side-menu";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-import SiteRoutes from "./components/navigation";
-import { SideReviews } from "./components/side-reviews";
-import { SideTranslations } from "./components/side-translations";
+import SiteRoutes from "./navigation";
 
 function App() {
   return (
     <div className="App w3-theme-l5">
-      {/* <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header> */}
-
       <div className="w3-top">
         <div className="w3-bar w3-theme-d2 w3-left-align w3-large">
           <a
@@ -109,11 +92,13 @@ function App() {
           {/* Left Column */}
           <div className="w3-col m3">
             <SideMenu />
+            <br/>
           </div>
+          
           {/* End Left Column */}
 
           {/* Middle Column */}
-          <div className="w3-col m7">
+          {/* <div className="w3-col m7"> */}
             <BrowserRouter>
               <Switch>
                 {SiteRoutes.public.map((route, index) => (
@@ -126,14 +111,14 @@ function App() {
                 ))}
               </Switch>
             </BrowserRouter>
-          </div>
+          {/* </div> */}
           {/* End Middle Column */}
 
           {/* Right Column */}
-          <div className="w3-col m2">
+          {/* <div className="w3-col m2">
             <SideReviews />
             <SideTranslations />
-          </div>
+          </div> */}
           {/* End Right Column */}
         </div>
         {/* End Grid */}

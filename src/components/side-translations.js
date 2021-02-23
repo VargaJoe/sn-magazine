@@ -29,7 +29,7 @@ export const SideTranslations = () => {
         <div className="w3-container">
           <p>Latest translations:</p>
           {data?.map((child) => (        
-          <div>
+          <div key={`sidetranslation-${child.Id}`}>
           <p><strong>{child.DisplayName}</strong></p>
           {/* <p>Friday 15:00</p> */}
           {/* <hr/> */}

@@ -43,21 +43,21 @@ export const ContentWrapper = (props) => {
 
     async function addComponent(compo) {
       compo = compo.toLowerCase();
-      console.log(`Loading ${compo} component...`);
+      console.log(`Loading ${compo} component in wrapper...`);
       
-      import(`./content/content-${compo}.js`)
+      await import(`./content/content-${compo}.js`)
         .then(compo => {
           console.log(compo.default);
           setCompo(compo.default);
           }
         )
-        .catch(error => {
-          console.error(`"${compo}" not yet supported`);
-          if (compo !== defaultComponent) {
-            console.log(`fallback to ${defaultComponent} component`);
-            addComponent(defaultComponent)
-          }
-        });
+        // .catch(error => {
+        //  console.error(`"${compo}" not yet supported`);
+        //   // if (compo !== defaultComponent) {
+        //   //   console.log(`fallback to ${defaultComponent} component`);
+        //   //   addComponent(defaultComponent)
+        //   // }
+        // });
     };
     
   }, [categoryName, repo]);
@@ -77,12 +77,12 @@ export const ContentWrapper = (props) => {
   if (dynacompo === undefined || dynacompo.length === 0) return <div>Loading...</div>;
   
   return (
-    <div>
+    <>
       {/* <i className="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i>  */}
       {/* {categoryName}
             {console.log(data.Name)}
             {data.DisplayName} */}
       {dynacompo}
-    </div>
+    </>
   );
 }
