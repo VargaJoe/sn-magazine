@@ -27,7 +27,7 @@ export const CategoryWrapper = () => {
     }).then(result => {
       if (result?.d?.Type) {
         const View = importView(result.d.Type.toLowerCase());
-        setCompo(<View key={result.d.Id} />);
+        setCompo(<View key={result.d.Id} data={result.d} />);
       }
     })
     .catch(error => {

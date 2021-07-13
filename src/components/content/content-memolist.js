@@ -12,8 +12,10 @@ const importView = component =>
     )
   );
 
-const MemoListContent = () => {
-  console.log('inside memolist');
+const MemoListContent = (props) => {
+  console.log('memolist component');
+  console.log(props.data);
+
   const repo = useRepository();
   const [dynacompo, setCompo] = useState([]);
   const { categoryName } = useParams();
@@ -37,10 +39,10 @@ const MemoListContent = () => {
     }
   }, [categoryName, repo]);
 
-const loadCompo = (type, id) => {
-   const View = importView(type.toLowerCase());
+const loadCompo = (data) => {
+   const View = importView(data.Type.toLowerCase());
    //setCompo(<View key={result.d.Id} />);
-   return (<View key={id} />);
+   return (<View key={data.Id} data={data}/>);
 }
 
   useEffect(() => {
@@ -60,7 +62,7 @@ const loadCompo = (type, id) => {
                   <div key={`memo-${art.Id}`}>
                     {/* <i className="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i>  */}
                     {/* {art.DisplayName} */}
-                    {loadCompo(art.Type, art.Id)}
+                    {loadCompo(art)}
                   </div>
                 ))}
 

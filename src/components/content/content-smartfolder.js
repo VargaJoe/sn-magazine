@@ -3,8 +3,10 @@ import { useRepository } from '@sensenet/hooks-react';
 
 const DATA = require('../../config.json');
 
-export const SmartFolderContent = () => {
-  console.log('inside smartfolder');
+export const SmartFolderContent = (props) => {
+  console.log('smartfolder component');
+  console.log(props.data);
+
   // const repo = useRepository();
   const [data, setData] = useState();
 

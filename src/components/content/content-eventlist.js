@@ -1,6 +1,6 @@
-export const EventListContent = () => {
-  console.log('inside smartfolder');
-
+export const EventListContent = (props) => {
+  console.log('eventlist component');
+  console.log(props.data);
   return (
     <>
       {/* Middle Column */}
@@ -9,6 +9,7 @@ export const EventListContent = () => {
           <div className="w3-col m12">
             <div className="w3-card w3-round w3-white">
               <div className="w3-container w3-padding">
+                <h1>{props.data.DisplayName}</h1>
                 <p>eventlist</p>
               </div>
             </div>
