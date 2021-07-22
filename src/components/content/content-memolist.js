@@ -56,8 +56,18 @@ const loadCompo = (data) => {
           <div className="w3-col m12">
             <div className="w3-card w3-round w3-white">
               <div className="w3-container w3-padding">
-                <p>memolist</p>
-
+                <h1>{props.data.DisplayName}</h1>
+                <div className="context-info">
+                  <ul>
+                    <li>Component: <span>memolist</span></li>
+                    <li>Name: <span>{props.data.Name}</span></li>
+                    <li>Type: <span>{props.data.Type}</span></li>
+                    <li>Path: <span>{props.data.Path}</span></li>
+                    <li>Lifespan: <span>{props.data.EnableLifespan}</span></li>
+                    <li>ValidFrom: <span>{props.data.ValidFrom}</span></li>
+                    <li>ValidTill: <span>{props.data.ValidTill}</span></li>
+                  </ul>
+                </div>
                 {articles?.map((art) => (
                   <div key={`memo-${art.Id}`}>
                     {/* <i className="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i>  */}
