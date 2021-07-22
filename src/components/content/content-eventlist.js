@@ -16,7 +16,7 @@ export const EventListContent = (props) => {
                     <li>Name: <span>{props.data.Name}</span></li>
                     <li>Type: <span>{props.data.Type}</span></li>
                     <li>Path: <span>{props.data.Path}</span></li>
-                    <li>Lifespan: <span>{props.data.EnableLifespan}</span></li>
+                    <li>Lifespan: <span>{props.data.EnableLifespan?"true":"false"}</span></li>
                     <li>ValidFrom: <span>{props.data.ValidFrom}</span></li>
                     <li>ValidTill: <span>{props.data.ValidTill}</span></li>
                   </ul>
