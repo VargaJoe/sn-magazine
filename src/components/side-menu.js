@@ -13,7 +13,7 @@ export const SideMenu = () => {
         path: `${DATA.dataPath}`,
         oDataOptions: {
           // query: "TypeIs:LeisureCategory AND Hidden:0 .AUTOFILTERS:OFF",
-          query: `TypeIs:${DATA.categoryType} AND NOT Path:${DATA.dataPath} AND Hidden:0`,
+          query: `TypeIs:${DATA.categoryType} AND NOT Path:${DATA.dataPath} AND Hidden:0 .LIFESPAN:ON`,
           orderby: ['DisplayName'],
 				  // orderby: ['PublishDate', 'DisplayName'],
           select: "all", 
