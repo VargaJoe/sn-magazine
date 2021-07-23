@@ -12,6 +12,8 @@ const importView = component =>
     )
   );
 
+// pagecomponent walker instead of single content view
+
 const MemoListContent = (props) => {
   console.log('memolist component');
   console.log(props.data);
