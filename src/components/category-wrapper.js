@@ -30,7 +30,7 @@ export const CategoryWrapper = (props) => {
 
           setCompo(
             result.d.results.filter(pcnt => pcnt.Type !== 'PageContainer').map((child) => { 
-              return addComponent('content', child.Type.toLowerCase(), child.Id, context, result.d.results); 
+              return addComponent('component', child.Type.toLowerCase(), child.Id, context, child, result.d.results); 
             })
           );
         } else {
