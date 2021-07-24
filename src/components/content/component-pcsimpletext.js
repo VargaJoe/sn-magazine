@@ -1,5 +1,5 @@
 export function SimpletTextComponent(props) {
-  console.log('folder component');
+  console.log('simpletext component');
   console.log(props.data);
   const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'PageContainer')[0]:{};
   return (

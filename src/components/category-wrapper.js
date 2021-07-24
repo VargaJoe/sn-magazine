@@ -1,4 +1,4 @@
-import React, { lazy, useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useRepository } from '@sensenet/hooks-react';
 import { useParams } from 'react-router-dom';
 import { addComponent } from './utils/add-component';
@@ -9,17 +9,21 @@ export const CategoryWrapper = (props) => {
   const repo = useRepository();
   const [dynacompo, setCompo] = useState([]);
   const { categoryName } = useParams();
-  const [context, setContext] = useState([]);
+  const [context, setContext] = useState();
   console.log("props");
   console.log(props);
   
   const loadPage = useCallback(async () => {
     console.log(context.Type);
     if (context !== undefined && context.Type !== undefined && context.Type !== []) {
+      const query = (context.Type === 'PageContainer') ? 
+      `Path:'${context.Path}' OR TypeIs:PageComponent AND InTree:'${context.Path}' AND Hidden:0 .LIFESPAN:ON`
+      : `Name:'${context.Type}' AND Type:PageContainer OR TypeIs:PageComponent AND InTree:'${DATA.pagecontainerPath}/${context.Type}' AND Hidden:0 .LIFESPAN:ON`;
+      const queryPath = (context.Type === 'PageContainer') ? `${context.Path}` : `${DATA.pagecontainerPath}`;
       await repo.loadCollection({
-        path: `${DATA.pagecontainerPath}`,
+        path: queryPath,
         oDataOptions: {
-          query: `Name:'${context.Type}' AND Type:PageContainer OR TypeIs:PageComponent AND InTree:'${DATA.pagecontainerPath}/${context.Type}' AND Hidden:0 .LIFESPAN:ON`,
+          query: query,
           orderby: ['Index'],
           select: "all", 
         },
@@ -66,8 +70,9 @@ export const CategoryWrapper = (props) => {
   }, [categoryName, loadContent, repo]);
 
   useEffect(() => {
-    if (context !== undefined && context !== '') {
+    if (context !== undefined && context !== []) {
       console.log('load page');
+      console.log(context);
       loadPage();
     } else {
       console.log('skip page load');
