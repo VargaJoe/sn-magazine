@@ -5,28 +5,11 @@ import { addComponent } from './utils/add-component';
 
 const DATA = require('../config.json');
 
-const defaultComponent = 'folder';
-
-const importView = component =>
-  lazy(() =>
-    import(`./content/content-${component}`).catch(() =>
-      import(`./content/content-${defaultComponent}`)
-    )
-  );
-
-const importPage = component =>
-  lazy(() =>
-    import(`./content/content-${component}`).catch(() =>
-      import(`./content/content-${defaultComponent}`)
-    )
-  );
-
 export const CategoryWrapper = (props) => {
   const repo = useRepository();
   const [dynacompo, setCompo] = useState([]);
   const { categoryName } = useParams();
   const [context, setContext] = useState([]);
-  // const [page, setPage] = useState([]);
   console.log("props");
   console.log(props);
   
@@ -42,7 +25,6 @@ export const CategoryWrapper = (props) => {
         },
       }).then(result => {
         if (result?.d?.results && result?.d?.results.length > 0) {
-          // setPage(result.d.results);
           console.log("page");
           console.log(result.d.results);
 
@@ -75,8 +57,7 @@ export const CategoryWrapper = (props) => {
       };
     })
     .catch(error => {
-      const View = importView('missing');
-      setCompo(<View key={'1'} />);
+      setCompo(addComponent('content', 'missing', 1));
     });
   }, [categoryName, repo]);
 
