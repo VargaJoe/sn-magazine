@@ -24,6 +24,7 @@ export const CategoryWrapper = (props) => {
         path: queryPath,
         oDataOptions: {
           query: query,
+          expand: ['CustomRoot'],
           orderby: ['Index'],
           select: "all", 
         },
