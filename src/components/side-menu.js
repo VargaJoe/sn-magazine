@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useRepository } from "@sensenet/hooks-react";
+import { Link } from "react-router-dom";
 
 const DATA = require('../config.json');
 
@@ -31,14 +32,17 @@ export const SideMenu = () => {
       {/* <p className="w3-center"><img src="/w3images/avatar3.png" className="w3-circle w3-circle-side-avatar" alt="Avatar" /></p> */}
       <hr/>
       <div className="side-menu-uppercase">
-        {data?.map((child) => (        
+        {data?.map((child) => {
+          console.log(child.Name);
+          return (
           <p key={`sidemenu-${child.Id}`}>
             {/* <i className="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i>  */}
-            <a key={`sidemenu-link-${child.Id}`} href={'/' + child.Name} className="side-menu-link">
+            <Link key={`sidemenu-link-${child.Id}`} to={'/' + child.Name} className="side-menu-link">
               {child.DisplayName}
-            </a>
+            </Link>
           </p>
-        ))}
+        )}
+        )}
       </div>
       {/* <p><i className="fa fa-home fa-fw w3-margin-right w3-text-theme"></i> London, UK</p>
       <p><i className="fa fa-birthday-cake fa-fw w3-margin-right w3-text-theme"></i> April 1, 1988</p> */}
