@@ -10,6 +10,11 @@ const Data = {
 	public: [
 		{
 			exact: true,
+			path: '/*',
+			component: CategoryWrapper
+		},
+		{
+			exact: true,
 			path: '/:categoryName',
 			component: CategoryWrapper
 		},

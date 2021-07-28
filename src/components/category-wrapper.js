@@ -8,11 +8,16 @@ const DATA = require('../config.json');
 export const CategoryWrapper = (props) => {
   const repo = useRepository();
   const [dynacompo, setCompo] = useState([]);
-  const { categoryName } = useParams();
+  // const { categoryName } = useParams();
+  const categoryName = props.location.pathname;
   const [context, setContext] = useState();
   console.log("props");
-  console.log(props);
-  
+  console.log(props);  
+
+  const path = props.location.pathname.split('/');
+  console.log("path");
+  console.log(path);
+
   const loadPage = useCallback(async () => {
     console.log(context.Type);
     if (context !== undefined && context.Type !== undefined && context.Type !== []) {
@@ -36,6 +41,7 @@ export const CategoryWrapper = (props) => {
           setCompo(
             result.d.results.filter(pcnt => pcnt.Type !== 'PageContainer').map((child) => { 
               return addComponent('component', child.Type.toLowerCase(), child.Id, context, child, result.d.results); 
+              // return addComponent('component', child.ClientComponent.toLowerCase()===''?child.ClientComponent.toLowerCase():child.Type.toLowerCase(), child.Id, context, child, result.d.results); 
             })
           );
         } else {

@@ -15,17 +15,18 @@ const importView = component =>
 const MemoListContent = (props) => {
   console.log('memolist component');
   console.log(props.data);
-
   const repo = useRepository();
   const [dynacompo, setCompo] = useState([]);
-  const { categoryName } = useParams();
+  // const { categoryName } = useParams();
+  const contextPath = props.data.Path;
   const [articles, setArts] = useState([]);
 
   const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'PageContainer')[0]:{};
   
   const loadContents = useCallback(async () => {
     const result = await repo.loadCollection({
-      path: `${DATA.dataPath}/${categoryName}`,
+      // path: `${DATA.dataPath}/${categoryName}`,
+      path: `${contextPath}`,
       oDataOptions: {
         select: 'all',
       },
@@ -39,7 +40,7 @@ const MemoListContent = (props) => {
       // const View = importView('missing');
       // setCompo(<View key={'1'} />);
     }
-  }, [categoryName, repo]);
+  }, [contextPath, repo]);
 
 const loadCompo = (data) => {
    const View = importView(data.Type.toLowerCase());
@@ -49,7 +50,7 @@ const loadCompo = (data) => {
 
   useEffect(() => {
     loadContents();
-  }, [categoryName, loadContents, repo]);
+  }, [contextPath, loadContents, repo]);
   return (
     <>
       {/* Middle Column */}
