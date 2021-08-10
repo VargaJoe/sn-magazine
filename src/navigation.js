@@ -10,33 +10,13 @@ const Data = {
 	public: [
 		{
 			exact: true,
-			path: '/*',
-			component: CategoryWrapper
-		},
-		{
-			exact: true,
-			path: '/:categoryName',
-			component: CategoryWrapper
-		},
-		{
-			exact: true,
-			path: '/:categoryName/:articleName',
-			component: ContentWrapper
-		},
-		// {
-		// 	exact: true,
-		// 	path: '/Fordítások',
-		// 	component: Translateds
-		// },
-		// {
-		// 	exact: true,
-		// 	path: '/:categoryName',
-		// 	component: Category
-		// },
-		{
-			exact: true,
 			path: '/',
 			component: ContentIntro
+		},
+		{
+			exact: true,
+			path: '/*',
+			component: CategoryWrapper
 		},
 		{
 			component: Missing
