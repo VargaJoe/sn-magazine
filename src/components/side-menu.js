@@ -15,7 +15,7 @@ export const SideMenu = () => {
         oDataOptions: {
           // query: "TypeIs:LeisureCategory AND Hidden:0 .AUTOFILTERS:OFF",
           query: `TypeIs:${DATA.categoryType} AND InFolder:${DATA.dataPath} AND Hidden:0 .LIFESPAN:ON`,
-          orderby: ['DisplayName'],
+          orderby: ['Index', 'DisplayName'],
 				  // orderby: ['PublishDate', 'DisplayName'],
           select: "all", 
         },
@@ -37,7 +37,7 @@ export const SideMenu = () => {
           return (
           <p key={`sidemenu-${child.Id}`}>
             {/* <i className="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i>  */}
-            <Link key={`sidemenu-link-${child.Id}`} to={'/' + child.Name} className="side-menu-link">
+            <Link key={`sidemenu-link-${child.Id}`} to={'/' + child.Name} className="side-menu-link" title={'index: '+child.Index}>
               {child.DisplayName}
             </Link>
           </p>
