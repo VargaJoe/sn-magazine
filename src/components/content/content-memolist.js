@@ -1,6 +1,8 @@
 import React, { lazy, useCallback, useEffect, useState } from 'react';
 import { useRepository } from '@sensenet/hooks-react';
 import { useParams } from 'react-router-dom';
+import { Link } from "react-router-dom";
+
 const DATA = require('../../config.json');
 
 const defaultComponent = 'folder';
@@ -57,6 +59,27 @@ const loadCompo = (data) => {
       <div className="w3-col m9">
         <div className="w3-row-padding">
           <div className="w3-col m12">
+            <div className="w3-card w3-round w3-white w3-margin-bottom">
+            <div className="w3-container w3-padding">
+              <div className='w3-left'>
+              Submenu
+              </div>
+              <div>
+                {articles?.map((art) => {
+                  const relativePath = art.Path.substr(DATA.dataPath.length + 1);
+                  return (
+                    <span key={`memo-${art.Id}`} className='w3-padding'>
+                      {/* <i className="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i>  */}
+                      {/* {art.DisplayName} */}
+                      <Link key={`sidemenu-link-${art.Id}`} to={'/' + relativePath} className="side-menu-link">
+                        {art.DisplayName}
+                      </Link>
+                    </span>
+                  )})}
+                  </div>
+              </div>
+            </div>
+
             <div className="w3-card w3-round w3-white">
               <div className="w3-container w3-padding">
                 <h1>{props.data.DisplayName}</h1>
