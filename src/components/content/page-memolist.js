@@ -1,6 +1,8 @@
 import React, { lazy, useCallback, useEffect, useState } from 'react';
 import { useRepository } from '@sensenet/hooks-react';
 import { useParams } from 'react-router-dom';
+import { addComponent } from '../utils/add-component';
+
 const DATA = require('../../config.json');
 
 const defaultComponent = 'folder';
@@ -45,13 +47,17 @@ const MemoListContent = (props) => {
 
 const loadCompo = (data) => {
    const View = importView(data.Type.toLowerCase());
+   console.log('memo-compo-'+data.Id);
    //setCompo(<View key={result.d.Id} />);
-   return (<View key={data.Id} data={data}/>);
+   return (<View key={'memo-compo-'+data.Id} data={data}/>);
 }
 
   useEffect(() => {
     loadContents();
   }, [categoryName, loadContents, repo]);
+
+  let counter = 0;
+
   return (
     <>
       {/* Middle Column */}
@@ -75,11 +81,12 @@ const loadCompo = (data) => {
                     <li>Page Path: <span>{currentPage?.Path}</span></li>                   
                   </ul>
                 </div>
-                {articles?.map((art) => (
-                  <div key={`memo-${art.Id}`}>
+                {articles?.map((child) => (
+                  <div key={`page-memo-${counter++}-${props.data.Id}-${child.Id}`}>
                     {/* <i className="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i>  */}
                     {/* {art.DisplayName} */}
-                    {loadCompo(art)}
+                    {/* {loadCompo(art)} */}
+                    {addComponent('content', child.Type.toLowerCase(), `${counter++}-${props.data.Id}-${child.Id}`, child, child, props.page)}                    
                   </div>
                 ))}
 
