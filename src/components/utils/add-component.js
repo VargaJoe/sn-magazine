@@ -10,6 +10,7 @@ const importView = (prefix, component) =>
 
 export const addComponent = (prefix, component, id, context, widget, page) => {
   const View = importView(prefix, component);
+  console.log('uniqid: '+id);
   return (
     <div className='container'>
       <View key={id} data={context} widget={widget} page={page} />

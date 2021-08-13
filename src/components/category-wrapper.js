@@ -40,17 +40,19 @@ export const CategoryWrapper = (props) => {
 
           setCompo(
             result.d.results.filter(pcnt => pcnt.Type !== 'PageContainer').map((child) => { 
-              return addComponent('component', child.Type.toLowerCase(), child.Id, context, child, result.d.results); 
+              const compoType = child.ClientComponent === undefined || child.ClientComponent === null || child.ClientComponent === '' ? child.Type : child.ClientComponent;
+              console.log('addcompo: '+compoType.toLowerCase())
+              return addComponent('component', compoType.toLowerCase(), `${context.Id}-${child.Id}`, context, child, result.d.results); 
               // return addComponent('component', child.ClientComponent.toLowerCase()===''?child.ClientComponent.toLowerCase():child.Type.toLowerCase(), child.Id, context, child, result.d.results); 
             })
           );
         } else {
           console.log('else:'+context.Type.toLowerCase());
-          setCompo(addComponent('content', context.Type.toLowerCase(), context.Id, context));
+          setCompo(addComponent('content', context.Type.toLowerCase(), `cnt-${context.Id}`, context));
         }
       }).catch(error => {
         console.log(error);
-        setCompo(addComponent('content', context.Type.toLowerCase(), context.Id, context));
+        setCompo(addComponent('content', context.Type.toLowerCase(), `err-${context.Id}`, context));
       });
     };
   }, [context, repo]);
