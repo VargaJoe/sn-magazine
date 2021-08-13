@@ -10,7 +10,7 @@ export function SimpletTextComponent(props) {
   console.log(props.data);
   const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'PageContainer')[0]:{};
   let context = props.data;
-  console.log(props.widget.ContextBinding);
+  console.log(props.widget.Name + ' - ' + props.widget.ContextBinding);
   if (props.widget.ContextBinding[0] === 'customroot' ) {
     if (props.widget.CustomRoot !== undefined) {
       context = props.widget.CustomRoot
@@ -23,6 +23,7 @@ export function SimpletTextComponent(props) {
     const result = await repo.loadCollection({
       path: `${context.Path}`,
       oDataOptions: {
+        orderby: ['Index', 'DisplayName'],
         select: 'all',
       },
     });
@@ -41,6 +42,7 @@ export function SimpletTextComponent(props) {
     loadContents();
   }, [context, loadContents, repo]);
 
+  let counter = 0;
   return (
     <div className="w3-col m9 w3-right">
       <div className="w3-row-padding w3-margin-bottom">
@@ -68,7 +70,7 @@ export function SimpletTextComponent(props) {
                   </ul>
                   <div>
                     {widgetCollection.map((child) => { 
-                      return addComponent('content', child.Type.toLowerCase(), child.Id, child, child, props.page); 
+                      return addComponent('content', child.Type.toLowerCase(), `${counter++}-${context.Id}-${child.Id}`, child, child, props.page); 
                     })}
                   </div>
                 </div>
