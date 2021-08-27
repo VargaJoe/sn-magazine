@@ -2,7 +2,7 @@ import { SideMenu } from "../side-menu";
 import { addComponentsByZone } from '../utils/add-component';
 
 export const VanillaPageTemplate = (props) => {
-  console.log('pagetemplate: vanilla');
+  console.log('pagetemplate: mirror');
   console.log(props.data);
 
   const sideboxes = addComponentsByZone('content', 'side', 'side', props.data, props.page);
@@ -96,12 +96,11 @@ export const VanillaPageTemplate = (props) => {
         {/* The Grid */}
         <div className="w3-row">
           {/* Left Column */}
-          <div className="w3-col m3">
+          {/* <div className="w3-col m3">
             <SideMenu />
             <br/>
             {sideboxes}
-          </div>
-          
+          </div> */}
           {/* End Left Column */}
 
           {/* Middle Column */}
@@ -111,10 +110,9 @@ export const VanillaPageTemplate = (props) => {
           {/* End Middle Column */}
 
           {/* Right Column */}
-          {/* <div className="w3-col m2">
-            <SideReviews />
-            <SideTranslations />
-          </div> */}
+          <div className="w3-col m2">
+            {sideboxes}
+          </div>
           {/* End Right Column */}
         </div>
         {/* End Grid */}

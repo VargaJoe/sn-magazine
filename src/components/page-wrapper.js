@@ -37,8 +37,12 @@ export const PageWrapper = (props) => {
         if (result?.d?.results && result?.d?.results.length > 0) {
           console.log("page");
           console.log(result.d.results);
+          const page = result.d.results.filter(pcnt => pcnt.Type === 'PageContainer')[0];
+          const pageTemplate = page.PageTemplate === '' || page.PageTemplate === null ? "vanilla" : page.PageTemplate;
+          console.log('pt: '+pageTemplate);
+
           // setCompo(addComponent('page-templates', 'page', "vanilla", `cnt-${context.Id}`, context));
-          setCompo(addComponent('page-templates', 'page', "vanilla", `page-${context.Id}`, context, result.d.results)); 
+          setCompo(addComponent('page-templates', 'page', pageTemplate, `page-${context.Id}`, context, result.d.results)); 
         } else {
           console.log('else:'+context.Type.toLowerCase());
           setCompo(addComponent('page-templates', 'page', "vanilla", `cnt-${context.Id}`, context));

@@ -1,13 +1,16 @@
 import { SideMenu } from "../side-menu";
-import { addComponentsByZone } from '../utils/add-component';
+import { addComponent } from '../utils/add-component';
 
-export const VanillaPageTemplate = (props) => {
-  console.log('pagetemplate: vanilla');
+
+export const EmptyPageTemplate = (props) => {
+  console.log('pagetemplate: wide');
   console.log(props.data);
 
-  const sideboxes = addComponentsByZone('content', 'side', 'side', props.data, props.page);
-  const components = addComponentsByZone('content', 'component', null, props.data, props.page);
-
+  const components = props.page.filter(pcnt => pcnt.Type !== 'PageContainer').map((child) => { 
+    const compoType = child.ClientComponent === undefined || child.ClientComponent === null || child.ClientComponent === '' ? child.Type : child.ClientComponent;
+    console.log('addcompo: '+compoType.toLowerCase())
+    return addComponent('content', 'component', compoType.toLowerCase(), `${props.data.Id}-${child.Id}`, props.data, props.page, child); 
+  })
   console.log(components);
 
   return (
@@ -95,27 +98,16 @@ export const VanillaPageTemplate = (props) => {
       <div className="w3-container w3-content w3-content-custom">        
         {/* The Grid */}
         <div className="w3-row">
-          {/* Left Column */}
-          <div className="w3-col m3">
-            <SideMenu />
-            <br/>
-            {sideboxes}
-          </div>
-          
-          {/* End Left Column */}
-
           {/* Middle Column */}
-          <div className="w3-col m7">
+          <div className="w3-col m12">
              {components}
           </div>
           {/* End Middle Column */}
 
-          {/* Right Column */}
-          {/* <div className="w3-col m2">
-            <SideReviews />
-            <SideTranslations />
-          </div> */}
-          {/* End Right Column */}
+          {/* Hidden Column */}
+          <div className="hidden">
+          </div>
+          {/* Hidden Column */}
         </div>
         {/* End Grid */}
       </div>
@@ -140,4 +132,4 @@ export const VanillaPageTemplate = (props) => {
   );
 }
 
-export default VanillaPageTemplate;
+export default EmptyPageTemplate;

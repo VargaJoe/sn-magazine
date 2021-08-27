@@ -5,7 +5,7 @@ export const EventListContent = (props) => {
   return (
     <>
       {/* Middle Column */}
-      <div className="w3-col m9">
+      {/* <div className="w3-col m9"> */}
         <div className="w3-row-padding">
           <div className="w3-col m12">
             <div className="w3-card w3-round w3-white">
@@ -29,8 +29,8 @@ export const EventListContent = (props) => {
             </div>
           </div>
         </div>
-      </div>
-      <br />
+      {/* </div> */}
+      {/* <br /> */}
       {/* End Middle Column */}
     </>
   );

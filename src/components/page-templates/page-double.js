@@ -1,12 +1,13 @@
 import { SideMenu } from "../side-menu";
 import { addComponentsByZone } from '../utils/add-component';
 
-export const VanillaPageTemplate = (props) => {
-  console.log('pagetemplate: vanilla');
+export const DoublePageTemplate = (props) => {
+  console.log('pagetemplate: double');
   console.log(props.data);
 
-  const sideboxes = addComponentsByZone('content', 'side', 'side', props.data, props.page);
+  const leftsideboxes = addComponentsByZone('content', 'side', 'side', props.data, props.page);
   const components = addComponentsByZone('content', 'component', null, props.data, props.page);
+  const rightsideboxes = addComponentsByZone('content', 'side', 'right', props.data, props.page);
 
   console.log(components);
 
@@ -99,9 +100,8 @@ export const VanillaPageTemplate = (props) => {
           <div className="w3-col m3">
             <SideMenu />
             <br/>
-            {sideboxes}
+            {leftsideboxes}
           </div>
-          
           {/* End Left Column */}
 
           {/* Middle Column */}
@@ -111,10 +111,9 @@ export const VanillaPageTemplate = (props) => {
           {/* End Middle Column */}
 
           {/* Right Column */}
-          {/* <div className="w3-col m2">
-            <SideReviews />
-            <SideTranslations />
-          </div> */}
+          <div className="w3-col m2">
+            {rightsideboxes}
+          </div>
           {/* End Right Column */}
         </div>
         {/* End Grid */}
@@ -140,4 +139,4 @@ export const VanillaPageTemplate = (props) => {
   );
 }
 
-export default VanillaPageTemplate;
+export default DoublePageTemplate;

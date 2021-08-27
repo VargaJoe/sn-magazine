@@ -18,3 +18,21 @@ export const addComponent = (type, prefix, component, id, context, page, widget)
   );
 };
 
+export const addComponentsByZone = (type, prefix, zone, context, page) => {
+
+  if (page === undefined) {
+    if (zone === null || zone === 'content') {
+      return addComponent('content', 'content', context.Type.toLowerCase(), `err-${context.Id}`, context)
+    } else {
+      return null;
+    }
+  }
+
+  return (
+    page.filter(pcnt => pcnt.Type !== 'PageContainer' && pcnt.PortletZone === zone).map((child) => { 
+      const compoType = child.ClientComponent === undefined || child.ClientComponent === null || child.ClientComponent === '' ? child.Type : child.ClientComponent;
+      console.log('addcompo: '+compoType.toLowerCase())
+      return addComponent(type, prefix, compoType.toLowerCase(), `${context.Id}-${child.Id}`, context, page, child);
+    })
+  );
+};
