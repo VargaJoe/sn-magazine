@@ -5,9 +5,9 @@ import { addComponent } from './utils/add-component';
 
 const DATA = require('../config.json');
 
-export const CategoryWrapper = (props) => {
+export const PageWrapper = (props) => {
   const repo = useRepository();
-  const [dynacompo, setCompo] = useState([]);
+  const [wrappercompo, setCompo] = useState([]);
   // const { categoryName } = useParams();
   const categoryName = props.location.pathname;
   const [context, setContext] = useState();
@@ -37,22 +37,16 @@ export const CategoryWrapper = (props) => {
         if (result?.d?.results && result?.d?.results.length > 0) {
           console.log("page");
           console.log(result.d.results);
-
-          setCompo(
-            result.d.results.filter(pcnt => pcnt.Type !== 'PageContainer').map((child) => { 
-              const compoType = child.ClientComponent === undefined || child.ClientComponent === null || child.ClientComponent === '' ? child.Type : child.ClientComponent;
-              console.log('addcompo: '+compoType.toLowerCase())
-              return addComponent('component', compoType.toLowerCase(), `${context.Id}-${child.Id}`, context, result.d.results, child); 
-              // return addComponent('component', child.ClientComponent.toLowerCase()===''?child.ClientComponent.toLowerCase():child.Type.toLowerCase(), child.Id, context, child, result.d.results); 
-            })
-          );
+          // setCompo(addComponent('page-templates', 'page', "vanilla", `cnt-${context.Id}`, context));
+          setCompo(addComponent('page-templates', 'page', "vanilla", `page-${context.Id}`, context, result.d.results)); 
         } else {
           console.log('else:'+context.Type.toLowerCase());
-          setCompo(addComponent('content', context.Type.toLowerCase(), `cnt-${context.Id}`, context));
+          setCompo(addComponent('page-templates', 'page', "vanilla", `cnt-${context.Id}`, context));
+          setCompo(addComponent('content', 'content', context.Type.toLowerCase(), `cnt-${context.Id}`, context));
         }
       }).catch(error => {
         console.log(error);
-        setCompo(addComponent('content', context.Type.toLowerCase(), `err-${context.Id}`, context));
+        setCompo(addComponent('content', 'content', context.Type.toLowerCase(), `err-${context.Id}`, context));
       });
     };
   }, [context, repo]);
@@ -70,7 +64,7 @@ export const CategoryWrapper = (props) => {
       };
     })
     .catch(error => {
-      setCompo(addComponent('content', 'missing', 1));
+      setCompo(addComponent('content', 'content', 'missing', 1));
     });
   }, [categoryName, repo]);
 
@@ -90,7 +84,7 @@ export const CategoryWrapper = (props) => {
 
   return ( 
     <React.Suspense fallback='Loading views...'>
-        {dynacompo}
+        {wrappercompo}
     </React.Suspense>
   )
 };

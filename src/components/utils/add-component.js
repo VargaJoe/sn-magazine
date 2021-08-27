@@ -1,19 +1,20 @@
 import React, { lazy } from 'react';
 
 const defaultComponent = 'folder';
-const importView = (prefix, component) =>
+const importView = (type, prefix, component) =>
   lazy(() =>
-    import(`../content/${prefix}-${component}`).catch(() =>
+    import(`../${type}/${prefix}-${component}`).catch(() =>
       import(`../content/content-${defaultComponent}`)
     )
   );
 
-export const addComponent = (prefix, component, id, context, widget, page) => {
-  const View = importView(prefix, component);
+export const addComponent = (type, prefix, component, id, context, page, widget) => {
+  const View = importView(type, prefix, component);
   console.log('uniqid: '+id);
   return (
     <div className='container'>
-      <View key={id} data={context} widget={widget} page={page} />
+      <View key={id} data={context} page={page} widget={widget} />
     </div>
   );
 };
+
