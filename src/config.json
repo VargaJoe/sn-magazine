@@ -1,6 +1,8 @@
 {
 	"apiUrl" : 			"https://joe.sensenet.cloud",
+	"rootPath" :		"/Root/Content",
 	"dataPath" :		"/Root/Content/SampleWorkspace",
+	"pagecontainerPath": 	"/Root/Content/Pages",
 	"categoryType" :	"Folder",
 	"articleType" :	"GenericContent"
 } 

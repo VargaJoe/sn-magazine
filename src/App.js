@@ -84,9 +84,9 @@ function App() {
   <a href="#" className="w3-bar-item w3-button w3-padding-large">Link 3</a>
   <a href="#" className="w3-bar-item w3-button w3-padding-large">My Profile</a> */}
       </div>
-
+      <BrowserRouter>
       {/* Page Container */}
-      <div className="w3-container w3-content w3-content-custom">
+      <div className="w3-container w3-content w3-content-custom">        
         {/* The Grid */}
         <div className="w3-row">
           {/* Left Column */}
@@ -99,7 +99,6 @@ function App() {
 
           {/* Middle Column */}
           {/* <div className="w3-col m7"> */}
-            <BrowserRouter>
               <Switch>
                 {SiteRoutes.public.map((route, index) => (
                   <Route
@@ -110,7 +109,6 @@ function App() {
                   />
                 ))}
               </Switch>
-            </BrowserRouter>
           {/* </div> */}
           {/* End Middle Column */}
 
@@ -123,6 +121,7 @@ function App() {
         </div>
         {/* End Grid */}
       </div>
+      </BrowserRouter>
       {/* End Page Container */}
 
       {/* Footer */}

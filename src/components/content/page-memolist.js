@@ -1,7 +1,6 @@
 import React, { lazy, useCallback, useEffect, useState } from 'react';
 import { useRepository } from '@sensenet/hooks-react';
 import { useParams } from 'react-router-dom';
-import { Link } from "react-router-dom";
 import { addComponent } from '../utils/add-component';
 
 const DATA = require('../../config.json');
@@ -15,21 +14,22 @@ const importView = component =>
     )
   );
 
+// pagecomponent walker instead of single content view
+
 const MemoListContent = (props) => {
   console.log('memolist component');
   console.log(props.data);
+
   const repo = useRepository();
   const [dynacompo, setCompo] = useState([]);
-  // const { categoryName } = useParams();
-  const contextPath = props.data.Path;
+  const { categoryName } = useParams();
   const [articles, setArts] = useState([]);
 
   const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'PageContainer')[0]:{};
   
   const loadContents = useCallback(async () => {
     const result = await repo.loadCollection({
-      // path: `${DATA.dataPath}/${categoryName}`,
-      path: `${contextPath}`,
+      path: `${DATA.dataPath}/${categoryName}`,
       oDataOptions: {
         select: 'all',
       },
@@ -43,17 +43,18 @@ const MemoListContent = (props) => {
       // const View = importView('missing');
       // setCompo(<View key={'1'} />);
     }
-  }, [contextPath, repo]);
+  }, [categoryName, repo]);
 
 const loadCompo = (data) => {
    const View = importView(data.Type.toLowerCase());
+   console.log('memo-compo-'+data.Id);
    //setCompo(<View key={result.d.Id} />);
-   return (<View key={'load-'+data.Id} data={data}/>);
+   return (<View key={'memo-compo-'+data.Id} data={data}/>);
 }
 
   useEffect(() => {
     loadContents();
-  }, [contextPath, loadContents, repo]);
+  }, [categoryName, loadContents, repo]);
 
   let counter = 0;
 
@@ -63,33 +64,12 @@ const loadCompo = (data) => {
       <div className="w3-col m9">
         <div className="w3-row-padding">
           <div className="w3-col m12">
-            <div className="w3-card w3-round w3-white w3-margin-bottom">
-            <div className="w3-container w3-padding">
-              <div className='w3-left'>
-              Submenu
-              </div>
-              <div>
-                {articles?.map((art) => {
-                  const relativePath = art.Path.substr(DATA.dataPath.length + 1);
-                  return (
-                    <span key={`memo-submenu-${art.Id}`} className='w3-padding'>
-                      {/* <i className="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i>  */}
-                      {/* {art.DisplayName} */}
-                      <Link key={`sidemenu-link-${art.Id}`} to={'/' + relativePath} className="side-menu-link">
-                        {art.DisplayName}
-                      </Link>
-                    </span>
-                  )})}
-                  </div>
-              </div>
-            </div>
-
             <div className="w3-card w3-round w3-white">
               <div className="w3-container w3-padding">
                 <h1>{props.data.DisplayName}</h1>
                 <div className="context-info">
                   <ul>
-                    <li>React Component:<span>memolist</span></li>
+                    <li>React Component: <span>memolist</span></li>
                     <li>Content Name: <span>{props.data.Name}</span></li>
                     <li>Content Type: <span>{props.data.Type}</span></li>
                     <li>Content Path: <span>{props.data.Path}</span></li>
@@ -102,11 +82,11 @@ const loadCompo = (data) => {
                   </ul>
                 </div>
                 {articles?.map((child) => (
-                  <div key={`content-memo-${counter++}-${props.data.Id}-${child.Id}`}>
+                  <div key={`page-memo-${counter++}-${props.data.Id}-${child.Id}`}>
                     {/* <i className="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i>  */}
                     {/* {art.DisplayName} */}
                     {/* {loadCompo(art)} */}
-                    {addComponent('content', child.Type.toLowerCase(), `${counter++}-${props.data.Id}-${child.Id}`, child, child, props.page)}
+                    {addComponent('content', child.Type.toLowerCase(), `${counter++}-${props.data.Id}-${child.Id}`, child, child, props.page)}                    
                   </div>
                 ))}
 
