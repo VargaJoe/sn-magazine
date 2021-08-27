@@ -16,17 +16,8 @@ export const VanillaPageTemplate = (props) => {
   console.log(props.data);
 
   const sideboxes = addComponentsByZone('content', 'side', 'side', props.data, props.page);
-  // const sideboxes = props.page.filter(pcnt => pcnt.Type !== 'PageContainer').map((child) => { 
-  //   const compoType = child.ClientComponent === undefined || child.ClientComponent === null || child.ClientComponent === '' ? child.Type : child.ClientComponent;
-  //   console.log('addcompo: '+compoType.toLowerCase())
-  //   return addComponent('content', 'component', compoType.toLowerCase(), `${props.data.Id}-${child.Id}`, props.data, props.page, child); 
-  // })
+  const components = addComponentsByZone('content', 'component', null, props.data, props.page);
 
-  const components = props.page.filter(pcnt => pcnt.Type !== 'PageContainer').map((child) => { 
-    const compoType = child.ClientComponent === undefined || child.ClientComponent === null || child.ClientComponent === '' ? child.Type : child.ClientComponent;
-    console.log('addcompo: '+compoType.toLowerCase())
-    return addComponent('content', 'component', compoType.toLowerCase(), `${props.data.Id}-${child.Id}`, props.data, props.page, child); 
-  })
   console.log(components);
 
   return (

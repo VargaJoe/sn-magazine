@@ -16,6 +16,7 @@ export function StaticComponent(props) {
     <div className="w3-card w3-round w3-white">
       <div className="w3-container">
         <h4>{props.data.DisplayName} - {props.widget.DisplayName}</h4>
+        <hr/>
         <div className="context-info">
             <ul>
               <li>Component: <span>simple text</span></li>
