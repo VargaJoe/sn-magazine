@@ -42,7 +42,7 @@ export const PageWrapper = (props) => {
         } else {
           console.log('else:'+context.Type.toLowerCase());
           setCompo(addComponent('page-templates', 'page', "vanilla", `cnt-${context.Id}`, context));
-          setCompo(addComponent('content', 'content', context.Type.toLowerCase(), `cnt-${context.Id}`, context));
+          // setCompo(addComponent('content', 'content', context.Type.toLowerCase(), `cnt-${context.Id}`, context));
         }
       }).catch(error => {
         console.log(error);

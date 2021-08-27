@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useRepository } from '@sensenet/hooks-react';
 import { addComponent } from '../utils/add-component';
 
-export function SimpletTextComponent(props) {
+export function ContentCollectionComponent(props) {
   const repo = useRepository();
   const [widgetCollection, setCollection] = useState([]);
 
@@ -82,4 +82,4 @@ export function SimpletTextComponent(props) {
   );
 }
 
-export default SimpletTextComponent
+export default ContentCollectionComponent

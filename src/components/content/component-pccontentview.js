@@ -1,4 +1,4 @@
-export function SimpletTextComponent(props) {
+export function ContentViewComponent(props) {
   console.log('contentview component');
   console.log(props.data);
   const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'PageContainer')[0]:{};
@@ -47,4 +47,4 @@ export function SimpletTextComponent(props) {
   );
 }
 
-export default SimpletTextComponent
+export default ContentViewComponent

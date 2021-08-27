@@ -1,4 +1,4 @@
-export function StaticComponent(props) {
+export function StaticSide(props) {
   console.log('contentview side');
   console.log(props.data);
   const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'PageContainer')[0]:{};
@@ -13,7 +13,7 @@ export function StaticComponent(props) {
   }
 
   return (
-    <div className="w3-card w3-round w3-white">
+    <div className="w3-card w3-round w3-white w3-margin-bottom">
       <div className="w3-container">
         <h4>{props.data.DisplayName} - {props.widget.DisplayName}</h4>
         <hr/>
@@ -41,4 +41,4 @@ export function StaticComponent(props) {
   );
 }
 
-export default StaticComponent;
+export default StaticSide;
