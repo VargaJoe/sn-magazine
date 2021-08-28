@@ -11,6 +11,7 @@ export const PageWrapper = (props) => {
   // const { categoryName } = useParams();
   const categoryName = props.location.pathname;
   const [context, setContext] = useState();
+  const [pageTemplates, setPts] = useState([]);
   console.log("props");
   console.log(props);  
 

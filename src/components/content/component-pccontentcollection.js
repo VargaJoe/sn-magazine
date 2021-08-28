@@ -70,7 +70,7 @@ export function ContentCollectionComponent(props) {
                   </ul>
                   <div>
                     {widgetCollection.map((child) => { 
-                      return addComponent('content', child.Type.toLowerCase(), `${counter++}-${context.Id}-${child.Id}`, child, child, props.page); 
+                      return addComponent('content', 'content', child.Type.toLowerCase(), `${counter++}-${context.Id}-${child.Id}`, child, props.page, child); 
                     })}
                   </div>
                 </div>

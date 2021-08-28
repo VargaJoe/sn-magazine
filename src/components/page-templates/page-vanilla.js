@@ -106,6 +106,7 @@ export const VanillaPageTemplate = (props) => {
 
           {/* Middle Column */}
           <div className="w3-col m7">
+            <b>VANILLA</b>
              {components}
           </div>
           {/* End Middle Column */}

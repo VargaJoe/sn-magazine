@@ -106,6 +106,7 @@ export const DoublePageTemplate = (props) => {
 
           {/* Middle Column */}
           <div className="w3-col m7">
+            <b>DOUBLE</b>
              {components}
           </div>
           {/* End Middle Column */}

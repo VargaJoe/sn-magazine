@@ -1,12 +1,28 @@
 import React, { lazy } from 'react';
 
 const defaultComponent = 'folder';
-const importView = (type, prefix, component) =>
-  lazy(() =>
-    import(`../${type}/${prefix}-${component}`).catch(() =>
-      import(`../content/content-${defaultComponent}`)
-    )
-  );
+let lazyComponents = [];
+function importView(type, prefix, component) {
+  if (lazyComponents !== null && lazyComponents !== undefined) {
+    let lazyView = lazyComponents.filter(ptmplt => ptmplt.type === type && ptmplt.prefix === prefix && ptmplt.component === component)[0];
+    if (lazyView === undefined) {
+      lazyView = {
+        type: type,
+        prefix: prefix,
+        component: component,
+        view: lazy(() =>
+        import(`../${type}/${prefix}-${component}`).catch(() =>
+        import(`../content/content-${defaultComponent}`)
+      ))}
+      lazyComponents.push(lazyView);
+      console.log('new component added: '+lazyView.component);
+    } else {
+      console.log('already loaded component: '+lazyView.component);
+    };
+
+    return lazyView.view;
+  }
+};
 
 export const addComponent = (type, prefix, component, id, context, page, widget) => {
   const View = importView(type, prefix, component);

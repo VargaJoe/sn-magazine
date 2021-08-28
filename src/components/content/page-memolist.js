@@ -86,7 +86,7 @@ const loadCompo = (data) => {
                     {/* <i className="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i>  */}
                     {/* {art.DisplayName} */}
                     {/* {loadCompo(art)} */}
-                    {addComponent('content', child.Type.toLowerCase(), `${counter++}-${props.data.Id}-${child.Id}`, child, child, props.page)}                    
+                    {addComponent('content', child.Type.toLowerCase(), `${counter++}-${props.data.Id}-${child.Id}`, child, props.page, child)}
                   </div>
                 ))}
 
