@@ -100,7 +100,15 @@ export const EmptyPageTemplate = (props) => {
         <div className="w3-row">
           {/* Middle Column */}
           <div className="w3-col m12">
-            <b>WIDE</b>
+            <div className="w3-row-padding w3-margin-bottom">
+                <div className="w3-col m12">
+                  <div className="w3-card w3-round w3-white">
+                    <div className="w3-container w3-padding">
+                      <b>WIDE</b>
+                    </div>
+                  </div>
+                </div>
+              </div>
              {components}
           </div>
           {/* End Middle Column */}
