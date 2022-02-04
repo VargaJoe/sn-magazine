@@ -1,78 +1,84 @@
-import React, { useState, useEffect } from "react";
-import { useRepository } from "@sensenet/hooks-react";
-import { useParams } from 'react-router-dom';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useRepository } from '@sensenet/hooks-react';
+import { addComponent } from '../utils/add-component';
 
-const DATA = require('../../config.json');
-const defaultComponent = 'folder';
+export function LeisureCategoryContent(props) {
+  const repo = useRepository();
+  const [widgetCollection, setCollection] = useState([]);
 
-export function LeisureCategoryContent() {
-  // const repo = useRepository();
-  // const [data, setData] = useState();
-  // const [isDataFetched, setDataFetched] = useState();
-  // const [dynacompo, setCompo] = useState();
-  // // const [catName, setCategory] = useState();
-  // const { categoryName } = useParams();
-  //const { articleName } = useParams();
-  // // const prevProps = useRef(props);
+  console.log('contentcollection component');
+  console.log(props);
+  const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'Page')[0]:{};
+  let context = props.data;
+  console.log(props.widget.Name + ' - ' + props.widget.ContextBinding);
+  if (props.widget.ContextBinding[0] === 'customroot' ) {
+    if (props.widget.CustomRoot !== undefined) {
+      context = props.widget.CustomRoot
+    } else {
+      console.log('customroot is not set');
+    }
+  }
 
-  // useEffect(() => {
-    // console.log("second useeffect");
-    // async function loadChildren() {
-    //   // const result = 
-    //   await repo.loadCollection({
-    //     path: `${DATA.dataPath}`,
-    //     oDataOptions: {
-    //       // query: "TypeIs:LeisureCategory AND Hidden:0 .AUTOFILTERS:OFF",
-    //       query: `TypeIs:${DATA.articleType} AND Hidden:0 .AUTOFILTERS:OFF`,
-    //       orderby: ['DisplayName'],
-		// 		  // orderby: ['PublishDate', 'DisplayName'],
-    //       select: "all", 
-    //     },
-    //   });
-    //   // setData(result.d.results);
-    //   // console.log(data);
-    // }
-    // loadChildren();
-//  }, [repo]);
+  const loadContents = useCallback(async () => {
+    const result = await repo.loadCollection({
+      path: `${context.Path}`,
+      oDataOptions: {
+        orderby: ['Index', 'DisplayName'],
+        select: 'all',
+      },
+    });
+    if (result?.d?.results) {
+      console.log(result);
+      setCollection(result.d.results);
+      // const View = importView(result.d.Type.toLowerCase());
+      // setCompo(<View key={result.d.Id} />);
+    } else {
+      // const View = importView('missing');
+      // setCompo(<View key={'1'} />);
+    }
+  }, [context, repo]);
 
-  // if (!isDataFetched) {
-  //   return null;
-  // } 
+  useEffect(() => {
+    loadContents();
+  }, [context, loadContents, repo]);
 
-  // console.log(categoryName);
-
-  // if (dynacompo === undefined) {
-  //   console.log("dynacompo");
-  //   console.log(dynacompo);
-  //   addComponent("dynacomp");
-  // }
-
-  // if (dynacompo === undefined || dynacompo.length === 0) return <div>Loading...</div>;
-  
+  let counter = 0;
   return (
-    <>
-      {/* Middle Column */}
-      <div className="w3-col m7">
-        {/* {dynacompo} */}
-        <div className="w3-row-padding">
-          <div className="w3-col m12">
-            <div className="w3-card w3-round w3-white">
-              <div className="w3-container w3-padding">
-                <p>category view</p>
-              </div>
+    // <div className="w3-col m9 w3-right">
+      <div className="w3-row-padding w3-margin-bottom">
+        <div className="w3-col m12">
+          <div className="w3-card w3-round w3-white">
+            <div className="w3-container w3-padding">
+            <h1>{props.data.DisplayName} - {props.widget.DisplayName}</h1>
+              <div className="context-info">
+                  <ul>
+                  <li>Component: <span>simple text</span></li>
+                    <li>Content Name: <span>{context.Name}</span></li>
+                    <li>Content Type: <span>{context.Type}</span></li>
+                    <li>Content Path: <span>{context.Path}</span></li>
+                    <li>Content Lifespan: <span>{context.EnableLifespan?"true":"false"}</span></li>
+                    <li>Content ValidFrom: <span>{context.ValidFrom}</span></li>
+                    <li>Content ValidTill: <span>{context.ValidTill}</span></li>
+                    <li>Page Name: <span>{currentPage?.Name}</span></li>
+                    <li>Page Type: <span>{currentPage?.Type}</span></li>
+                    <li>Page Path: <span>{currentPage?.Path}</span></li>
+                    <li>Widget Name: <span>{props.widget.Name}</span></li>
+                    <li>Widget Type: <span>{props.widget.Type}</span></li>
+                    <li>Widget Path: <span>{props.widget.Path}</span></li>
+                    <li>Widget Context: <span>{props.widget.ContextBinding}</span></li>
+                    <li>Widget Custom Root: <span>{props.widget.CustomRoot?.Path}</span></li>
+                  </ul>
+                  <div>
+                    {widgetCollection.map((child) => { 
+                      return addComponent('content', 'content', child.Type.toLowerCase(), `${counter++}-${context.Id}-${child.Id}`, child, props.page, child); 
+                    })}
+                  </div>
+                </div>
             </div>
           </div>
         </div>
       </div>
-      <br/>
-      {/* End Middle Column */}
-
-      {/* Right Column */}
-      <div className="w3-col m2">
-        
-      </div>
-      {/* End Right Column */}
-    </>
+    // </div>
   );
 }
 

@@ -1,0 +1,32 @@
+.pagetemplate-custom {
+  max-width: 1800px;
+}
+
+.hidden {
+  display:  none;
+}
+
+.pagetemplate-sign { 
+  display: none; 
+}
+
+.gallery-item {
+  max-width: 250px;
+}
+
+.debug-info {
+  position: absolute;
+}
+
+.debug-info-button {
+  position: relative;
+}
+
+.debug-info-details {
+  /* position: relative; */
+  background-color:white;
+  border: 1px;
+  border-color: black;
+  border-style: double;
+  padding-right: 40px;
+}
