@@ -1,7 +1,7 @@
 export function StaticSide(props) {
   console.log('contentview side');
   console.log(props.data);
-  const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'PageContainer')[0]:{};
+  const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'Page')[0]:{};
   let context = props.data;
   console.log(props.widget.ContextBinding);
   if (props.widget.ContextBinding[0] === 'customroot' ) {

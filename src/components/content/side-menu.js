@@ -7,14 +7,15 @@ export function MenuSide(props) {
   const repo = useRepository();
   const [widgetCollection, setCollection] = useState([]);
 
-  console.log('contentview side');
-  console.log(props.data);
-  const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'PageContainer')[0]:{};
+  console.log('contentview sidemenu');
+  console.log(props);
+  const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'Page')[0]:{};
   let context = props.data;
-  console.log(props.widget.ContextBinding);
-  if (props.widget.ContextBinding[0] === 'customroot' ) {
-    if (props.widget.CustomRoot !== undefined) {
-      context = props.widget.CustomRoot
+  let widget = props.widget;
+  console.log(widget.ContextBinding);
+  if (widget.ContextBinding[0] === 'customroot' ) {
+    if (widget.CustomRoot !== undefined) {
+      context = widget.CustomRoot
     } else {
       console.log('customroot is not set');
     }
@@ -24,6 +25,7 @@ export function MenuSide(props) {
     const result = await repo.loadCollection({
       path: `${context.Path}`,
       oDataOptions: {
+        query: widget.ContentQuery,
         orderby: ['Index', 'DisplayName'],
         select: 'all',
       },
@@ -42,7 +44,7 @@ export function MenuSide(props) {
   return (
     <div className="w3-card w3-round w3-white w3-margin-bottom">
       <div className="w3-container">
-      <h4 className="w3-center">Side menu</h4>
+      <h4 className="w3-center">{widget.DisplayName}</h4>
       {/* <p className="w3-center"><img src="/w3images/avatar3.png" className="w3-circle w3-circle-side-avatar" alt="Avatar" /></p> */}
       <hr/>
       <div className="side-menu-uppercase">

@@ -1,7 +1,7 @@
 export const EventListContent = (props) => {
   console.log('eventlist component');
   console.log(props.data);
-  const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'PageContainer')[0]:{};
+  const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'Page')[0]:{};
   return (
     <>
       {/* Middle Column */}

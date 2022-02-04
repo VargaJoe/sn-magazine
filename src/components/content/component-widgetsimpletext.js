@@ -1,7 +1,7 @@
 export function SimpletTextComponent(props) {
   console.log('simpletext component');
   console.log(props.data);
-  const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'PageContainer')[0]:{};
+  const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'Page')[0]:{};
   return (
     // <div className="w3-col m9 w3-right">
       <div className="w3-row-padding w3-margin-bottom">

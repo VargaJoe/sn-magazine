@@ -19,26 +19,29 @@ export const PageWrapper = (props) => {
   console.log("path");
   console.log(path);
 
+  // refactor: filters should get from page fields
   const loadPage = useCallback(async () => {
     console.log(context.Type);
     if (context !== undefined && context.Type !== undefined && context.Type !== []) {
-      const query = (context.Type === 'PageContainer') ? 
-      `Path:'${context.Path}' OR TypeIs:PageComponent AND InTree:'${context.Path}' AND Hidden:0 .LIFESPAN:ON`
-      : `Name:'${context.Type}' AND Type:PageContainer OR TypeIs:PageComponent AND InTree:'${DATA.pagecontainerPath}/${context.Type}' AND Hidden:0 .LIFESPAN:ON`;
-      const queryPath = (context.Type === 'PageContainer') ? `${context.Path}` : `${DATA.pagecontainerPath}`;
+      const query = (context.Type === 'Page') ? 
+      `Path:'${context.Path}' OR TypeIs:Widget AND InTree:'${context.Path}' AND Hidden:0`
+      : `Name:'${context.Type}' AND Type:Page OR TypeIs:Widget AND InTree:'${DATA.pagecontainerPath}/${context.Type}' AND Hidden:0`;
+      const queryPath = (context.Type === 'Page') ? `${context.Path}` : `${DATA.pagecontainerPath}`;
       await repo.loadCollection({
         path: queryPath,
         oDataOptions: {
           query: query,
           expand: ['CustomRoot'],
           orderby: ['Index'],
-          select: "all", 
+          select: "all",      
+          enablelifespanfilter: "on",
+          enableautofilters: "off"
         },
       }).then(result => {
         if (result?.d?.results && result?.d?.results.length > 0) {
           console.log("page");
           console.log(result.d.results);
-          const page = result.d.results.filter(pcnt => pcnt.Type === 'PageContainer')[0];
+          const page = result.d.results.filter(pcnt => pcnt.Type === 'Page')[0];
           const pageTemplate = page.PageTemplate === '' || page.PageTemplate === null ? "vanilla" : page.PageTemplate;
           // console.log('pt: '+pageTemplate);
 
@@ -46,12 +49,13 @@ export const PageWrapper = (props) => {
           setCompo(addComponent('page-templates', 'page', pageTemplate, `page-${context.Id}`, context, result.d.results)); 
         } else {
           console.log('else:'+context.Type.toLowerCase());
-          setCompo(addComponent('page-templates', 'page', "vanilla", `cnt-${context.Id}`, context));
+          setCompo(addComponent('page-templates', 'page', "vanilla", `page-${context.Id}`, context));
           // setCompo(addComponent('content', 'content', context.Type.toLowerCase(), `cnt-${context.Id}`, context));
         }
       }).catch(error => {
         console.log(error);
-        setCompo(addComponent('content', 'content', context.Type.toLowerCase(), `err-${context.Id}`, context));
+        // setCompo(addComponent('content', 'content', context.Type.toLowerCase(), `err-${context.Id}`, context));
+        setCompo(addComponent('page-templates', 'page', "vanilla", `page-${context.Id}`, context)); 
       });
     };
   }, [context, repo]);
@@ -64,6 +68,7 @@ export const PageWrapper = (props) => {
       },
     }).then(result => {
       if (result?.d?.Type) {
+        console.log('First level context:');
         console.log(result.d);
         setContext(result.d);
       };

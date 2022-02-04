@@ -6,7 +6,7 @@ export const VanillaPageTemplate = (props) => {
   console.log(props.data);
 
   const sideboxes = addComponentsByZone('content', 'side', 'side', props.data, props.page);
-  const components = addComponentsByZone('content', 'component', null, props.data, props.page);
+  const components = addComponentsByZone('content', 'component', 'content', props.data, props.page);
 
   console.log(components);
 
@@ -92,7 +92,7 @@ export const VanillaPageTemplate = (props) => {
       </div>
       
       {/* Page Container */}
-      <div className="w3-container w3-content w3-content-custom">        
+      <div className="w3-container w3-content w3-content-custom pagetemplate-mirror">        
         {/* The Grid */}
         <div className="w3-row">
           {/* Left Column */}

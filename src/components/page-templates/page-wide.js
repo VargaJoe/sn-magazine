@@ -6,7 +6,7 @@ export const EmptyPageTemplate = (props) => {
   console.log('pagetemplate: wide');
   console.log(props.data);
 
-  const components = props.page.filter(pcnt => pcnt.Type !== 'PageContainer').map((child) => { 
+  const components = props.page.filter(pcnt => pcnt.Type !== 'Page').map((child) => { 
     const compoType = child.ClientComponent === undefined || child.ClientComponent === null || child.ClientComponent === '' ? child.Type : child.ClientComponent;
     console.log('addcompo: '+compoType.toLowerCase())
     return addComponent('content', 'component', compoType.toLowerCase(), `${props.data.Id}-${child.Id}`, props.data, props.page, child); 
@@ -36,13 +36,13 @@ export const EmptyPageTemplate = (props) => {
           >
             <i className="fa fa-globe"></i>
           </a>
-          <a
+          {/* <a
             href="/"
             className="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white"
             title="Account Settings"
           >
             <i className="fa fa-user"></i>
-          </a>
+          </a> */}
           <a
             href="/"
             className="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white"
@@ -50,7 +50,7 @@ export const EmptyPageTemplate = (props) => {
           >
             <i className="fa fa-envelope"></i>
           </a>
-          <div className="w3-dropdown-hover w3-hide-small">
+          {/* <div className="w3-dropdown-hover w3-hide-small">
             <button
               className="w3-button w3-padding-large"
               title="Notifications"
@@ -69,7 +69,7 @@ export const EmptyPageTemplate = (props) => {
                 Jane likes your post
               </a>
             </div>
-          </div>
+          </div> */}
           <a
             href="/"
             className="w3-bar-item w3-button w3-hide-small w3-right w3-padding-large w3-hover-white"
@@ -95,7 +95,7 @@ export const EmptyPageTemplate = (props) => {
       </div>
       
       {/* Page Container */}
-      <div className="w3-container w3-content w3-content-custom">        
+      <div className="w3-container w3-content w3-content-custom pagetemplate-wide">        
         {/* The Grid */}
         <div className="w3-row">
           {/* Middle Column */}

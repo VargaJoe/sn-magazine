@@ -25,7 +25,7 @@ const MemoListContent = (props) => {
   const { categoryName } = useParams();
   const [articles, setArts] = useState([]);
 
-  const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'PageContainer')[0]:{};
+  const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'Page')[0]:{};
   
   const loadContents = useCallback(async () => {
     const result = await repo.loadCollection({

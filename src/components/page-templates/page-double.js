@@ -6,7 +6,7 @@ export const DoublePageTemplate = (props) => {
   console.log(props.data);
 
   const leftsideboxes = addComponentsByZone('content', 'side', 'side', props.data, props.page);
-  const components = addComponentsByZone('content', 'component', null, props.data, props.page);
+  const components = addComponentsByZone('content', 'component', 'content', props.data, props.page);
   const rightsideboxes = addComponentsByZone('content', 'side', 'right', props.data, props.page);
 
   console.log(components);
@@ -93,7 +93,7 @@ export const DoublePageTemplate = (props) => {
       </div>
       
       {/* Page Container */}
-      <div className="w3-container w3-content w3-content-custom">        
+      <div className="w3-container w3-content w3-content-custom pagetemplate-double">        
         {/* The Grid */}
         <div className="w3-row">
           {/* Left Column */}
