@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useRepository } from '@sensenet/hooks-react';
 import { addComponent } from '../utils/add-component';
 
-export function SimpletTextComponent(props) {
+export function ContentCollectionComponent(props) {
   const repo = useRepository();
   const [widgetCollection, setCollection] = useState([]);
 
@@ -44,7 +44,7 @@ export function SimpletTextComponent(props) {
 
   let counter = 0;
   return (
-    <div className="w3-col m9 w3-right">
+    // <div className="w3-col m9 w3-right">
       <div className="w3-row-padding w3-margin-bottom">
         <div className="w3-col m12">
           <div className="w3-card w3-round w3-white">
@@ -70,7 +70,7 @@ export function SimpletTextComponent(props) {
                   </ul>
                   <div>
                     {widgetCollection.map((child) => { 
-                      return addComponent('content', child.Type.toLowerCase(), `${counter++}-${context.Id}-${child.Id}`, child, child, props.page); 
+                      return addComponent('content', 'content', child.Type.toLowerCase(), `${counter++}-${context.Id}-${child.Id}`, child, props.page, child); 
                     })}
                   </div>
                 </div>
@@ -78,8 +78,8 @@ export function SimpletTextComponent(props) {
           </div>
         </div>
       </div>
-    </div>
+    // </div>
   );
 }
 
-export default SimpletTextComponent
+export default ContentCollectionComponent

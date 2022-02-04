@@ -61,7 +61,7 @@ const loadCompo = (data) => {
   return (
     <>
       {/* Middle Column */}
-      <div className="w3-col m9">
+      {/* <div className="w3-col m9"> */}
         <div className="w3-row-padding">
           <div className="w3-col m12">
             <div className="w3-card w3-round w3-white">
@@ -86,7 +86,7 @@ const loadCompo = (data) => {
                     {/* <i className="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i>  */}
                     {/* {art.DisplayName} */}
                     {/* {loadCompo(art)} */}
-                    {addComponent('content', child.Type.toLowerCase(), `${counter++}-${props.data.Id}-${child.Id}`, child, child, props.page)}                    
+                    {addComponent('content', child.Type.toLowerCase(), `${counter++}-${props.data.Id}-${child.Id}`, child, props.page, child)}
                   </div>
                 ))}
 
@@ -98,8 +98,8 @@ const loadCompo = (data) => {
             </div>
           </div>
         </div>
-      </div>
-      <br />
+      {/* </div>
+      <br /> */}
       {/* End Middle Column */}
     </>
   );
