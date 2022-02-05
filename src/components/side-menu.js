@@ -14,7 +14,7 @@ export const SideMenu = () => {
         path: `${DATA.dataPath}`,
         oDataOptions: {
           // query: "TypeIs:LeisureCategory AND Hidden:0 .AUTOFILTERS:OFF",
-          query: `TypeIs:${DATA.categoryType} AND InFolder:${DATA.dataPath} AND Hidden:0 .LIFESPAN:ON`,
+          query: `TypeIs:${process.env.REACT_APP_DATA_PATH || DATA.categoryType} AND InFolder:${DATA.dataPath} AND Hidden:0 .LIFESPAN:ON`,
           orderby: ['Index', 'DisplayName'],
 				  // orderby: ['PublishDate', 'DisplayName'],
           select: "all", 

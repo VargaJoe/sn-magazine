@@ -70,7 +70,7 @@ const loadCompo = (data) => {
               </div>
               <div>
                 {articles?.map((art) => {
-                  const relativePath = art.Path.substr(DATA.dataPath.length + 1);
+                  const relativePath = art.Path.substr((process.env.REACT_APP_DATA_PATH || DATA.dataPath).length + 1);
                   return (
                     <span key={`memo-submenu-${art.Id}`} className='w3-padding'>
                       {/* <i className="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i>  */}

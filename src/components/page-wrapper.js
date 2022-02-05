@@ -25,8 +25,8 @@ export const PageWrapper = (props) => {
     if (context !== undefined && context.Type !== undefined && context.Type !== []) {
       const query = (context.Type === 'Page') ? 
       `Path:'${context.Path}' OR TypeIs:Widget AND InTree:'${context.Path}' AND Hidden:0`
-      : `Name:'${context.Type}' AND Type:Page OR TypeIs:Widget AND InTree:'${DATA.pagecontainerPath}/${context.Type}' AND Hidden:0`;
-      const queryPath = (context.Type === 'Page') ? `${context.Path}` : `${DATA.pagecontainerPath}`;
+      : `Name:'${context.Type}' AND Type:Page OR TypeIs:Widget AND InTree:'${process.env.REACT_APP_PAGECONTAINER_PATH || DATA.pagecontainerPath}/${context.Type}' AND Hidden:0`;
+      const queryPath = (context.Type === 'Page') ? `${context.Path}` : `${process.env.REACT_APP_PAGECONTAINER_PATH || DATA.pagecontainerPath}`;
       await repo.loadCollection({
         path: queryPath,
         oDataOptions: {
@@ -62,7 +62,7 @@ export const PageWrapper = (props) => {
 
   const loadContent = useCallback(async () => {
     await repo.load({
-      idOrPath: `${DATA.dataPath}/${categoryName}`,
+      idOrPath: `${process.env.REACT_APP_DATA_PATH || DATA.dataPath}/${categoryName}`,
       oDataOptions: {
         select: 'all',
       },

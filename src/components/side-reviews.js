@@ -10,7 +10,7 @@ export const SideReviews = () => {
   useEffect(() => {
     async function loadChildrenOfSamplews() {
       const result = await repo.loadCollection({
-        path: `${DATA.dataPath}`,
+        path: `${process.env.REACT_APP_DATA_PATH || DATA.dataPath}`,
         oDataOptions: {
           // query: "TypeIs:LeisureArticle AND NOT Type:LeisureArticle AND Hidden:0 .AUTOFILTERS:OFF",
 				  orderby: [['PublishDate', 'desc']],
