@@ -81,19 +81,19 @@ export function ContentCollectionComponent(props) {
           </li>
           <li><br/></li>
           <li>
-            Widget Name: <span>{props.widget.Name}</span>
+            Widget Name: <span>{widget.Name}</span>
           </li>
           <li>
-            Widget Type: <span>{props.widget.Type}</span>
+            Widget Type: <span>{widget.Type}</span>
           </li>
           <li>
-            Widget Path: <span>{props.widget.Path}</span>
+            Widget Path: <span>{widget.Path}</span>
           </li>
           <li>
-            Widget Context: <span>{props.widget.ContextBinding}</span>
+            Widget Context: <span>{widget.ContextBinding}</span>
           </li>
           <li>
-            Widget Custom Root: <span>{props.widget.CustomRoot?.Path}</span>
+            Widget Custom Root: <span>{widget.CustomRoot?.Path}</span>
           </li>
         </ul>
       </div>
@@ -101,10 +101,10 @@ export function ContentCollectionComponent(props) {
   )};
   // ======================================== END OF DEBUG INFO ========================================
 
-  console.log(props.widget.Name + " - " + props.widget.ContextBinding);
-  if (props.widget.ContextBinding[0] === "customroot") {
-    if (props.widget.CustomRoot !== undefined) {
-      context = props.widget.CustomRoot;
+  console.log(widget.Name + " - " + widget.ContextBinding);
+  if (widget.ContextBinding[0] === "customroot") {
+    if (widget.CustomRoot !== undefined) {
+      context = widget.CustomRoot;
     } else {
       console.log("customroot is not set");
     }
@@ -150,8 +150,7 @@ export function ContentCollectionComponent(props) {
               </div>
             </div>
             <div className="w3-container w3-padding-large w3-bottombar">
-              <div dangerouslySetInnerHTML={{ __html: context.Body }}>
-              </div>              
+              <div dangerouslySetInnerHTML={{ __html: context.Body }}/>
               <div className="small">{context.Author} ({context.Publisher}, <time datetime="1628016300000">{context.PublishDate}</time>)</div>
             </div>
             <div>

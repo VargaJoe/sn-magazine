@@ -31,6 +31,8 @@
   min-height: 325px;
 }
 
+.component-news-half,
+.widget-simpletext,
 .article-full {
   text-align: left;
 }
@@ -41,6 +43,26 @@
 
 .article-cover {
   width: 250px;
+}
+
+.news-meta {
+  white-space: normal;
+  overflow: hidden;
+  /* text-overflow: ellipsis; */
+  width:  80%;
+}
+
+.news-padding {
+  padding: 0 16px;  
+}
+
+.news-item a:link,
+.news-item a:hover {
+  text-decoration: none;
+}
+
+.news-item img {
+  max-height: 70px;
 }
 
 .debug-info {
