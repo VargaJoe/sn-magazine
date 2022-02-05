@@ -1,13 +1,14 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useRepository } from "@sensenet/hooks-react";
 import { addComponent } from "../utils/add-component";
+import { useLocation } from "react-router-dom";
 
 const DATA = require('../../config.json');
 
 export function ContentCollectionComponent(props) {
   const repo = useRepository();
   const [widgetCollection, setCollection] = useState([]);
-  
+  const { search } = useLocation();
 
   console.log("contentcollection component");
   console.log(props);
@@ -18,12 +19,23 @@ export function ContentCollectionComponent(props) {
   let widget = props.widget;
 
   // ======================================== START OF DEBUG INFO ========================================
+  function useQuery() {
+    const { search } = useLocation();
+  
+    return React.useMemo(() => new URLSearchParams(search), [search]);
+  }
+  let query = useQuery();
+
   const [showDebug, setDebug] = useState(false);
   const handleToggle = () => {
     setDebug(!showDebug);
   };
   // refactor: debugview to separate Component, add variables through parameters
-  const DebugView = (
+  function DebugView (isDebug) { 
+    if (!isDebug || isDebug !== 'true')
+      return;
+
+    return (
     <div className="context-info debug-info">
       <div className="debug-info-button">
         <button title="show" onClick={handleToggle}>
@@ -86,7 +98,7 @@ export function ContentCollectionComponent(props) {
         </ul>
       </div>
     </div>
-  );
+  )};
   // ======================================== END OF DEBUG INFO ========================================
 
   console.log(props.widget.Name + " - " + props.widget.ContextBinding);
@@ -127,7 +139,7 @@ export function ContentCollectionComponent(props) {
     <div className="w3-row-padding w3-margin-bottom">
       <div className="w3-col m12">
         <div className="w3-card w3-round w3-white">
-          {DebugView}
+        {DebugView(query.get("debug"))}
           <div className="w3-container w3-padding article-full">
             <h1>
               {context.DisplayName} 

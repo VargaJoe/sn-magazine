@@ -3,11 +3,14 @@ import { useRepository } from '@sensenet/hooks-react';
 import { addComponent } from '../utils/add-component';
 import { Component } from 'react/cjs/react.production.min';
 
+import { useLocation } from "react-router-dom";
+
 export function CustomGalleryView(props) {
   const repo = useRepository();
   const [widgetCollection, setCollection] = useState([]);
-  const [showDebug, setDebug] = useState(false);
-
+  const [showDebug, setDebug] = useState(false); 
+  const { search } = useLocation();
+  
   console.log('gallery component');
   console.log(props);
   const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'Page')[0]:{};
@@ -18,8 +21,19 @@ export function CustomGalleryView(props) {
     setDebug(!showDebug);
   };
 
+  function useQuery() {
+    const { search } = useLocation();
+  
+    return React.useMemo(() => new URLSearchParams(search), [search]);
+  }
+  let query = useQuery();
+
   // refactor: debugview to separate Component, add variables through parameters
-  const DebugView = (
+  function DebugView (isDebug) { 
+    if (!isDebug || isDebug !== 'true')
+      return;
+
+    return (
     <div className="context-info debug-info">
       <div className='debug-info-button'>
         <button title='show' onClick={handleToggle}>show</button>
@@ -45,7 +59,7 @@ export function CustomGalleryView(props) {
         </ul>
       </div>
     </div>
-  )  
+  )  }
 
 
   console.log(widget.Name + ' - ' + widget.ContextBinding);
@@ -86,7 +100,7 @@ export function CustomGalleryView(props) {
       <div className="w3-row-padding w3-margin-bottom">
         <div className="w3-col m12">
           <div className="w3-card w3-round w3-white">
-          {DebugView}
+          {DebugView(query.get("debug"))}
             <div className="w3-container w3-padding">
             <h1>{props.data.DisplayName}</h1>
               <div>
