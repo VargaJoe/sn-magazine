@@ -28,7 +28,7 @@ const MemoListContent = (props) => {
   
   const loadContents = useCallback(async () => {
     const result = await repo.loadCollection({
-      // path: `${DATA.dataPath}/${categoryName}`,
+      // path: `${process.env.REACT_APP_DATA_PATH || DATA.dataPath}/${categoryName}`,
       path: `${contextPath}`,
       oDataOptions: {
         select: 'all',

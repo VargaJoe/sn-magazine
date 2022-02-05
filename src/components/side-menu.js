@@ -11,7 +11,7 @@ export const SideMenu = () => {
   useEffect(() => {
     async function loadChildrenOfSamplews() {
       const result = await repo.loadCollection({
-        path: `${DATA.dataPath}`,
+        path: `${process.env.REACT_APP_DATA_PATH || DATA.dataPath}`,
         oDataOptions: {
           // query: "TypeIs:LeisureCategory AND Hidden:0 .AUTOFILTERS:OFF",
           query: `TypeIs:${process.env.REACT_APP_CATEGORY_TYPE || DATA.categoryType} AND InFolder:${process.env.REACT_APP_DATA_PATH || DATA.dataPath} AND Hidden:0 .LIFESPAN:ON`,

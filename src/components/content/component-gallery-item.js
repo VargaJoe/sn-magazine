@@ -6,7 +6,7 @@ export function CustomGalleryItem(props) {
   console.log(props);
   const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'Page')[0]:{};
   let context = props.data;
-  const relativePath = context.Path.substr(DATA.dataPath.length + 1);
+  const relativePath = context.Path.substr((process.env.REACT_APP_DATA_PATH || DATA.dataPath).length + 1);
   return (
     // <div className="w3-col m9">
       <div className="w3-row-padding w3-margin-bottom w3-left gallery-item">
@@ -19,7 +19,7 @@ export function CustomGalleryItem(props) {
                   {/* <svg width="200px" height="200px" > */}
                     {/* <img src={DATA.apiUrl + context.Path + '/cover.jpg'} alt={context.DisplayName} class="w3-hover-opacity w3-col"/> */}
                     {/* <img src={DATA.apiUrl + DATA.dataPath + '/(structure)/Site/sample.png'} alt={context.DisplayName} class="w3-hover-opacity w3-col"/> */}
-                    <img src={process.env.REACT_APP_API_URL || DATA.apiUrl + context.Image.Url} alt={context.DisplayName} class="w3-hover-opacity w3-col"/>
+                    <img src={(process.env.REACT_APP_API_URL || DATA.apiUrl) + context.Image.Url} alt={context.DisplayName} class="w3-hover-opacity w3-col"/>
                   {/* </svg> */}
                     <div class="w3-container w3-white list-box-title">
                         <p>
@@ -28,8 +28,8 @@ export function CustomGalleryItem(props) {
                           {/* <span class="hide-icon"><i class="fa fa-download"></i></span> */}
                         </p>
                         <p class="hidden"></p>
-                        <div class="small hidden">PlasticE</div>
-                        <div class="small hidden"><time datetime="1552427520000">2019.03.12.</time></div>
+                        <div class="small hidden">{context.Author}</div>
+                        <div class="small hidden"><time datetime="1552427520000">{context.PublishDate}</time></div>
                     </div>
                   </Link>
                 </div>
