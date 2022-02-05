@@ -2,6 +2,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useRepository } from "@sensenet/hooks-react";
 import { addComponent } from "../utils/add-component";
 
+const DATA = require('../../config.json');
+
 export function ContentCollectionComponent(props) {
   const repo = useRepository();
   const [widgetCollection, setCollection] = useState([]);
@@ -35,7 +37,7 @@ export function ContentCollectionComponent(props) {
           <li>
             Component: <span>book review component</span>
           </li>
-          <li>-</li>
+          <li><br/></li>
           <li>
             Content Name: <span>{context.Name}</span>
           </li>
@@ -55,7 +57,7 @@ export function ContentCollectionComponent(props) {
           <li>
             Content ValidTill: <span>{context.ValidTill}</span>
           </li>
-          <li>-</li>
+          <li><br/></li>
           <li>
             Page Name: <span>{currentPage?.Name}</span>
           </li>
@@ -65,7 +67,7 @@ export function ContentCollectionComponent(props) {
           <li>
             Page Path: <span>{currentPage?.Path}</span>
           </li>
-          <li>-</li>
+          <li><br/></li>
           <li>
             Widget Name: <span>{props.widget.Name}</span>
           </li>
@@ -126,10 +128,20 @@ export function ContentCollectionComponent(props) {
       <div className="w3-col m12">
         <div className="w3-card w3-round w3-white">
           {DebugView}
-          <div className="w3-container w3-padding">
+          <div className="w3-container w3-padding article-full">
             <h1>
-              {props.data.DisplayName} - {props.widget.DisplayName}
+              {context.DisplayName} 
             </h1>
+            <div class="w3-row-padding w3-padding-16">
+              <div class="w3-col m6">
+                <img src={(process.env.REACT_APP_API_URL || DATA.apiUrl) + context.Image.Url} alt={context.DisplayName} className="article-cover"/>
+              </div>
+            </div>
+            <div className="w3-container w3-padding-large w3-bottombar">
+              <div dangerouslySetInnerHTML={{ __html: context.Body }}>
+              </div>              
+              <div className="small">{context.Author} ({context.Publisher}, <time datetime="1628016300000">{context.PublishDate}</time>)</div>
+            </div>
             <div>
               {widgetCollection.map((child) => {
                 return addComponent(

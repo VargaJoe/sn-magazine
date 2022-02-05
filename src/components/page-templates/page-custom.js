@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 const DATA = require('../../config.json');
 const defaultImage = require('../../images/logo.png');
 
-export const VanillaPageTemplate = (props) => {
+export const CustomPageTemplate = (props) => {
   console.log('pagetemplate: custom');
   console.log(props.data);
 
@@ -143,16 +143,13 @@ export const VanillaPageTemplate = (props) => {
       {/* End Page Container */}
 
       {/* Footer */}
-      <footer className="w3-container w3-theme-d3 w3-padding-16">
+      <footer className="w3-container w3-theme-d3 w3-padding-16 hidden">
         <h5>Footer</h5>
       </footer>
 
       <footer className="w3-container w3-theme-d5">
         <p>
-          Powered by{" "}
-          <a href="https://www.w3schools.com/w3css/default.asp" target="_blank" rel="noreferrer">
-            w3.css
-          </a>
+          Powered by <a href="https://sensenet.com" target="_blank" rel="noreferrer">sensenet</a>, <a href="https://reactjs.org/" target="_blank" rel="noreferrer">react</a> and <a href="https://www.w3schools.com/w3css/default.asp" target="_blank" rel="noreferrer">w3.css</a>
         </p>
       </footer>
       {/* End Footer */}
@@ -160,4 +157,4 @@ export const VanillaPageTemplate = (props) => {
   );
 }
 
-export default VanillaPageTemplate;
+export default CustomPageTemplate;

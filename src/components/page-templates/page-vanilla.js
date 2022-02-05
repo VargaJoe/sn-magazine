@@ -110,8 +110,8 @@ export const VanillaPageTemplate = (props) => {
         <div className="w3-row">
           {/* Left Column */}
           <div className="w3-col m3">
-            <SideMenu />
-            <br/>
+            {/* <SideMenu />
+            <br/> */}
             {sideboxes}
           </div>
           

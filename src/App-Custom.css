@@ -2,6 +2,10 @@
   max-width: 1800px;
 }
 
+.small {
+  font-size: small;
+}
+
 .hidden {
   display:  none;
 }
@@ -13,6 +17,18 @@
 .gallery-item {
   max-width: 250px;
   min-height: 325px;
+}
+
+.article-full {
+  text-align: left;
+}
+
+.article-full h1 {
+  padding: 0 24px;
+}
+
+.article-cover {
+  width: 250px;
 }
 
 .debug-info {
