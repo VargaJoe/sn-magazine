@@ -12,6 +12,7 @@
 
 .gallery-item {
   max-width: 250px;
+  min-height: 325px;
 }
 
 .debug-info {
@@ -30,3 +31,4 @@
   border-style: double;
   padding-right: 40px;
 }
+

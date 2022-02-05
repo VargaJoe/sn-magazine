@@ -22,8 +22,9 @@ export function CustomGalleryItem(props) {
                   {/* </svg> */}
                     <div class="w3-container w3-white list-box-title">
                         <p>
+                          {/* <b>{(context.DisplayName.indexOf('-') > 0)?context.DisplayName.substr(0, context.DisplayName.indexOf('-')):context.DisplayName}</b> */}
                           <b>{context.DisplayName}</b>
-                          <span class="hide-icon"><i class="fa fa-download"></i></span>
+                          {/* <span class="hide-icon"><i class="fa fa-download"></i></span> */}
                         </p>
                         <p class="hidden"></p>
                         <div class="small hidden">PlasticE</div>
