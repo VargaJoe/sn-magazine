@@ -14,6 +14,18 @@
   display: none; 
 }
 
+.pagetemplate-custom {
+  margin-top: 20px;
+}
+
+.logo-image {
+  max-width: 250px;
+}
+
+.no-margin {
+  margin: 0;
+}
+
 .gallery-item {
   max-width: 250px;
   min-height: 325px;

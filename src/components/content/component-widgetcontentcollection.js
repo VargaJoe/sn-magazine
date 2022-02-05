@@ -10,6 +10,7 @@ export function ContentCollectionComponent(props) {
   console.log(props);
   const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'Page')[0]:{};
   let context = props.data;
+  let widget = props.widget;
   console.log(props.widget.Name + ' - ' + props.widget.ContextBinding);
   if (props.widget.ContextBinding[0] === 'customroot' ) {
     if (props.widget.CustomRoot !== undefined) {
@@ -23,6 +24,7 @@ export function ContentCollectionComponent(props) {
     const result = await repo.loadCollection({
       path: `${context.Path}`,
       oDataOptions: {
+        query: widget.ContentQuery,
         orderby: ['Index', 'DisplayName'],
         select: 'all',
       },

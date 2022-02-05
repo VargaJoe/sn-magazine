@@ -10,14 +10,15 @@ export function LeisureCategoryContent(props) {
   console.log(props);
   const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'Page')[0]:{};
   let context = props.data;
-  console.log(props.widget.Name + ' - ' + props.widget.ContextBinding);
-  if (props.widget.ContextBinding[0] === 'customroot' ) {
-    if (props.widget.CustomRoot !== undefined) {
-      context = props.widget.CustomRoot
-    } else {
-      console.log('customroot is not set');
-    }
-  }
+  // let widget = props.widget;
+  // console.log(widget.Name + ' - ' + widget.ContextBinding);
+  // if (widget.ContextBinding[0] === 'customroot' ) {
+  //   if (widget.CustomRoot !== undefined) {
+  //     context = widget.CustomRoot
+  //   } else {
+  //     console.log('customroot is not set');
+  //   }
+  // }
 
   const loadContents = useCallback(async () => {
     const result = await repo.loadCollection({
@@ -42,14 +43,13 @@ export function LeisureCategoryContent(props) {
     loadContents();
   }, [context, loadContents, repo]);
 
-  let counter = 0;
   return (
     // <div className="w3-col m9 w3-right">
       <div className="w3-row-padding w3-margin-bottom">
         <div className="w3-col m12">
           <div className="w3-card w3-round w3-white">
             <div className="w3-container w3-padding">
-            <h1>{props.data.DisplayName} - {props.widget.DisplayName}</h1>
+            <h1>{context.DisplayName} - content</h1>
               <div className="context-info">
                   <ul>
                   <li>Component: <span>leisure category content</span></li>
@@ -62,17 +62,17 @@ export function LeisureCategoryContent(props) {
                     <li>Page Name: <span>{currentPage?.Name}</span></li>
                     <li>Page Type: <span>{currentPage?.Type}</span></li>
                     <li>Page Path: <span>{currentPage?.Path}</span></li>
-                    <li>Widget Name: <span>{props.widget.Name}</span></li>
-                    <li>Widget Type: <span>{props.widget.Type}</span></li>
-                    <li>Widget Path: <span>{props.widget.Path}</span></li>
-                    <li>Widget Context: <span>{props.widget.ContextBinding}</span></li>
-                    <li>Widget Custom Root: <span>{props.widget.CustomRoot?.Path}</span></li>
+                    {/* <li>Widget Name: <span>{widget.Name}</span></li>
+                    <li>Widget Type: <span>{widget.Type}</span></li>
+                    <li>Widget Path: <span>{widget.Path}</span></li>
+                    <li>Widget Context: <span>{widget.ContextBinding}</span></li>
+                    <li>Widget Custom Root: <span>{widget.CustomRoot?.Path}</span></li> */}
                   </ul>
-                  <div>
+                  {/* <div>
                     {widgetCollection.map((child) => { 
                       return addComponent('content', 'content', child.Type.toLowerCase(), `${counter++}-${context.Id}-${child.Id}`, child, props.page, child); 
                     })}
-                  </div>
+                  </div> */}
                 </div>
             </div>
           </div>
