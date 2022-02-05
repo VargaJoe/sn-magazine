@@ -6,13 +6,6 @@ const DATA = require('./config.json');
 const defaultImage = require('./images/logo.png');
 
 function App() {
-  let logoPath = process.env.REACT_APP_LOGO_PATH || DATA.siteLogo;
-  let apiUrl = process.env.REACT_APP_API_URL || DATA.apiUrl;
-  let logoUrl = apiUrl + logoPath;
-		if (logoPath === undefined || logoUrl === apiUrl) {
-			logoUrl = defaultImage;
-		}
-
   return (
     <BrowserRouter>
      <Switch>
