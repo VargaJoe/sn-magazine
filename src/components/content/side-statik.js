@@ -19,7 +19,7 @@ export function StaticSide(props) {
         <hr/>
         <div className="context-info">
             <ul>
-              <li>Component: <span>simple text</span></li>
+              <li>Component: <span>statik side</span></li>
               <li>Content Name: <span>{context.Name}</span></li>
               <li>Content Type: <span>{context.Type}</span></li>
               <li>Content Path: <span>{context.Path}</span></li>

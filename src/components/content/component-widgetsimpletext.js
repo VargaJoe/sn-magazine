@@ -11,7 +11,7 @@ export function SimpletTextComponent(props) {
               <h1>{props.data.DisplayName}</h1>
               <div className="context-info">
                   <ul>
-                    <li>Component: <span>simple text</span></li>
+                    <li>Component: <span>simple text widget</span></li>
                     <li>Content Name: <span>{props.data.Name}</span></li>
                     <li>Content Type: <span>{props.data.Type}</span></li>
                     <li>Content Path: <span>{props.data.Path}</span></li>

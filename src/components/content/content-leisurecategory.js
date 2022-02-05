@@ -52,7 +52,7 @@ export function LeisureCategoryContent(props) {
             <h1>{props.data.DisplayName} - {props.widget.DisplayName}</h1>
               <div className="context-info">
                   <ul>
-                  <li>Component: <span>simple text</span></li>
+                  <li>Component: <span>leisure category content</span></li>
                     <li>Content Name: <span>{context.Name}</span></li>
                     <li>Content Type: <span>{context.Type}</span></li>
                     <li>Content Path: <span>{context.Path}</span></li>

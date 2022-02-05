@@ -7,7 +7,7 @@ export function ContentCollectionComponent(props) {
   const [widgetCollection, setCollection] = useState([]);
 
   console.log('contentcollection component');
-  console.log(props.data);
+  console.log(props);
   const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'Page')[0]:{};
   let context = props.data;
   console.log(props.widget.Name + ' - ' + props.widget.ContextBinding);
@@ -52,7 +52,7 @@ export function ContentCollectionComponent(props) {
             <h1>{props.data.DisplayName} - {props.widget.DisplayName}</h1>
               <div className="context-info">
                   <ul>
-                  <li>Component: <span>simple text</span></li>
+                  <li>Component: <span>content collection widget</span></li>
                     <li>Content Name: <span>{context.Name}</span></li>
                     <li>Content Type: <span>{context.Type}</span></li>
                     <li>Content Path: <span>{context.Path}</span></li>
