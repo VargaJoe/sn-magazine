@@ -14,26 +14,39 @@ export function MenuSide(props) {
   const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'Page')[0]:{};
   let context = props.data;
   let widget = props.widget;
+  let contextPath = context.Path;
   
   console.log(widget.ContextBinding);
-  if (widget.ContextBinding[0] === 'customroot' ) {
-    if (widget.CustomRoot !== undefined) {
-      context = widget.CustomRoot
-    } else {
-      console.log('customroot is not set');
-    }
-  }
+  switch(widget.ContextBinding[0]) {
+    case "customroot":
+      if (widget.CustomRoot !== undefined) {
+        context = widget.CustomRoot
+        contextPath = context.Path;
+      } else {
+        console.log('customroot is not set');
+      }
+      break;
+    case "currentsite":
+      contextPath = process.env.REACT_APP_DATA_PATH || DATA.dataPath;
+      break;
+    default:
+      // code block
+  }  
+
+
+  
 
   let logoPath = process.env.REACT_APP_LOGO_PATH || DATA.siteLogo;
   let apiUrl = process.env.REACT_APP_API_URL || DATA.apiUrl;
-  let logoUrl = apiUrl + logoPath;
+  let dataPath = process.env.REACT_APP_DATA_PATH || DATA.dataPath;
+  let logoUrl = apiUrl + dataPath + logoPath;
 		if (logoPath === undefined || logoUrl === apiUrl) {
 			logoUrl = defaultImage;
 		}
 
   const loadContents = useCallback(async () => {
     const result = await repo.loadCollection({
-      path: `${context.Path}`,
+      path: `${contextPath}`,
       oDataOptions: {
         query: widget.ContentQuery,
         orderby: ['Index', 'DisplayName'],
