@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useRepository } from "@sensenet/hooks-react";
 import { addComponent } from "../utils/add-component";
 import { useLocation } from "react-router-dom";
+import Moment from 'moment';
 
 const DATA = require('../../config.json');
 
@@ -151,7 +152,7 @@ export function ContentCollectionComponent(props) {
             </div>
             <div className="w3-container w3-padding-large w3-bottombar">
               <div dangerouslySetInnerHTML={{ __html: context.Body }}/>
-              <div className="small">{context.Author} ({context.Publisher}, <time datetime="1628016300000">{context.PublishDate}</time>)</div>
+              <div className="small">{context.Author} ({context.Publisher}, {Moment(context.PublishDate).format('yyyy.MM.DD')})</div>
             </div>
             <div>
               {widgetCollection.map((child) => {

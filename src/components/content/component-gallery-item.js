@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import Moment from 'moment';
+
 const DATA = require('../../config.json');
 
 export function CustomGalleryItem(props) {
@@ -29,7 +31,7 @@ export function CustomGalleryItem(props) {
                         </p>
                         <p class="hidden"></p>
                         <div class="small hidden">{context.Author}</div>
-                        <div class="small hidden"><time datetime="1552427520000">{context.PublishDate}</time></div>
+                        <div class="small hidden">{Moment(context.PublishDate).format('yyyy.MM.DD')}</div>
                     </div>
                   </Link>
                 </div>
