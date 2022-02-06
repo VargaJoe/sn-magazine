@@ -1,15 +1,24 @@
 import { SideMenu } from "../side-menu";
 import { addComponentsByZone } from '../utils/add-component';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
+
 const DATA = require('../../config.json');
 const defaultImage = require('../../images/logo.png');
 
 export const CustomPageTemplate = (props) => {
   console.log('pagetemplate: custom');
-  console.log(props.data);
+  console.log(props);
+  const context = props.data;
+  const layout = props.page;
 
-  const sideboxes = addComponentsByZone('content', 'side', 'side', props.data, props.page);
-  const components = addComponentsByZone('content', 'component', 'content', props.data, props.page);
+  const sideboxes = addComponentsByZone('content', 'side', 'side', context, layout);
+  console.log('sideboxes');
+  console.log(sideboxes);
+
+  const components = addComponentsByZone('content', 'component', 'content', context, layout);
+  console.log('components');
+  console.log(components);
 
   let logoPath = process.env.REACT_APP_LOGO_PATH || DATA.siteLogo;
   let apiUrl = process.env.REACT_APP_API_URL || DATA.apiUrl;
@@ -18,10 +27,16 @@ export const CustomPageTemplate = (props) => {
 			logoUrl = defaultImage;
 		}
 
-  console.log(components);
+  const pageTitle = (context.Id === context.Workspace.Id) ? `${context.DisplayName}` : `${context.Workspace.DisplayName} - ${context.DisplayName}`;
 
   return (
     <div className="App w3-theme-l5">
+        <Helmet>
+					<meta charSet="utf-8" />
+					<title>{pageTitle}</title>
+					<link rel="canonical" href={`${apiUrl}/${context.Path}/`} />
+				</Helmet>
+
       <div className="w3-top">
         <div className="w3-bar w3-theme-d2 w3-left-align w3-large hidden">
           <a
