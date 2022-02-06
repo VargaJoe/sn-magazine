@@ -6,7 +6,7 @@ import Moment from 'moment';
 
 const DATA = require('../../config.json');
 
-export function ContentCollectionComponent(props) {
+export function CustomBookReviewView(props) {
   const repo = useRepository();
   const [widgetCollection, setCollection] = useState([]);
   const { search } = useLocation();
@@ -175,4 +175,4 @@ export function ContentCollectionComponent(props) {
   );
 }
 
-export default ContentCollectionComponent;
+export default CustomBookReviewView;

@@ -3,7 +3,7 @@ import Moment from 'moment';
 
 const DATA = require('../../config.json');
 
-export function CustomGalleryItem(props) {
+export function CustomNewsItem(props) {
   console.log('gallery item');
   console.log(props);
   const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'Page')[0]:{};
@@ -48,4 +48,4 @@ export function CustomGalleryItem(props) {
   );
 }
 
-export default CustomGalleryItem
+export default CustomNewsItem

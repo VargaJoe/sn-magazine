@@ -2,10 +2,11 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useRepository } from '@sensenet/hooks-react';
 import { addComponent } from '../utils/add-component';
 import { Component } from 'react/cjs/react.production.min';
-
 import { useLocation } from "react-router-dom";
 
-export function CustomHalfSizeNewsView(props) {
+const DATA = require('../../config.json');
+
+export function CustomNewsView(props) {
   const repo = useRepository();
   const [widgetCollection, setCollection] = useState([]);
   const [showDebug, setDebug] = useState(false); 
@@ -13,7 +14,7 @@ export function CustomHalfSizeNewsView(props) {
   
   console.log('gallery component');
   console.log(props);
-  const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'Page')[0]:{};
+  const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'Page' || pcnt.Type === 'Layout')[0]:{};
   let context = props.data;
   let widget = props.widget;
 
@@ -61,19 +62,34 @@ export function CustomHalfSizeNewsView(props) {
     </div>
   )  }
 
+  // ======================================== START OF CONTEXT BINDING ========================================
+  console.log(widget.ContextBinding);
+  let contextPath = context.Path;
+  switch(widget.ContextBinding[0]) {
+    case "customroot":
+      if (widget.CustomRoot !== undefined) {
+        context = widget.CustomRoot
+        contextPath = context.Path;
+      } else {
+        console.log('customroot is not set');
+      }
+      break;
+    case "currentsite":
+      contextPath = process.env.REACT_APP_DATA_PATH || DATA.dataPath;
+      break;
+    default:
+      // code block
+  }  
 
-  console.log(widget.Name + ' - ' + widget.ContextBinding);
-  if (widget.ContextBinding[0] === 'customroot' ) {
-    if (widget.CustomRoot !== undefined) {
-      context = widget.CustomRoot
-    } else {
-      console.log('customroot is not set');
-    }
+  if (widget.RelativePath !== "") {
+    contextPath += widget.RelativePath
   }
+  // ======================================== START OF CONTEXT BINDING ========================================
+
 
   const loadContents = useCallback(async () => {
     const result = await repo.loadCollection({
-      path: `${context.Path}`,
+      path: `${contextPath}`,
       oDataOptions: {
         query: widget.ContentQuery,
         orderby: [['PublishDate', 'desc'], 'Index', 'DisplayName'],
@@ -96,8 +112,8 @@ export function CustomHalfSizeNewsView(props) {
   }, [context, loadContents, repo]);
 
   return (
-    // <div className="w3-col m9 w3-right">
-        <div className="w3-margin-bottom w3-col m6 news-padding">
+    // <div className="w3-col m12 w3-right">
+        <div className="w3-margin-bottom w3-col m12 news-padding">
           <div className="w3-card w3-round w3-white">
           {DebugView(query.get("debug"))}
             <div className="w3-container w3-padding component-news-half">
@@ -114,4 +130,4 @@ export function CustomHalfSizeNewsView(props) {
   );
 }
 
-export default CustomHalfSizeNewsView
+export default CustomNewsView

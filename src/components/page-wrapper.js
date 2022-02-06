@@ -23,10 +23,10 @@ export const PageWrapper = (props) => {
   const loadPage = useCallback(async () => {
     console.log(context.Type);
     if (context !== undefined && context.Type !== undefined && context.Type !== []) {
-      const query = (context.Type === 'Page') ? 
+      const query = (context.Type === 'Page' || context.Type === 'Layout') ? 
       `Path:'${context.Path}' OR TypeIs:Widget AND InTree:'${context.Path}' AND Hidden:0`
-      : `Name:'${context.Type}' AND Type:Page OR TypeIs:Widget AND InTree:'${process.env.REACT_APP_PAGECONTAINER_PATH || DATA.pagecontainerPath}/${context.Type}' AND Hidden:0`;
-      const queryPath = (context.Type === 'Page') ? `${context.Path}` : `${process.env.REACT_APP_PAGECONTAINER_PATH || DATA.pagecontainerPath}`;
+      : `Name:'${context.Type}' AND Type:(Page Layout) OR TypeIs:Widget AND InTree:'${process.env.REACT_APP_PAGECONTAINER_PATH || DATA.pagecontainerPath}/${context.Type}' AND Hidden:0`;
+      const queryPath = (context.Type === 'Page' || context.Type === 'Layout') ? `${context.Path}` : `${process.env.REACT_APP_PAGECONTAINER_PATH || DATA.pagecontainerPath}`;
       await repo.loadCollection({
         path: queryPath,
         oDataOptions: {
@@ -41,7 +41,7 @@ export const PageWrapper = (props) => {
         if (result?.d?.results && result?.d?.results.length > 0) {
           console.log("page");
           console.log(result.d.results);
-          const page = result.d.results.filter(pcnt => pcnt.Type === 'Page')[0];
+          const page = result.d.results.filter(pcnt => pcnt.Type === 'Page' || pcnt.Type === 'Layout')[0];
           const pageTemplate = page.PageTemplate === '' || page.PageTemplate === null ? "vanilla" : page.PageTemplate;
           // console.log('pt: '+pageTemplate);
 

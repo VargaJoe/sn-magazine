@@ -14,9 +14,10 @@ export function MenuSide(props) {
   const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'Page')[0]:{};
   let context = props.data;
   let widget = props.widget;
-  let contextPath = context.Path;
+  
   
   console.log(widget.ContextBinding);
+  let contextPath = context.Path;
   switch(widget.ContextBinding[0]) {
     case "customroot":
       if (widget.CustomRoot !== undefined) {
@@ -32,9 +33,6 @@ export function MenuSide(props) {
     default:
       // code block
   }  
-
-
-  
 
   let logoPath = process.env.REACT_APP_LOGO_PATH || DATA.siteLogo;
   let apiUrl = process.env.REACT_APP_API_URL || DATA.apiUrl;
