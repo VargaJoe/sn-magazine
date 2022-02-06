@@ -65,6 +65,7 @@ export const PageWrapper = (props) => {
       idOrPath: `${process.env.REACT_APP_DATA_PATH || DATA.dataPath}/${categoryName}`,
       oDataOptions: {
         select: 'all',
+        expand: 'Workspace'
       },
     }).then(result => {
       if (result?.d?.Type) {

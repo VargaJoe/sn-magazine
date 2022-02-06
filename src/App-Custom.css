@@ -47,8 +47,20 @@
   padding: 0 24px;
 }
 
-.article-cover {
-  width: 250px;
+.article-cover-outer {
+  background-color: darkgray;
+  width: 100%;  
+}
+
+.article-cover-inner {
+  background-color: lightgrey;
+  text-align: center; 
+}
+
+.article-full img {
+  object-fit: scale-down;
+  max-width: 250px;
+  margin: 10px;
 }
 
 .news-meta {

@@ -2,6 +2,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useRepository } from '@sensenet/hooks-react';
 import { addComponent } from '../utils/add-component';
 import { Link } from "react-router-dom";
+import ShowDebugInfo from "../utils/show-debuginfo"
+
 const DATA = require('../../config.json');
 const defaultImage = require('../../images/logo.png');
 
@@ -14,7 +16,6 @@ export function MenuSide(props) {
   const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'Page')[0]:{};
   let context = props.data;
   let widget = props.widget;
-  
   
   console.log(widget.ContextBinding);
   let contextPath = context.Path;
@@ -64,6 +65,7 @@ export function MenuSide(props) {
 
   return (
     <div className="w3-card w3-round w3-white w3-margin-bottom">
+      {ShowDebugInfo("side menu with logo", context, currentPage, widget)}
       <div className="w3-container">
       <h4 className="w3-center hidden">{widget.DisplayName}</h4>
       <Link to={'/'}>
