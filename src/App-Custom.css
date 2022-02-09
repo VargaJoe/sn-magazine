@@ -100,3 +100,12 @@
   padding-right: 40px;
 }
 
+.related-link-meta {
+  white-space: normal;
+  overflow: hidden;
+  /* text-overflow: ellipsis; */
+}
+
+.related-link-icon {
+  padding-right: 5px;
+}

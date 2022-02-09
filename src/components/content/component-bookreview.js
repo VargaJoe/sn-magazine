@@ -10,6 +10,7 @@ const DATA = require('../../config.json');
 export function CustomBookReviewView(props) {
   const repo = useRepository();
   const [widgetCollection, setCollection] = useState([]);
+  const [expContext, setExpContext] = useState([]);
   const { search } = useLocation();
 
   console.log("contentcollection component");
@@ -17,8 +18,8 @@ export function CustomBookReviewView(props) {
   const currentPage = props.page
     ? props.page.filter((pcnt) => pcnt.Type === "Page" || pcnt.Type === "Layout")[0]
     : {};
-  let context = props.data;
-  let widget = props.widget;
+  const context = props.data;
+  const widget = props.widget;
  
   console.log(widget.Name + " - " + widget.ContextBinding);
   if (widget.ContextBinding[0] === "customroot") {
@@ -29,28 +30,28 @@ export function CustomBookReviewView(props) {
     }
   }
 
-  const loadContents = useCallback(async () => {
-    const result = await repo.loadCollection({
-      path: `${context.Path}`,
+  const loadContent = useCallback(async () => {
+    await repo.load({
+      idOrPath: `${context.Path}`,
       oDataOptions: {
-        orderby: ["Index", "DisplayName"],
-        select: "all",
+        select: 'all',
+        expand: 'RelatedContent'
       },
+    }).then(result => {
+      if (result?.d?.Type) {
+        console.log('review extended context:');
+        console.log(result.d);
+        setExpContext(result.d);
+      };
+    })
+    .catch(error => {
+      //
     });
-    if (result?.d?.results) {
-      console.log(result);
-      setCollection(result.d.results);
-      // const View = importView(result.d.Type.toLowerCase());
-      // setCompo(<View key={result.d.Id} />);
-    } else {
-      // const View = importView('missing');
-      // setCompo(<View key={'1'} />);
-    }
   }, [context, repo]);
 
   useEffect(() => {
-    loadContents();
-  }, [context, loadContents, repo]);
+    loadContent();
+  }, [context, loadContent, repo]);
 
   function newsImage () { 
     if (context.Image.Url === "") {
@@ -65,6 +66,37 @@ export function CustomBookReviewView(props) {
       </div>
     );   
   };
+
+  function relatedContents (cont) { 
+    if (cont?.RelatedContent === undefined 
+      ) {
+      return "";
+    }
+
+    const renderLinks = expContext.RelatedContent.map((child) => {
+      return addComponent(
+        "content",
+        "component",
+        `bookreview-related-${child.Type.toLowerCase()}`,
+        `${widget.Id}-${context.Id}-${child.Id}`,
+        child,
+        props.page,
+        widget
+      );
+    })
+
+    if (expContext?.RelatedContent?.length > 0) {      
+      return (
+        <div>
+          <div className="w3-padding">
+          <h4>Kapcsolódó linkek</h4>
+          </div>
+          {renderLinks}
+        </div>
+      )
+    }
+  };
+    
 
   return (
     // <div className="w3-col m9 w3-right">
@@ -82,17 +114,7 @@ export function CustomBookReviewView(props) {
               <div className="small">{context.Author} ({context.Publisher}, {Moment(context.PublishDate).format('yyyy.MM.DD')})</div>
             </div>
             <div>
-              {widgetCollection.map((child) => {
-                return addComponent(
-                  "content",
-                  "content",
-                  child.Type.toLowerCase(),
-                  `${widget.Id}-${context.Id}-${child.Id}`,
-                  child,
-                  props.page,
-                  child
-                );
-              })}
+              {relatedContents(expContext)}
             </div>
           </div>
         </div>
