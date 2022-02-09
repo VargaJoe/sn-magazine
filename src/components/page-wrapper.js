@@ -61,8 +61,9 @@ export const PageWrapper = (props) => {
   }, [context, repo]);
 
   const loadContent = useCallback(async () => {
+    const categoryNameWorkaround = categoryName.replace("(", "%28").replace(")", "%29");
     await repo.load({
-      idOrPath: `${process.env.REACT_APP_DATA_PATH || DATA.dataPath}/${categoryName}`,
+      idOrPath: `${process.env.REACT_APP_DATA_PATH || DATA.dataPath}/${categoryNameWorkaround}`,
       oDataOptions: {
         select: 'all',
         expand: 'Workspace'

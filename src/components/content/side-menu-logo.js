@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useRepository } from '@sensenet/hooks-react';
-import { addComponent } from '../utils/add-component';
+// import { addComponent } from '../utils/add-component';
 import { Link } from "react-router-dom";
 import ShowDebugInfo from "../utils/show-debuginfo"
 
@@ -57,7 +57,7 @@ export function MenuSide(props) {
       setCollection(result.d.results);
     } else {
     }
-  }, [context, repo]);
+  }, [contextPath, widget.ContentQuery, repo]);
 
   useEffect(() => {
     loadContents();

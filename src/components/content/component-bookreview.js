@@ -31,8 +31,9 @@ export function CustomBookReviewView(props) {
   }
 
   const loadContent = useCallback(async () => {
+    const contextPathWorkaround = context.Path.replace("(", "%28").replace(")", "%29");
     await repo.load({
-      idOrPath: `${context.Path}`,
+      idOrPath: `${contextPathWorkaround}`,
       oDataOptions: {
         select: 'all',
         expand: 'RelatedContent'
