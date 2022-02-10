@@ -32,7 +32,6 @@ export function CustomGalleryView(props) {
       path: `${context.Path}`,
       oDataOptions: {
         query: widget.ContentQuery,
-        orderby: [['PublishDate', 'desc'], 'Index', 'DisplayName'],
         select: 'all',
       },
     });

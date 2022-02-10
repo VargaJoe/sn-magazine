@@ -9,7 +9,7 @@ const defaultImage = require('../../images/logo.png');
 
 export function MenuSide(props) {
   const repo = useRepository();
-  const [widgetCollection, setCollection] = useState([]);
+  const [itemCollection, setCollection] = useState([]);
 
   console.log('contentview sidemenu');
   console.log(props);
@@ -63,6 +63,22 @@ export function MenuSide(props) {
     loadContents();
   }, [context, loadContents, repo]);
 
+  function iconItem (item) { 
+    if (item.Type === "LeisureCategory") {
+      return (
+        <Link key={`sidemenu-link-${item.Id}`} to={'/' + item.Name} className="side-menu-link" title={'index: '+item.Index}>
+          <i className={`fa ${item.IconName} fa-fw w3-margin-right w3-text-theme`}></i>
+        </Link>
+      )
+    } else if (item.Url !== "") {
+        return (
+          <a key={`sidemenu-icon-${item.Id}`} href={item.Url} target="_blank" rel="noreferrer" className="no-score">
+            <i className={`fa ${item.IconName} fa-fw w3-margin-right w3-text-theme`}></i>
+          </a>
+        )
+    }    
+  };
+
   return (
     <div className="w3-card w3-round w3-white w3-margin-bottom">
       {ShowDebugInfo("side menu with logo", context, currentPage, widget)}
@@ -74,7 +90,7 @@ export function MenuSide(props) {
       {/* <p className="w3-center"><img src="/w3images/avatar3.png" className="w3-circle w3-circle-side-avatar" alt="Avatar" /></p> */}
       <hr className="no-margin"/>
       <div className="side-menu-uppercase">
-        {widgetCollection?.map((child) => {
+        {itemCollection?.filter(item => item.DisplayZone.includes("menuitem")).map((child) => {
           console.log(child.Name);
           return (
           <p key={`sidemenu-${child.Id}`}>
@@ -86,8 +102,12 @@ export function MenuSide(props) {
         )}
         )}
       </div>
-      {/* <p><i className="fa fa-home fa-fw w3-margin-right w3-text-theme"></i> London, UK</p>
-      <p><i className="fa fa-birthday-cake fa-fw w3-margin-right w3-text-theme"></i> April 1, 1988</p> */}
+      <hr className="no-margin"/>
+        <p>
+          {itemCollection?.filter(item => item.DisplayZone.includes("menuicon")).map((child) => {
+            return iconItem(child);
+          })}
+        </p>
       </div>
     </div>
   );

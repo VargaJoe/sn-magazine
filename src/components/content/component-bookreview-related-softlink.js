@@ -1,8 +1,6 @@
 import { Link } from "react-router-dom";
 import Moment from 'moment';
 import ShowDebugInfo from "../utils/show-debuginfo"
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faLink } from '@fortawesome/free-solid-svg-icons'
 
 const DATA = require('../../config.json');
 
@@ -25,7 +23,7 @@ export function ReviewRelatedSoftLink(props) {
             <div className="w3-container w3-padding">
               <a key={`news-item-${context.Id}`} href={context.Url} target="_blank" rel="noreferrer" className="no-score">
                 <div className="w3-left w3-padding related-link-meta">
-                  <div className="w3-large"><span className="related-link-icon"><FontAwesomeIcon icon={faLink} /></span>{context.DisplayName}</div>
+                  <div className="w3-large"><i className="fa fa-link fa-fw related-link-icon"></i>{context.DisplayName}</div>
                   <div className="small">{context.Description}</div>
                   {/* <div className="small hidden">{context.Author}</div>
                   <div>{Moment(context.PublishDate).format('yyyy.MM.DD')}</div> */}

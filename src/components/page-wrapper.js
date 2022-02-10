@@ -19,14 +19,34 @@ export const PageWrapper = (props) => {
   console.log("path");
   console.log(path);
 
+  function pageQuery () { 
+    let query="";
+    if (context.Type === 'Page' || context.Type === 'Layout') {
+      query = `Path:'${context.Path}' OR TypeIs:Widget AND InTree:'${context.Path}' AND Hidden:0`;
+    }
+
+    query =`((Name:'${context.Type}' OR (Name:'This' AND InFolder:'${context.Path}/(layout)')) AND Type:(Page Layout))
+    OR TypeIs:Widget 
+    AND InTree:(
+      '${context.Path}/(layout)' 
+      '${process.env.REACT_APP_PAGECONTAINER_PATH || DATA.pagecontainerPath}/${context.Type}'       
+      ) 
+    AND Hidden:0`;
+
+    console.log('query', query);
+    return query;   
+  };
+
   // refactor: filters should get from page fields
   const loadPage = useCallback(async () => {
     console.log(context.Type);
     if (context !== undefined && context.Type !== undefined && context.Type !== []) {
-      const query = (context.Type === 'Page' || context.Type === 'Layout') ? 
-      `Path:'${context.Path}' OR TypeIs:Widget AND InTree:'${context.Path}' AND Hidden:0`
-      : `Name:'${context.Type}' AND Type:(Page Layout) OR TypeIs:Widget AND InTree:'${process.env.REACT_APP_PAGECONTAINER_PATH || DATA.pagecontainerPath}/${context.Type}' AND Hidden:0`;
-      const queryPath = (context.Type === 'Page' || context.Type === 'Layout') ? `${context.Path}` : `${process.env.REACT_APP_PAGECONTAINER_PATH || DATA.pagecontainerPath}`;
+      // const query = (context.Type === 'Page' || context.Type === 'Layout') ? 
+      // `Path:'${context.Path}' OR TypeIs:Widget AND InTree:'${context.Path}' AND Hidden:0`
+      // : `Name:'${context.Type}' AND Type:(Page Layout) OR TypeIs:Widget AND InTree:'${process.env.REACT_APP_PAGECONTAINER_PATH || DATA.pagecontainerPath}/${context.Type}' AND Hidden:0`;
+      const query = pageQuery();
+      // const queryPath = (context.Type === 'Page' || context.Type === 'Layout') ? `${context.Path}` : `${process.env.REACT_APP_PAGECONTAINER_PATH || DATA.pagecontainerPath}`;
+      const queryPath = `/Root/Content`;
       await repo.loadCollection({
         path: queryPath,
         oDataOptions: {
@@ -39,14 +59,16 @@ export const PageWrapper = (props) => {
         },
       }).then(result => {
         if (result?.d?.results && result?.d?.results.length > 0) {
-          console.log("page");
-          console.log(result.d.results);
-          const page = result.d.results.filter(pcnt => pcnt.Type === 'Page' || pcnt.Type === 'Layout')[0];
+          console.log("page", result.d.results);
+          const page = result.d.results.sort((a, b) => a.Depth < b.Depth ? 1 : -1).filter(pcnt => pcnt.Type === 'Page' || pcnt.Type === 'Layout')[0];
+          const widgets = result.d.results.filter(pcnt => pcnt.ParentId === page.Id);
           const pageTemplate = page.PageTemplate === '' || page.PageTemplate === null ? "vanilla" : page.PageTemplate;
-          // console.log('pt: '+pageTemplate);
+          console.log('selected page: ', page);
+          console.log('selected widgets', widgets);
+          console.log('selected pagetemplate', pageTemplate);
 
           // setCompo(addComponent('page-templates', 'page', "vanilla", `cnt-${context.Id}`, context));
-          setCompo(addComponent('page-templates', 'page', pageTemplate, `page-${context.Id}`, context, result.d.results)); 
+          setCompo(addComponent('page-templates', 'page', pageTemplate, `page-${context.Id}`, context, widgets)); 
         } else {
           console.log('else:'+context.Type.toLowerCase());
           setCompo(addComponent('page-templates', 'page', "vanilla", `page-${context.Id}`, context));
