@@ -57,10 +57,10 @@ const ShowDebugInfo = (title, context, currentPage, widget) => {
               <br />
             </li>
             <li>
-              Current Workspace Name: <span>{context.Workspace.Name}</span>
+              Current Workspace Name: <span>{context.Type === "Workspace" ? context.Name : context.Workspace.Name}</span>
             </li>
             <li>
-              Current Workspace Path: <span>{context.Workspace.Path}</span>
+              Current Workspace Path: <span>{context.Type === "Workspace" ? context.Path : context.Workspace.Path}</span>
             </li>
             <li>
               <br />
