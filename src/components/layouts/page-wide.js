@@ -1,4 +1,4 @@
-import { SideMenu } from "../side-menu";
+// import { SideMenu } from "../remove/side-menu";
 import { addComponent } from '../utils/add-component';
 
 

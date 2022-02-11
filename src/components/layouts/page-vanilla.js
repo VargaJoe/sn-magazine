@@ -1,4 +1,4 @@
-import { SideMenu } from "../side-menu";
+// import { SideMenu } from "../side-menu";
 import { addComponentsByZone } from '../utils/add-component';
 import { Link } from 'react-router-dom';
 const DATA = require('../../config.json');

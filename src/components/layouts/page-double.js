@@ -1,4 +1,4 @@
-import { SideMenu } from "../side-menu";
+// import { SideMenu } from "../side-menu";
 import { addComponentsByZone } from '../utils/add-component';
 
 export const DoublePageTemplate = (props) => {
@@ -98,7 +98,7 @@ export const DoublePageTemplate = (props) => {
         <div className="w3-row">
           {/* Left Column */}
           <div className="w3-col m3">
-            <SideMenu />
+            {/* <SideMenu /> */}
             <br/>
             {leftsideboxes}
           </div>

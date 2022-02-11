@@ -1,4 +1,4 @@
-import { SideMenu } from "../side-menu";
+// import { SideMenu } from "../side-menu";
 import { addComponentsByZone } from '../utils/add-component';
 
 export const VanillaPageTemplate = (props) => {
