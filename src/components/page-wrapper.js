@@ -23,15 +23,15 @@ export const PageWrapper = (props) => {
     let query="";
     if (context.Type === 'Page' || context.Type === 'Layout') {
       query = `Path:'${context.Path}' OR TypeIs:Widget AND InTree:'${context.Path}' AND Hidden:0`;
+    } else {
+      query =`((Name:'${context.Type}' OR (Name:'This' AND InFolder:'${context.Path}/(layout)')) AND Type:(Page Layout))
+      OR TypeIs:Widget 
+      AND InTree:(
+        '${context.Path}/(layout)' 
+        '${process.env.REACT_APP_PAGECONTAINER_PATH || DATA.pagecontainerPath}/${context.Type}'       
+        ) 
+      AND Hidden:0`;
     }
-
-    query =`((Name:'${context.Type}' OR (Name:'This' AND InFolder:'${context.Path}/(layout)')) AND Type:(Page Layout))
-    OR TypeIs:Widget 
-    AND InTree:(
-      '${context.Path}/(layout)' 
-      '${process.env.REACT_APP_PAGECONTAINER_PATH || DATA.pagecontainerPath}/${context.Type}'       
-      ) 
-    AND Hidden:0`;
 
     console.log('query', query);
     return query;   
@@ -39,7 +39,7 @@ export const PageWrapper = (props) => {
 
   // refactor: filters should get from page fields
   const loadPage = useCallback(async () => {
-    console.log(context.Type);
+    console.log('context type', context.Type);
     if (context !== undefined && context.Type !== undefined && context.Type !== []) {
       // const query = (context.Type === 'Page' || context.Type === 'Layout') ? 
       // `Path:'${context.Path}' OR TypeIs:Widget AND InTree:'${context.Path}' AND Hidden:0`
