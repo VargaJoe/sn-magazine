@@ -57,7 +57,7 @@ export const PageWrapper = (props) => {
         },
       }).then(result => {
         if (result?.d?.results && result?.d?.results.length > 0) {
-          const page = result.d.results.sort((a, b) => a.Depth < b.Depth ? 1 : -1).filter(pcnt => pcnt.Type === 'Page' || pcnt.Type === 'Layout')[0];
+          const page = result.d.results.filter(pcnt => pcnt.Type === 'Page' || pcnt.Type === 'Layout').sort((a, b) => a.Depth < b.Depth ? 1 : -1)[0];
           const widgets = result.d.results.filter(pcnt => pcnt.ParentId === page.Id);
           const pageTemplate = page.PageTemplate === '' || page.PageTemplate === null ? "vanilla" : page.PageTemplate;
           console.log('selected page: ', result.d.results, page, widgets, pageTemplate );
