@@ -8,7 +8,7 @@ export function SimpletTextComponent(props) {
 
   console.log('simpletext component');  
   console.log(props);
-  const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'Page')[0]:{};
+  const layout = props.page;
   let context = props.data;
   let widget = props.widget;
 
@@ -49,9 +49,9 @@ function DebugView (isDebug) {
             <li>Content ValidFrom: <span>{context.ValidFrom}</span></li>
             <li>Content ValidTill: <span>{context.ValidTill}</span></li>
             <li><br/></li>
-            <li>Page Name: <span>{currentPage?.Name}</span></li>
-            <li>Page Type: <span>{currentPage?.Type}</span></li>
-            <li>Page Path: <span>{currentPage?.Path}</span></li>
+            <li>Page Name: <span>{layout?.Name}</span></li>
+            <li>Page Type: <span>{layout?.Type}</span></li>
+            <li>Page Path: <span>{layout?.Path}</span></li>
             <li><br/></li>
             <li>Widget Name: <span>{props.widget.Name}</span></li>
             <li>Widget Type: <span>{props.widget.Type}</span></li>

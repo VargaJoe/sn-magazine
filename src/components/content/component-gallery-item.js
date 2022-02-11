@@ -7,7 +7,7 @@ const DATA = require('../../config.json');
 export function CustomGalleryItem(props) {
   console.log('gallery item');
   console.log(props);
-  const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'Page')[0]:{};
+  const layout = props.page;
   const context = props.data;
   const widget = props.widget;
 
@@ -17,7 +17,7 @@ export function CustomGalleryItem(props) {
       <div className="w3-row-padding w3-margin-bottom w3-left gallery-item">
         <div className="w3-col">
           <div className="w3-card w3-round w3-white">
-          {ShowDebugInfo("gallery item", context, currentPage, widget)}
+          {ShowDebugInfo("gallery item", context, layout, widget)}
             <div className="w3-container w3-padding">
               {/* <h1>{props.data.DisplayName}</h1> */}
               <div className="context-info">

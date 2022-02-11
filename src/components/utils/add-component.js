@@ -26,7 +26,7 @@ function importView(type, prefix, component) {
 
 export const addComponent = (type, prefix, component, id, context, page, widget) => {
   const View = importView(type, prefix, component);
-  console.log('uniqid: '+id);
+  console.log('add component with uniqid: '+id);
   return (
     // <div className='container'>
       <View key={id} data={context} page={page} widget={widget} />
@@ -34,8 +34,8 @@ export const addComponent = (type, prefix, component, id, context, page, widget)
   );
 };
 
-export const addComponentsByZone = (type, prefix, zone, context, page) => {
-  if (page === undefined) {
+export const addComponentsByZone = (type, prefix, zone, context, page, widgets) => {
+  if (widgets === undefined) {
     if (zone === null || zone === 'content') {
       return addComponent('content', 'content', context.Type.toLowerCase(), `${type}-${prefix}-${zone}-err-${context.Id}`, context)
     } else {
@@ -44,7 +44,7 @@ export const addComponentsByZone = (type, prefix, zone, context, page) => {
   }
 
   return (
-    page.filter(pcnt => pcnt.Type !== 'Page' && pcnt.PortletZone === zone).map((child) => { 
+    widgets.filter(pcnt => pcnt.PortletZone === zone).map((child) => { 
       const compoType = child.ClientComponent === undefined || child.ClientComponent === null || child.ClientComponent === '' ? child.Type : child.ClientComponent;
       console.log('addcompo: '+compoType.toLowerCase())
       return addComponent(type, prefix, compoType.toLowerCase(), `${type}-${prefix}-${zone}-${context.Id}-${child.Id}`, context, page, child);

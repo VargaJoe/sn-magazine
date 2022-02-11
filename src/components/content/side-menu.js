@@ -9,7 +9,7 @@ export function MenuSide(props) {
 
   console.log('contentview sidemenu');
   console.log(props);
-  const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'Page')[0]:{};
+  const layout = props.page;
   let context = props.data;
   let widget = props.widget;
   console.log(widget.ContextBinding);

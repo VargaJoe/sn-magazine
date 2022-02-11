@@ -13,7 +13,7 @@ export function MenuSideWithLogo(props) {
 
   console.log('contentview sidemenu');
   console.log(props);
-  const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'Page')[0]:{};
+  const layout = props.page;
   let context = props.data;
   let widget = props.widget;
   
@@ -85,7 +85,7 @@ export function MenuSideWithLogo(props) {
 
   return (
     <div className="w3-card w3-round w3-white w3-margin-bottom">
-      {ShowDebugInfo("side menu with logo", context, currentPage, widget)}
+      {ShowDebugInfo("side menu with logo", context, layout, widget)}
       <div className="w3-container">
       <h4 className="w3-center hidden">{widget.DisplayName}</h4>
       <Link to={'/'}>

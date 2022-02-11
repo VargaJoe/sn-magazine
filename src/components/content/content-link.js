@@ -1,7 +1,7 @@
 export function FolderContent(props) {
   console.log('folder component');
   console.log(props.data);
-  const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'Page')[0]:{};
+  const layout = props.page;
   return (
     // <div className="w3-col m9">
       <div className="w3-row-padding w3-margin-bottom">

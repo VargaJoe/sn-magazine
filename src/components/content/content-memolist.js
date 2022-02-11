@@ -24,7 +24,7 @@ const MemoListContent = (props) => {
   const contextPath = props.data.Path;
   const [articles, setArts] = useState([]);
 
-  const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'Page')[0]:{};
+  const layout = props.page;
   
   const loadContents = useCallback(async () => {
     const result = await repo.loadCollection({
@@ -96,9 +96,9 @@ const loadCompo = (data) => {
                     <li>Content Lifespan: <span>{props.data.EnableLifespan?"true":"false"}</span></li>
                     <li>Content ValidFrom: <span>{props.data.ValidFrom}</span></li>
                     <li>Content ValidTill: <span>{props.data.ValidTill}</span></li>
-                    <li>Page Name: <span>{currentPage?.Name}</span></li>
-                    <li>Page Type: <span>{currentPage?.Type}</span></li>
-                    <li>Page Path: <span>{currentPage?.Path}</span></li>                   
+                    <li>Page Name: <span>{layout?.Name}</span></li>
+                    <li>Page Type: <span>{layout?.Type}</span></li>
+                    <li>Page Path: <span>{layout?.Path}</span></li>                   
                   </ul>
                 </div>
                 {articles?.map((child) => (

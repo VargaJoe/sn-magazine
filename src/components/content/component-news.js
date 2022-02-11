@@ -15,7 +15,7 @@ export function CustomNewsView(props) {
   
   console.log('gallery component');
   console.log(props);
-  const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'Page' || pcnt.Type === 'Layout')[0]:{};
+  const layout = props.page;
   let context = props.data;
   let widget = props.widget;
 
@@ -72,7 +72,7 @@ export function CustomNewsView(props) {
     // <div className="w3-col m12 w3-right">
         <div className="w3-margin-bottom w3-col m12 news-padding">
           <div className="w3-card w3-round w3-white">
-          {ShowDebugInfo("news widget", context, currentPage, widget)}
+          {ShowDebugInfo("news widget", context, layout, widget)}
             <div className="w3-container w3-padding component-news-half">
             <h3>{context.DisplayName}</h3>
               <div>

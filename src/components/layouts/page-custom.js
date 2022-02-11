@@ -11,12 +11,15 @@ export const CustomPageTemplate = (props) => {
   console.log(props);
   const context = props.data;
   const layout = props.page;
+  const widgets = props.widget;
+  console.log('leisure layout: ', layout);
+  console.log('leisure widgets: ', widgets);
 
-  const sideboxes = addComponentsByZone('content', 'side', 'side', context, layout);
+  const sideboxes = addComponentsByZone('content', 'side', 'side', context, layout, widgets);
   console.log('sideboxes');
   console.log(sideboxes);
 
-  const components = addComponentsByZone('content', 'component', 'content', context, layout);
+  const components = addComponentsByZone('content', 'component', 'content', context, layout, widgets);
   console.log('components');
   console.log(components);
 

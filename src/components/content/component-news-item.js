@@ -7,7 +7,7 @@ const DATA = require('../../config.json');
 export function CustomNewsItem(props) {
   console.log('gallery item');
   console.log(props);
-  const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'Page' || pcnt.Type === 'Layout')[0]:{};
+  const layout = props.page;
   const context = props.data;
   const widget = props.widget;
 
@@ -31,7 +31,7 @@ export function CustomNewsItem(props) {
       <div className="w3-row-padding w3-margin-bottom w3-left w3-block m1 news-item">
         <div className="w3-col">
           <div className="w3-card w3-round w3-white">
-          {ShowDebugInfo("news item", context, currentPage, widget)}
+          {ShowDebugInfo("news item", context, layout, widget)}
             <div className="w3-container w3-padding">
               <div className="w3-padding-16">
                 <Link key={`news-item-${context.Id}`} to={'/' + relativePath} className="no-score">

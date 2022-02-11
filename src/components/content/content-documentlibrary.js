@@ -1,7 +1,7 @@
 export function FolderContent(props) {
   console.log('doclib component');
   console.log(props.data);
-  const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'Page')[0]:{};
+  const layout = props.page;
   return (
     // <div className="w3-col m9">
       <div className="w3-row-padding">
@@ -18,9 +18,9 @@ export function FolderContent(props) {
                     <li>Content Lifespan: <span>{props.data.EnableLifespan?"true":"false"}</span></li>
                     <li>Content ValidFrom: <span>{props.data.ValidFrom}</span></li>
                     <li>Content ValidTill: <span>{props.data.ValidTill}</span></li>
-                    <li>Page Name: <span>{currentPage?.Name}</span></li>
-                    <li>Page Type: <span>{currentPage?.Type}</span></li>
-                    <li>Page Path: <span>{currentPage?.Path}</span></li>  
+                    <li>Page Name: <span>{layout?.Name}</span></li>
+                    <li>Page Type: <span>{layout?.Type}</span></li>
+                    <li>Page Path: <span>{layout?.Path}</span></li>  
                   </ul>
                 </div>
             </div>

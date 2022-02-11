@@ -14,7 +14,7 @@ export function CustomGalleryView(props) {
   
   console.log('gallery component');
   console.log(props);
-  const currentPage = props.page?props.page.filter(pcnt => pcnt.Type === 'Page')[0]:{};
+  const layout = props.page;
   let context = props.data;
   let widget = props.widget;
 
@@ -55,7 +55,7 @@ export function CustomGalleryView(props) {
       <div className="w3-row-padding w3-margin-bottom">
         <div className="w3-col m12">
           <div className="w3-card w3-round w3-white">
-            {ShowDebugInfo("gallery widget", context, currentPage, widget)}
+            {ShowDebugInfo("gallery widget", context, layout, widget)}
             <div className="w3-container w3-padding">
             <h1>{props.data.DisplayName}</h1>
               <div>
