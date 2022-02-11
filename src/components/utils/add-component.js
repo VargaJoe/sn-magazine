@@ -1,6 +1,6 @@
 import React, { lazy } from 'react';
 
-const defaultComponent = 'folder';
+const defaultComponent = 'genericcontent';
 let lazyComponents = [];
 function importView(type, prefix, component) {
   if (lazyComponents !== null && lazyComponents !== undefined) {
@@ -34,10 +34,11 @@ export const addComponent = (type, prefix, component, id, context, page, widget)
   );
 };
 
-export const addComponentsByZone = (type, prefix, zone, context, page, widgets) => {
+export const addComponentsByZone = (type, zone, context, page, widgets) => {
   if (widgets === undefined) {
     if (zone === null || zone === 'content') {
-      return addComponent('content', 'content', context.Type.toLowerCase(), `${type}-${prefix}-${zone}-err-${context.Id}`, context)
+      // mod later: use content/auto
+      return addComponent('content', 'content', context.Type.toLowerCase(), `${type}-${zone}-err-${context.Id}`, context)
     } else {
       return null;
     }
@@ -45,9 +46,11 @@ export const addComponentsByZone = (type, prefix, zone, context, page, widgets) 
 
   return (
     widgets.filter(pcnt => pcnt.PortletZone === zone).map((child) => { 
-      const compoType = child.ClientComponent === undefined || child.ClientComponent === null || child.ClientComponent === '' ? child.Type : child.ClientComponent;
-      console.log('addcompo: '+compoType.toLowerCase())
-      return addComponent(type, prefix, compoType.toLowerCase(), `${type}-${prefix}-${zone}-${context.Id}-${child.Id}`, context, page, child);
+      const isAuto = (child.ClientComponent === undefined || child.ClientComponent === null || child.ClientComponent === '');
+      const compoType = isAuto ? child.Type : child.ClientComponent;
+      const prefix = (isAuto) ? "auto" : "manual";
+      console.log('add component by zone: ', {type, prefix, compoType});
+      return addComponent(type, prefix, compoType.toLowerCase(), `${type}-${zone}-${context.Id}-${child.Id}`, context, page, child);
     })
   );
 };
