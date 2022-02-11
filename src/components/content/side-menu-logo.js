@@ -7,7 +7,7 @@ import ShowDebugInfo from "../utils/show-debuginfo"
 const DATA = require('../../config.json');
 const defaultImage = require('../../images/logo.png');
 
-export function MenuSide(props) {
+export function MenuSideWithLogo(props) {
   const repo = useRepository();
   const [itemCollection, setCollection] = useState([]);
 
@@ -79,6 +79,10 @@ export function MenuSide(props) {
     }    
   };
 
+  // if (itemCollection?.length === 0) {
+  //   return (<div>loading</div>)
+  // }
+
   return (
     <div className="w3-card w3-round w3-white w3-margin-bottom">
       {ShowDebugInfo("side menu with logo", context, currentPage, widget)}
@@ -90,7 +94,8 @@ export function MenuSide(props) {
       {/* <p className="w3-center"><img src="/w3images/avatar3.png" className="w3-circle w3-circle-side-avatar" alt="Avatar" /></p> */}
       <hr className="no-margin"/>
       <div className="side-menu-uppercase">
-        {itemCollection?.filter(item => item.DisplayZone.includes("menuitem")).map((child) => {
+        {console.log('itemCollection', itemCollection)}
+        {itemCollection?.filter(item => item.DisplayZone?.includes("menuitem")).map((child) => {
           console.log(child.Name);
           return (
           <p key={`sidemenu-${child.Id}`}>
@@ -104,7 +109,7 @@ export function MenuSide(props) {
       </div>
       <hr className="no-margin"/>
         <p>
-          {itemCollection?.filter(item => item.DisplayZone.includes("menuicon")).map((child) => {
+          {itemCollection?.filter(item => item.DisplayZone?.includes("menuicon")).map((child) => {
             return iconItem(child);
           })}
         </p>
@@ -113,4 +118,4 @@ export function MenuSide(props) {
   );
 }
 
-export default MenuSide;
+export default MenuSideWithLogo;
