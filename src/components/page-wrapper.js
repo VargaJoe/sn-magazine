@@ -67,17 +67,17 @@ export const PageWrapper = (props) => {
           console.log('selected widgets', widgets);
           console.log('selected pagetemplate', pageTemplate);
 
-          // setCompo(addComponent('page-templates', 'page', "vanilla", `cnt-${context.Id}`, context));
-          setCompo(addComponent('page-templates', 'page', pageTemplate, `page-${context.Id}`, context, widgets)); 
+          // setCompo(addComponent('layouts', 'page', "vanilla", `cnt-${context.Id}`, context));
+          setCompo(addComponent('layouts', 'page', pageTemplate, `page-${context.Id}`, context, widgets)); 
         } else {
           console.log('else:'+context.Type.toLowerCase());
-          setCompo(addComponent('page-templates', 'page', "vanilla", `page-${context.Id}`, context));
+          setCompo(addComponent('layouts', 'page', "vanilla", `page-${context.Id}`, context));
           // setCompo(addComponent('content', 'content', context.Type.toLowerCase(), `cnt-${context.Id}`, context));
         }
       }).catch(error => {
         console.log(error);
         // setCompo(addComponent('content', 'content', context.Type.toLowerCase(), `err-${context.Id}`, context));
-        setCompo(addComponent('page-templates', 'page', "vanilla", `page-${context.Id}`, context)); 
+        setCompo(addComponent('layouts', 'page', "vanilla", `page-${context.Id}`, context)); 
       });
     };
   }, [context, repo]);
