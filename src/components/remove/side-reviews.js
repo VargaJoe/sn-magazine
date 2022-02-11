@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useRepository } from "@sensenet/hooks-react";
 
-const DATA = require('../config.json');
+const DATA = require('../../config.json');
 
-export const SideTranslations = () => {
+export const SideReviews = () => {
   const repo = useRepository();
   const [data, setData] = useState();
   
@@ -12,7 +12,7 @@ export const SideTranslations = () => {
       const result = await repo.loadCollection({
         path: `${process.env.REACT_APP_DATA_PATH || DATA.dataPath}`,
         oDataOptions: {
-          query: "TypeIs:LeisureTranslation AND Hidden:0 .AUTOFILTERS:OFF",
+          // query: "TypeIs:LeisureArticle AND NOT Type:LeisureArticle AND Hidden:0 .AUTOFILTERS:OFF",
 				  orderby: [['PublishDate', 'desc']],
           top: 5,
           select: "all", 
@@ -27,9 +27,9 @@ export const SideTranslations = () => {
     <>
     <div className="w3-card w3-round w3-white w3-center">
         <div className="w3-container">
-          <p>Latest translations:</p>
+          <p>Latest reviews:</p>
           {data?.map((child) => (        
-          <div key={`sidetranslation-${child.Id}`}>
+          <div key={`sidereview-${child.Id}`}>
           <p><strong>{child.DisplayName}</strong></p>
           {/* <p>Friday 15:00</p> */}
           {/* <hr/> */}

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useRepository } from "@sensenet/hooks-react";
 import { Link } from "react-router-dom";
 
-const DATA = require('../config.json');
+const DATA = require('../../config.json');
 
 export const SideMenu = () => {
   const repo = useRepository();
