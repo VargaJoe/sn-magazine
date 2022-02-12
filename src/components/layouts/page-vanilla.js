@@ -53,13 +53,7 @@ export const VanillaPageTemplate = (props) => {
           >
             <i className="fa fa-user"></i>
           </a> */}
-          <a
-            href={'mailto:' + (process.env.REACT_APP_SITE_EMAIL || DATA.siteEmail)}
-            className="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white"
-            title="Send Message"
-          >
-            <i className="fa fa-envelope"></i>
-          </a>
+          <i className="fa fa-envelope"></i>
           {/* <div className="w3-dropdown-hover w3-hide-small">
             <button
               className="w3-button w3-padding-large"

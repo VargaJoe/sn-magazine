@@ -56,7 +56,7 @@ export function ReviewListComponent(props) {
             <h1>{context.DisplayName}</h1>
               <div>
                 {itemCollection.map((child) => { 
-                  return addComponent('widgets', 'nested','reviewlist-item', `${widget.Id}-${context.Id}-${child.Id}`, child, layout, child); 
+                  return addComponent('widgets', 'nested','review-list-item', `${widget.Id}-${context.Id}-${child.Id}`, child, layout, child); 
                 })}
               </div>
             </div>

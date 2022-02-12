@@ -6,6 +6,10 @@
   font-size: small;
 }
 
+.italic {
+  font-style: italic;
+}
+
 .hidden {
   display:  none;
 }
@@ -27,9 +31,11 @@
   margin: 0;
 }
 
-.gallery-item {
-  width: 250px;
-  min-height: 365px;
+@media (min-width: 767px) {
+  .gallery-item {
+    max-width: 250px;
+    min-height: 365px;
+  }
 }
 
 .gallery-item img {
