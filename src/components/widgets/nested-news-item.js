@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import Moment from 'moment';
 import ShowDebugInfo from "../utils/show-debuginfo"
+import LazyImage from "../utils/lazyload-image";
 
 const DATA = require('../../config.json');
 
@@ -20,7 +21,8 @@ export function CustomNewsItem(props) {
 
     return (
       <div className="w3-left w3-padding">
-        <img src={(process.env.REACT_APP_API_URL || DATA.apiUrl) + context.Image.Url} alt={context.DisplayName} className="w3-hover-opacity"/>
+         {/* {LazyImage((process.env.REACT_APP_API_URL || DATA.apiUrl) + context.Image.Url, context.DisplayName, "w3-hover-opacity")} */}
+        <LazyImage src={(process.env.REACT_APP_API_URL || DATA.apiUrl) + context.Image.Url} alt={context.DisplayName} className="w3-hover-opacity"/>
       </div>
     );   
   };

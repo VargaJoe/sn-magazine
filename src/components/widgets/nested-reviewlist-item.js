@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import Moment from 'moment';
 import ShowDebugInfo from "../utils/show-debuginfo"
+import LazyImage from "../utils/lazyload-image";
 
 const DATA = require('../../config.json');
 
@@ -25,7 +26,7 @@ export function ReviewListItemComponent(props) {
                   {/* <svg width="200px" height="200px" > */}
                     {/* <img src={DATA.apiUrl + context.Path + '/cover.jpg'} alt={context.DisplayName} className="w3-hover-opacity w3-col"/> */}
                     {/* <img src={DATA.apiUrl + DATA.dataPath + '/(structure)/Site/sample.png'} alt={context.DisplayName} className="w3-hover-opacity w3-col"/> */}
-                    <img src={(process.env.REACT_APP_API_URL || DATA.apiUrl) + context.Image.Url} alt={context.DisplayName} className="w3-hover-opacity w3-col"/>
+                      <LazyImage src={(process.env.REACT_APP_API_URL || DATA.apiUrl) + context.Image.Url} alt={context.DisplayName} className="w3-hover-opacity w3-col"/>
                   {/* </svg> */}
                     <div className="w3-container w3-white list-box-title">
                         <p>
