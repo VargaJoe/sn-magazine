@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useRepository } from '@sensenet/hooks-react';
-import { useParams } from 'react-router-dom';
 import { addComponent } from './utils/add-component';
 
 const DATA = require('../config.json');
@@ -10,12 +9,8 @@ export const PageWrapper = (props) => {
   const [wrappercompo, setCompo] = useState([]);
   const [context, setContext] = useState();
   const locationPath = props.location.pathname;
-  console.log("props");
-  console.log(props);  
-
   const path = props.location.pathname.split('/');
-  console.log("path");
-  console.log(path);
+  console.log("page wrapper", props, path);
 
   // refactor: filters should get from page fields
   const loadPage = useCallback(async () => {
@@ -33,7 +28,7 @@ export const PageWrapper = (props) => {
         AND Hidden:0`;
       }
   
-      console.log('query', query);
+      console.log('query to select layout', query);
       return query;   
     };
 
@@ -59,18 +54,18 @@ export const PageWrapper = (props) => {
         if (result?.d?.results && result?.d?.results.length > 0) {
           const page = result.d.results.filter(pcnt => pcnt.Type === 'Page' || pcnt.Type === 'Layout').sort((a, b) => a.Depth < b.Depth ? 1 : -1)[0];
           const widgets = result.d.results.filter(pcnt => pcnt.ParentId === page.Id);
-          const pageTemplate = page.PageTemplate === '' || page.PageTemplate === null ? "vanilla" : page.PageTemplate;
-          console.log('selected page: ', result.d.results, page, widgets, pageTemplate );
+          const layout = page.PageTemplate === '' || page.PageTemplate === null ? "vanilla" : page.PageTemplate;
+          console.log('selected page: ', result.d.results, page, widgets, layout );
 
           // setCompo(addComponent('layouts', 'page', "vanilla", `cnt-${context.Id}`, context));
-          setCompo(addComponent('layouts', 'page', pageTemplate, `page-${context.Id}`, context, page, widgets)); 
+          setCompo(addComponent('layouts', 'page', layout, `page-${context.Id}`, context, page, widgets)); 
         } else {
-          console.log('else:'+context.Type.toLowerCase());
+          console.log('no page was found - else:', context.Type.toLowerCase());
           setCompo(addComponent('layouts', 'page', "vanilla", `page-${context.Id}`, context));
           // setCompo(addComponent('content', 'content', context.Type.toLowerCase(), `cnt-${context.Id}`, context));
         }
       }).catch(error => {
-        console.log(error);
+        console.log('error on loading page: ', error);
         // setCompo(addComponent('content', 'content', context.Type.toLowerCase(), `err-${context.Id}`, context));
         setCompo(addComponent('layouts', 'page', "vanilla", `page-${context.Id}`, context)); 
       });
@@ -87,8 +82,7 @@ export const PageWrapper = (props) => {
       },
     }).then(result => {
       if (result?.d?.Type) {
-        console.log('First level context:');
-        console.log(result.d);
+        console.log('First level context:', result.d);
         setContext(result.d);
       };
     })
@@ -99,16 +93,16 @@ export const PageWrapper = (props) => {
   }, [locationPath, repo]);
 
   useEffect(() => {
+    console.log("Load content useEffect:", locationPath);
     loadContent();
   }, [locationPath, loadContent, repo]);
 
   useEffect(() => {
     if (context !== undefined && context !== []) {
-      console.log('load page');
-      console.log(context);
+      console.log("Load page useEffect:", context);
       loadPage();
     } else {
-      console.log('skip page load');
+      console.log('Skip page load useEffect');
     }
   }, [context, loadPage, repo]);
 
