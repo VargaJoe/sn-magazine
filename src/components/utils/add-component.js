@@ -15,9 +15,9 @@ function importView(type, prefix, component) {
         import(`../content/content-${defaultComponent}`)
       ))}
       lazyComponents.push(lazyView);
-      console.log('new component added: '+lazyView.component);
+      console.log('new component added: ', lazyView.component);
     } else {
-      console.log('already loaded component: '+lazyView.component);
+      console.log('already loaded component: ', lazyView.component);
     };
 
     return lazyView.view;
@@ -26,7 +26,7 @@ function importView(type, prefix, component) {
 
 export const addComponent = (type, prefix, component, id, context, page, widget) => {
   const View = importView(type, prefix, component);
-  console.log('add component with uniqid: '+id);
+  console.log('add component with uniqid: ', id);
   return (
     // <div className='container'>
       <View key={id} data={context} page={page} widget={widget} />

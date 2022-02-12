@@ -9,9 +9,9 @@ export function FolderContent(props) {
 
 // ======================================== START OF CONTEXT BINDING ========================================
 if (widget !== undefined && widget !== null) {
-  console.log(widget.ContextBinding);
+  console.log('generic content context binding: ', widget.ContextBinding);
   let contextPath = context.Path;
-  switch(widget.ContextBinding[0]) {
+  switch(widget?.ContextBinding[0]) {
     case "customroot":
       if (widget.CustomRoot !== undefined) {
         context = widget.CustomRoot
