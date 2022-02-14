@@ -107,6 +107,7 @@ export function CustomBookReviewView(props) {
             </h1>
             {newsImage()}
             <div className="w3-container w3-padding-large w3-bottombar">
+              <div className="w3-margin-top italic" dangerouslySetInnerHTML={{ __html: context.Description }}/>
               <div className="italic" dangerouslySetInnerHTML={{ __html: context.Lead }}/>
               <div dangerouslySetInnerHTML={{ __html: context.Body }}/>
               <div className="small">{context.Author} ({context.Publisher}, {Moment(context.PublishDate).format('yyyy.MM.DD')})</div>
