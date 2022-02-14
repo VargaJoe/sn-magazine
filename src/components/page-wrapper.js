@@ -87,8 +87,8 @@ export const PageWrapper = (props) => {
       };
     })
     .catch(error => {
-      // setCompo(addComponent('content', 'content', 'missing', 1));
-      setCompo(addComponent('layout', 'page', 'error', 1));
+      // setCompo(addComponent('content', 'auto', 'missing', 1));
+      setCompo(addComponent('layouts', 'page', 'leisure-error', 1));
     });
   }, [locationPath, repo]);
 

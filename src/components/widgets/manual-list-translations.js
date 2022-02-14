@@ -39,7 +39,7 @@ export function ContentCollectionWidgetComponent(props) {
       // const View = importView('missing');
       // setCompo(<View key={'1'} />);
     }
-  }, [context.Path, repo, widget.ContentQuery]);
+  }, [context, repo]);
 
   useEffect(() => {
     loadContents();
@@ -74,13 +74,9 @@ export function ContentCollectionWidgetComponent(props) {
                   <div>
                     {itemCollection.map((child) => { 
                       return (
-                        <div>
-                        {/* <LazyLoad> */}
-                         {/* {addComponent('content', 'auto', child.Type.toLowerCase(), `${counter++}-${context.Id}-${child.Id}`, child, props.page)} */}
-                        {/* </LazyLoad> */}
-                        {addComponent('widgets', 'nested', `news-item-${child.Type.toLowerCase()}`, `${counter++}-${context.Id}-${child.Id}`, child, props.page)}
-                        </div>
-                        
+                        <LazyLoad>
+                         {addComponent('content', 'auto', child.Type.toLowerCase(), `${counter++}-${context.Id}-${child.Id}`, child, props.page)}
+                        </LazyLoad>
                       )
                     })}
                   </div>

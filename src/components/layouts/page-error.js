@@ -1,4 +1,5 @@
 import { addComponentsByZone } from '../utils/add-component';
+import { addComponent } from '../utils/add-component';
 
 export const ErrorLayout = (props) => {
   console.log('pagetemplate: wide');
@@ -7,8 +8,7 @@ export const ErrorLayout = (props) => {
   const layout = props.layout;
   const widgets = props.widget;
 
-  const components = addComponentsByZone('widgets', 'content', context, layout, widgets);
-
+  
   return (
     <div className="App w3-theme-l5">
       <div className="w3-top">
@@ -105,7 +105,7 @@ export const ErrorLayout = (props) => {
                   </div>
                 </div>
               </div>
-             {components}
+             {addComponent('content', 'auto', 'missing', 1, context)}
           </div>
           {/* End Middle Column */}
 

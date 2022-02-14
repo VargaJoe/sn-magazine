@@ -78,25 +78,28 @@ const ShowDebugInfo = (title, context, currentPage, widget) => {
               <br />
             </li>
             <li>
-              Widget Name: <span>{widget.Name}</span>
+              Widget Name: <span>{widget?.Name}</span>
             </li>
             <li>
-              Widget Type: <span>{widget.Type}</span>
+              Widget Type: <span>{widget?.Type}</span>
             </li>
             <li>
-              Widget Path: <span>{widget.Path}</span>
+              Widget Path: <span>{widget?.Path}</span>
             </li>
             <li>
-              Widget Query: <span>{widget.ContentQuery}</span>
+              Widget Component: <span>{widget?.ClientComponent}</span>
             </li>
             <li>
-              Widget Context: <span>{widget.ContextBinding}</span>
+              Widget Query: <span>{widget?.ContentQuery}</span>
             </li>
             <li>
-              Widget Custom Root: <span>{widget.CustomRoot?.Path}</span>
+              Widget Context: <span>{widget?.ContextBinding}</span>
             </li>
             <li>
-              Widget Relative Path: <span>{widget.RelativePath}</span>
+              Widget Custom Root: <span>{widget?.CustomRoot?.Path}</span>
+            </li>
+            <li>
+              Widget Relative Path: <span>{widget?.RelativePath}</span>
             </li>
           </ul>
         </div>

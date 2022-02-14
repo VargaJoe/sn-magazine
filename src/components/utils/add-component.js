@@ -1,4 +1,5 @@
 import React, { lazy } from 'react';
+import LazyLoad from 'react-lazyload';
 
 const defaultComponent = 'genericcontent';
 let lazyComponents = [];
@@ -12,25 +13,23 @@ function importView(type, prefix, component) {
         component: component,
         view: lazy(() =>
         import(`../${type}/${prefix}-${component}`).catch(() =>
-        import(`../content/content-${defaultComponent}`)
+        import(`../content/auto-${defaultComponent}`)
       ))}
       lazyComponents.push(lazyView);
       console.log('new component added: ', lazyView.component);
     } else {
       console.log('already loaded component: ', lazyView.component);
     };
-
+    console.log('already loaded component: ', lazyView.view);
     return lazyView.view;
   }
 };
 
 export const addComponent = (type, prefix, component, id, context, page, widget) => {
   const View = importView(type, prefix, component);
-  console.log('add component with uniqid: ', id);
+  // console.log('add component with uniqid: ', id);
   return (
-    // <div className='container'>
       <View key={id} data={context} page={page} widget={widget} />
-    // </div>
   );
 };
 
@@ -38,7 +37,7 @@ export const addComponentsByZone = (type, zone, context, page, widgets) => {
   if (widgets === undefined) {
     if (zone === null || zone === 'content') {
       // mod later: use content/auto
-      return addComponent('content', 'content', context.Type.toLowerCase(), `${type}-${zone}-err-${context.Id}`, context)
+      return addComponent('content', 'auto', context.Type.toLowerCase(), `${type}-${zone}-err-${context.Id}`, context)
     } else {
       return null;
     }

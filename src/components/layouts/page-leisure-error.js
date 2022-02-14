@@ -1,23 +1,18 @@
-import { addComponentsByZone } from '../utils/add-component';
+import { addComponent } from '../utils/add-component';
 import { Helmet } from 'react-helmet';
 
 const DATA = require('../../config.json');
 const defaultImage = require('../../images/logo.png');
 
-export const CustomPageTemplate = (props) => {
+export const LeisureErrorLayout = (props) => {
   const context = props.data;
   const layout = props.page;
   const widgets = props.widget;
-  console.log('leisure-simple layout: ', props, context, layout, widgets );
+  console.log('leisure-error layout: ', props, layout, widgets );
   
-  const sideboxes = addComponentsByZone('widgets', 'side', context, layout, widgets);
-  console.log('sideboxes');
-  console.log(sideboxes);
-
-  const components = addComponentsByZone('widgets', 'content', context, layout, widgets);
-  console.log('components');
-  console.log(components);
-
+  const components = addComponent('content', 'auto', 'missing', 1, context);
+  console.log('leisure-error layout components', components);
+  
   let logoPath = process.env.REACT_APP_LOGO_PATH || DATA.siteLogo;
   let apiUrl = process.env.REACT_APP_API_URL || DATA.apiUrl;
   let logoUrl = apiUrl + logoPath;
@@ -25,14 +20,14 @@ export const CustomPageTemplate = (props) => {
 			logoUrl = defaultImage;
 		}
 
-  const pageTitle = (context.Id === context.Workspace.Id) ? `${context.DisplayName}` : `${context.Workspace.DisplayName} - ${context.DisplayName}`;
+  // const pageTitle = (context.Id === context.Workspace.Id) ? `${context.DisplayName}` : `${context.Workspace.DisplayName} - ${context.DisplayName}`;
+  const pageTitle = 'Not found';
 
   return (
     <div className="App w3-theme-l5">
         <Helmet>
 					<meta charSet="utf-8" />
 					<title>{pageTitle}</title>
-					<link rel="canonical" href={`${apiUrl}/${context.Path}/`} />
 				</Helmet>
 
       
@@ -42,7 +37,7 @@ export const CustomPageTemplate = (props) => {
         <div className="w3-row">
           {/* Left Column */}
           <div className="w3-col m2">
-            {sideboxes}
+            
           </div>
           
           {/* End Left Column */}
@@ -87,4 +82,4 @@ export const CustomPageTemplate = (props) => {
   );
 }
 
-export default CustomPageTemplate;
+export default LeisureErrorLayout;
