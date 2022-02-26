@@ -27,6 +27,10 @@
   /* max-width: 250px; */
 }
 
+.banner-image {
+  width: 70%;
+}
+
 .no-margin {
   margin: 0;
 }
