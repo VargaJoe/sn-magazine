@@ -1,6 +1,6 @@
 import React, { lazy } from 'react';
 
-const defaultComponent = 'folder';
+const defaultComponent = 'default';
 let lazyComponents = [];
 function importView(type, prefix, component) {
   if (lazyComponents !== null && lazyComponents !== undefined) {
@@ -12,43 +12,44 @@ function importView(type, prefix, component) {
         component: component,
         view: lazy(() =>
         import(`../${type}/${prefix}-${component}`).catch(() =>
-        import(`../content/content-${defaultComponent}`)
+        import(`../${type}/auto-${defaultComponent}`)
       ))}
       lazyComponents.push(lazyView);
-      console.log('new component added: '+lazyView.component);
+      console.log('new component added: ', lazyView.component);
     } else {
-      console.log('already loaded component: '+lazyView.component);
+      console.log('already loaded component: ', lazyView.component);
     };
-
+    console.log('already loaded component: ', lazyView.view);
     return lazyView.view;
   }
 };
 
 export const addComponent = (type, prefix, component, id, context, page, widget) => {
   const View = importView(type, prefix, component);
-  console.log('uniqid: '+id);
+  // console.log('add component with uniqid: ', id);
   return (
-    <div className='container'>
       <View key={id} data={context} page={page} widget={widget} />
-    </div>
   );
 };
 
-export const addComponentsByZone = (type, prefix, zone, context, page) => {
-
-  if (page === undefined) {
+export const addComponentsByZone = (type, zone, context, page, widgets) => {
+  if (widgets === undefined) {
+    console.log('add component by zone - widgets undefined: ', type, zone, context, page);
     if (zone === null || zone === 'content') {
-      return addComponent('content', 'content', context.Type.toLowerCase(), `err-${context.Id}`, context)
+      return addComponent('content', 'auto', context.Type.toLowerCase(), `${type}-${zone}-err-${context.Id}`, context)
     } else {
       return null;
     }
   }
 
+  console.log('add component by zone - widgets: ', type, zone, context, page, widgets);
   return (
-    page.filter(pcnt => pcnt.Type !== 'PageContainer' && pcnt.PortletZone === zone).map((child) => { 
-      const compoType = child.ClientComponent === undefined || child.ClientComponent === null || child.ClientComponent === '' ? child.Type : child.ClientComponent;
-      console.log('addcompo: '+compoType.toLowerCase())
-      return addComponent(type, prefix, compoType.toLowerCase(), `${context.Id}-${child.Id}`, context, page, child);
+    widgets.filter(pcnt => pcnt.PortletZone === zone).map((child) => { 
+      const isAuto = (child.ClientComponent === undefined || child.ClientComponent === null || child.ClientComponent === '');
+      const compoType = isAuto ? child.Type : child.ClientComponent;
+      const prefix = (isAuto) ? "auto" : "manual";
+      console.log('add component by zone - widget: ', type, zone, context, page, child, compoType);
+      return addComponent(type, prefix, compoType.toLowerCase(), `${type}-${zone}-${context.Id}-${child.Id}`, context, page, child);
     })
   );
 };
