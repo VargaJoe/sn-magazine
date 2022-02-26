@@ -5,20 +5,24 @@ const DATA = require('../../config.json');
 const defaultImage = require('../../images/logo.png');
 
 export const VanillaPageTemplate = (props) => {
-  console.log('pagetemplate: vanilla');
-  console.log(props.data);
-
-  const sideboxes = addComponentsByZone('content', 'side', 'side', props.data, props.page);
-  const components = addComponentsByZone('content', 'component', 'content', props.data, props.page);
-
   let logoPath = process.env.REACT_APP_LOGO_PATH || DATA.siteLogo;
   let apiUrl = process.env.REACT_APP_API_URL || DATA.apiUrl;
-  let logoUrl = apiUrl + logoPath;
-		if (logoPath === undefined || logoUrl === apiUrl) {
-			logoUrl = defaultImage;
-		}
+  
+  const context = props.data;
+  const layout = props.page;
+  const widgets = props.widget;
+  console.log('vanilla layout: ', props, context, layout, widgets);
 
-  console.log(components);
+  const sideboxes = addComponentsByZone('widgets', 'side', context, layout, widgets);
+  const components = addComponentsByZone('widgets', 'content', context, layout, widgets);
+
+  let logoUrl = (logoPath === undefined || logoPath === '') ? '' : apiUrl + logoPath;
+	if (logoPath === undefined || logoUrl === '' || logoUrl === apiUrl) {
+		logoUrl = defaultImage.default;
+	}
+
+  console.log('vanilla layout sideboxes', sideboxes);
+  console.log('vanilla layout components', components);
 
   return (
     <div className="App w3-theme-l5">
