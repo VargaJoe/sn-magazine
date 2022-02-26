@@ -5,8 +5,11 @@
   "dependencies": {
     "@sensenet/client-core": "3.6.0",
     "@sensenet/hooks-react": "1.4.2",
+    "moment": "^2.29.1",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
+    "react-helmet": "^6.1.0",
+    "react-lazyload": "^3.2.0",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.2",

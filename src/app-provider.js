@@ -7,7 +7,7 @@ export function AppProviders({ children }) {
   return <RepositoryProvider>{children}</RepositoryProvider>; 
 }
 export const RepositoryProvider = ({ children }) => {
-  let apiUrl = DATA.apiUrl;
+  let apiUrl = process.env.REACT_APP_API_URL || DATA.apiUrl;
   return (
     <RepositoryContext.Provider value={new Repository({repositoryUrl: apiUrl})}>
       {children}
