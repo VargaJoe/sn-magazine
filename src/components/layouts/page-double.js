@@ -2,12 +2,14 @@
 import { addComponentsByZone } from '../utils/add-component';
 
 export const DoublePageTemplate = (props) => {
-  console.log('pagetemplate: double');
-  console.log(props.data);
+  const context = props.data;
+  const layout = props.page;
+  const widgets = props.widget;
+  console.log('double layout: ', props, context, layout, widgets);
 
-  const leftsideboxes = addComponentsByZone('content', 'side', 'side', props.data, props.page);
-  const components = addComponentsByZone('content', 'component', 'content', props.data, props.page);
-  const rightsideboxes = addComponentsByZone('content', 'side', 'right', props.data, props.page);
+  const leftsideboxes = addComponentsByZone('widgets', 'side', context, layout, widgets);
+  const components = addComponentsByZone('widgets', 'content', context, layout, widgets);
+  const rightsideboxes = addComponentsByZone('widgets', 'right', context, layout, widgets);
 
   console.log(components);
 
@@ -109,7 +111,7 @@ export const DoublePageTemplate = (props) => {
             <div className="w3-row-padding w3-margin-bottom">
               <div className="w3-col m12">
                 <div className="w3-card w3-round w3-white">
-                  <div className="w3-container w3-padding">
+                  <div className="w3-container w3-padding hidden">
                     <b>DOUBLE</b>
                   </div>
                 </div>

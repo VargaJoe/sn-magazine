@@ -1,16 +1,16 @@
-// import { SideMenu } from "../remove/side-menu";
-import { addComponent } from '../utils/add-component';
+// import { SideMenu } from "../side-menu";
+import { addComponentsByZone } from '../utils/add-component';
+import { Link } from 'react-router-dom';
+const DATA = require('../../config.json');
+const defaultImage = require('../../images/logo.png');
 
+export const WidePageTemplate = (props) => {
+  const context = props.data;
+  const layout = props.page;
+  const widgets = props.widget;
+  console.log('wide layout: ', props, context, layout, widgets );
 
-export const EmptyPageTemplate = (props) => {
-  console.log('pagetemplate: wide');
-  console.log(props.data);
-
-  const components = props.page.filter(pcnt => pcnt.Type !== 'Page').map((child) => { 
-    const compoType = child.ClientComponent === undefined || child.ClientComponent === null || child.ClientComponent === '' ? child.Type : child.ClientComponent;
-    console.log('addcompo: '+compoType.toLowerCase())
-    return addComponent('content', 'component', compoType.toLowerCase(), `${props.data.Id}-${child.Id}`, props.data, props.page, child); 
-  })
+  const components = addComponentsByZone('content', 'content', context, layout, widgets);
   console.log(components);
 
   return (
@@ -23,12 +23,11 @@ export const EmptyPageTemplate = (props) => {
           >
             <i className="fa fa-bars"></i>
           </a>
-          <a
-            href="/"
+          <Link to={'/'}
             className="w3-bar-item w3-button w3-padding-large w3-theme-d4"
           >
             <i className="fa fa-home w3-margin-right"></i>Logo
-          </a>
+          </Link>
           <a
             href="/"
             className="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white"
@@ -100,7 +99,7 @@ export const EmptyPageTemplate = (props) => {
         <div className="w3-row">
           {/* Middle Column */}
           <div className="w3-col m12">
-            <div className="w3-row-padding w3-margin-bottom">
+            <div className="w3-row-padding w3-margin-bottom hidden">
                 <div className="w3-col m12">
                   <div className="w3-card w3-round w3-white">
                     <div className="w3-container w3-padding">
@@ -141,4 +140,4 @@ export const EmptyPageTemplate = (props) => {
   );
 }
 
-export default EmptyPageTemplate;
+export default WidePageTemplate;

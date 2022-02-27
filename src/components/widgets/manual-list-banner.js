@@ -7,11 +7,11 @@ import ShowDebugInfo from "../utils/show-debuginfo"
 const DATA = require('../../config.json');
 const defaultImage = require('../../images/logo.png');
 
-export function MenuWithLogo(props) {
+export function BannerListWidget(props) {
   const repo = useRepository();
   const [itemCollection, setCollection] = useState([]);
 
-  console.log('menu list widget with logo');
+  console.log('banner list widget');
   console.log(props);
   const layout = props.page;
   let context = props.data;
@@ -34,6 +34,11 @@ export function MenuWithLogo(props) {
     default:
       // code block
   }  
+  
+  if (widget.RelativePath !== "") {
+    contextPath += widget.RelativePath;
+  } 
+  console.log('context path:', contextPath);
 
   let logoPath = process.env.REACT_APP_LOGO_PATH || DATA.siteLogo;
   let apiUrl = process.env.REACT_APP_API_URL || DATA.apiUrl;
@@ -48,8 +53,8 @@ export function MenuWithLogo(props) {
       path: `${contextPath}`,
       oDataOptions: {
         query: widget.ContentQuery + ` +InFolder:'${contextPath}'`,
-        orderby: ['Index', 'DisplayName'],
         select: 'all',
+        metadata: 'no' 
       },
     });
     if (result?.d?.results) {
@@ -63,23 +68,6 @@ export function MenuWithLogo(props) {
     loadContents();
   }, [context, loadContents, repo]);
 
-  // use CssClass instead of IconName
-  function iconItem (item) { 
-    if (item?.Url !== "") {
-      return (
-        <a key={`sidemenu-icon-${item.Id}`} href={item.Url} target="_blank" rel="noreferrer" className="no-score">
-          <i className={`fa ${item.IconName} fa-fw w3-margin-right w3-text-theme`}></i>
-        </a>
-      )
-    } else {
-      return (
-        <Link key={`sidemenu-link-${item.Id}`} to={'/' + item.Name} className="side-menu-link" title={'index: '+item.Index}>
-          <i className={`fa ${item.IconName} fa-fw w3-margin-right w3-text-theme`}></i>
-        </Link>
-      )
-    } 
-  };
-
   // if (itemCollection?.length === 0) {
   //   return (<div>loading</div>)
   // }
@@ -88,35 +76,23 @@ export function MenuWithLogo(props) {
     <div className="w3-card w3-round w3-white w3-margin-bottom">
       {ShowDebugInfo("side menu with logo", context, layout, widget)}
       <div className="w3-container">
-        <h4 className="w3-center hidden">{widget.DisplayName}</h4>
-        <Link to={'/'}>
-          <img src={logoUrl} alt="site title" className="w3-center logo-image" />
-        </Link> 
-        {/* <p className="w3-center"><img src="/w3images/avatar3.png" className="w3-circle w3-circle-side-avatar" alt="Avatar" /></p> */}
-        <hr className="no-margin"/>
         <div className="side-menu-uppercase">
           {console.log('itemCollection', itemCollection)}
-          {itemCollection?.filter(item => item.DisplayZone?.includes("menuitem")).map((child) => {
+          {itemCollection?.map((child) => {
             console.log(child.Name);
             return (
-            <p key={`sidemenu-${child.Id}`}>
+            <p key={`banner-${child.Id}`}>
               {/* <i className="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i>  */}
-              <Link key={`sidemenu-link-${child.Id}`} to={'/' + child.Name} className="side-menu-link" title={'index: '+child.Index}>
-                {child.DisplayName}
-              </Link>
+              <a key={`banner-link-${child.Id}`} href={child.Url} target="_blank" className="side-menu-link" title={'index: '+child.Index}>
+              <img src={(process.env.REACT_APP_API_URL || DATA.apiUrl) + child.Binary.__mediaresource.media_src} alt={child.DisplayName} className="banner-image"/>
+              </a>
             </p>
           )}
           )}
         </div>
-        <hr className="no-margin"/>
-        <p>
-          {itemCollection?.filter(item => item.DisplayZone?.includes("menuicon")).map((child) => {
-            return iconItem(child);
-          })}
-        </p>
       </div>
     </div>
   );
 }
 
-export default MenuWithLogo;
+export default BannerListWidget;

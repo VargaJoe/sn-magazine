@@ -22,11 +22,12 @@ export function ReviewRelatedSoftLink(props) {
               <a key={`news-item-${context.Id}`} href={context.Url} target="_blank" rel="noreferrer" className="no-score">
                 <div className="w3-left w3-padding related-link-meta">
                   <div className="w3-large"><i className="fa fa-link fa-fw related-link-icon"></i>{context.DisplayName}</div>
-                  <div className="small">{context.Description}</div>
+                  <div className="small" dangerouslySetInnerHTML={{ __html: context.Description }}/>
                   {/* <div className="small hidden">{context.Author}</div>
                   <div>{Moment(context.PublishDate).format('yyyy.MM.DD')}</div> */}
                 </div>
               </a>
+              <div className="small w3-clear w3-center" dangerouslySetInnerHTML={{ __html: context.Embed }}/>
             </div>
           </div>
         </div>
