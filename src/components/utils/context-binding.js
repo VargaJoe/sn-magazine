@@ -6,22 +6,22 @@ const DATA = require('../../config.json');
 export function BindedContext(props, withChildren) {
   const repo = useRepository();
   const [bndContext, setContext] = useState({
+                                      contextPath: '',
                                       content: props.data,
                                       children: []
-                                    });  
-
-  console.log("context binding: ", props);
+                                    });
+  
+  console.log('bindedContext params', { props, withChildren });
   const widget = props.widget;
   const context = props.data;
 
   const loadContents = useCallback(async () => {
     function getContextPath() {
-      console.log(widget.ContextBinding);
       let pathTemp = context.path;
       switch (widget.ContextBinding[0]) {
         case "customroot":
           if (widget.CustomRoot !== undefined) {
-            
+            // context could be set here too            
             pathTemp = widget.CustomRoot.Path;
           } else {
             console.log("customroot is not set");
@@ -41,7 +41,6 @@ export function BindedContext(props, withChildren) {
       return pathTemp;
     };
     const contextPath = getContextPath();
-    
     const result = await repo.loadCollection({
       path: `${contextPath}`,
       oDataOptions: {
@@ -52,8 +51,8 @@ export function BindedContext(props, withChildren) {
       },
     });
     if (result?.d?.results) {
-      console.log(result);
       setContext({
+        contextPath: contextPath,
         content: result.d.results
           .filter(cnt => cnt.Path === contextPath)[0],
         children: result.d.results      
@@ -68,7 +67,8 @@ export function BindedContext(props, withChildren) {
       loadContents();
     } 
   }, [loadContents, withChildren]);
-
+  
+  console.log('bindedContext result', bndContext);
   return bndContext;
 }
 
