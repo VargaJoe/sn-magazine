@@ -21,7 +21,9 @@ export function BindedContext(props, withChildren) {
         contextPath: context.Path,
             content: context,
             children: [],
-            reload: (withChildren) ? true : false
+            reload: (withChildren) ? true : false,
+            level: widget.ChildrenLevel[0]
+
       }
       switch (widget.ContextBinding[0]) {
         case "customroot":
@@ -67,14 +69,26 @@ export function BindedContext(props, withChildren) {
       select: 'all',
       metadata: 'no'
     }
+
     // when context is a smartfolder we must not use query as it would use InTree and smartfolder's own query would be busted
     if (contextObj.content.Type !== 'SmartFolder') {
-      options.query = '(' + widget.ContentQuery + ` +InFolder:'${contextObj.contextPath}') Path:'${contextObj.contextPath}'`
+      if (contextObj.level === undefined 
+        || contextObj.level === null        
+        || contextObj.level === 'child'
+        || contextObj.level === '') {
+        // only first level children
+        options.query = `(${widget.ContentQuery} +InFolder:'${contextObj.contextPath}') Path:'${contextObj.contextPath}'`
+      } else if (contextObj.level === 'deep') {
+        // get deep descendants
+        options.query = widget.ContentQuery
+      }
     } 
 
-    if (widget.Expand !== undefined && widget.Expand !== '') {
-      options.expand = widget.Expand
+    if (widget.Expand !== null && widget.Expand !== '') {
+      options.expand += ','+widget.Expand
     } 
+
+    console.log('options', options);
 
     // relativepath have to be loaded
     const result = await repo.loadCollection({
@@ -90,7 +104,7 @@ export function BindedContext(props, withChildren) {
       setContext(contextObj);
     } else {
     }
-  }, [context, repo, widget.ContentQuery, widget.ContextBinding, widget.CustomRoot, widget.RelativePath, withChildren]);
+  }, [context, repo, widget.ChildrenLevel, widget.ContentQuery, widget.ContextBinding, widget.CustomRoot, widget.Expand, widget.RelativePath, withChildren]);
 
   useEffect(() => {
     loadContents();
