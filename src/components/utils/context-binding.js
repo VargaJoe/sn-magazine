@@ -40,21 +40,28 @@ export function BindedContext(props, withChildren) {
   
       return pathTemp;
     };
+
     const contextPath = getContextPath();
+    const options = {
+      expand: 'Workspace',
+      select: 'all',
+      metadata: 'no'
+    }
+    // when context is a smartfolder we must not use query as it would use InTree and smartfolder's own query would be busted
+    if (widget.ContextBinding[0] === 'customroot' && widget.CustomRoot?.Type !== 'SmartFolder') {
+      options.query = '(' + widget.ContentQuery + ` +InFolder:'${contextPath}') Path:'${contextPath}'`
+    } 
+
     const result = await repo.loadCollection({
       path: `${contextPath}`,
-      oDataOptions: {
-        query: '(' + widget.ContentQuery + ` +InFolder:'${contextPath}') Path:'${contextPath}'`,
-        expand: 'Workspace',
-        select: 'all',
-        metadata: 'no' 
-      },
+      oDataOptions: options,
     });
     if (result?.d?.results) {
       setContext({
         contextPath: contextPath,
-        content: result.d.results
-          .filter(cnt => cnt.Path === contextPath)[0],
+        content: (result.d.results.filter(cnt => cnt.Path === contextPath)[0] !== undefined) 
+          ? result.d.results.filter(cnt => cnt.Path === contextPath)[0] 
+          : context,
         children: result.d.results      
           .filter(cnt => cnt.Path !== contextPath)
       });
