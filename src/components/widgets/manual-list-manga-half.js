@@ -19,7 +19,7 @@ export function HalfSizedMangaList(props) {
           <div className="w3-card w3-round w3-white">
             {ShowDebugInfo("half size news widget", context, layout, widget)}
             <div className="w3-container w3-padding component-news-half">
-            <h3>{context.DisplayName}</h3>
+            <h3>{bindedContext?.content?.DisplayName}</h3>
               <div>
                 {bindedContext.children?.map((child) => { 
                   return addComponent('widgets', 'nested',`list-news-item-${child.Type.toLowerCase()}`, `${widget.Id}-${context.Id}-${child.Id}`, child, props.page, child); 
