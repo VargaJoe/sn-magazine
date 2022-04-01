@@ -3,7 +3,7 @@ import { useRepository } from "@sensenet/hooks-react";
 import { addComponent } from "../utils/add-component";
 import Moment from 'moment';
 import ShowDebugInfo from "../utils/show-debuginfo"
-// Todo: use bindedcontext 
+// Todo: use bindedcontext but enhance it to load expanded content only, not children
 
 const DATA = require('../../config.json');
 
