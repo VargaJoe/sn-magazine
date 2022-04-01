@@ -1,5 +1,4 @@
 import React, { lazy } from 'react';
-import LazyLoad from 'react-lazyload';
 
 const defaultComponent = 'default';
 let lazyComponents = [];
@@ -20,7 +19,6 @@ function importView(type, prefix, component) {
     } else {
       console.log('already loaded component: ', lazyView.component);
     };
-    console.log('already loaded component: ', lazyView.view);
     return lazyView.view;
   }
 };

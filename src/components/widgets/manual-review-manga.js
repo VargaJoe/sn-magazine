@@ -3,9 +3,11 @@ import { useRepository } from "@sensenet/hooks-react";
 import { addComponent } from "../utils/add-component";
 import Moment from 'moment';
 import ShowDebugInfo from "../utils/show-debuginfo"
+// Todo: use bindedcontext 
 
 const DATA = require('../../config.json');
 
+// Todo: rename manual-list-manga to be consistent
 export function CustomBookReviewView(props) {
   const repo = useRepository();
   const [expContext, setExpContext] = useState([]);

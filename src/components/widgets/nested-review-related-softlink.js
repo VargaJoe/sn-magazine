@@ -1,8 +1,4 @@
-import { Link } from "react-router-dom";
-import Moment from 'moment';
 import ShowDebugInfo from "../utils/show-debuginfo"
-
-const DATA = require('../../config.json');
 
 export function ReviewRelatedSoftLink(props) {
   console.log('folder component');
@@ -10,7 +6,6 @@ export function ReviewRelatedSoftLink(props) {
   const layout = props.page;
   const context = props.data;
   const widget = props.widget;
-  const relativePath = context.Path.substr((process.env.REACT_APP_DATA_PATH || DATA.dataPath).length + 1);
 
   return (
     // <div className="w3-col m9">

@@ -5,9 +5,8 @@ import LazyImage from "../utils/lazyload-image";
 
 const DATA = require('../../config.json');
 
-export function CustomNewsItem(props) {
-  console.log('gallery item');
-  console.log(props);
+export function NestedLeisureMangaReviewItem(props) {
+  console.log('nestedLeisureMangaReviewItem', props);
   const layout = props.page;
   const context = props.data;
   const widget = props.widget;
@@ -28,7 +27,7 @@ export function CustomNewsItem(props) {
   };
     
   const translationIcon = () => {
-    if (context.Translation?.length > 0 ||true) {
+    if (context.Translation?.length > 0) {
       return <i className="fa fa-language fa-fw translation-"></i>;
     } 
   }
@@ -59,4 +58,4 @@ export function CustomNewsItem(props) {
   );
 }
 
-export default CustomNewsItem
+export default NestedLeisureMangaReviewItem

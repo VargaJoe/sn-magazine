@@ -5,6 +5,8 @@ import ShowDebugInfo from "../utils/show-debuginfo"
 
 const DATA = require('../../config.json');
 
+// Todo: this component is flagged for deletion after next release
+
 export function HalfSizedNewsComponent(props) {
   const repo = useRepository();
   const [itemCollection, setCollection] = useState([]);

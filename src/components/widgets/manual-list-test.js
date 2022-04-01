@@ -13,7 +13,7 @@ export function TestWidget(props) {
   const widget = props.widget;
   
   // binded context could be result back with all widget variables contet, children, widget, layout
-  // binded context withChildren should be set on widget content, not manual bollean variable
+  // binded context withChildren should be set on widget content, not manual boolean variable
   const bindedContext = BindedContext(props, true);
   console.log('binded context: ', bindedContext);
 
@@ -37,7 +37,7 @@ export function TestWidget(props) {
             return (
             <p key={`banner-${child.Id}`}>
               {/* <i className="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i>  */}
-              <a key={`banner-link-${child.Id}`} href={child.Url} target="_blank" className="side-menu-link" title={'index: '+child.Index}>
+              <a key={`banner-link-${child.Id}`} href={child.Url} target="_blank" rel="noreferrer" className="side-menu-link" title={'index: '+child.Index}>
               <img src={(process.env.REACT_APP_API_URL || DATA.apiUrl) + child.Binary.__mediaresource.media_src} alt={child.DisplayName} className="banner-image"/>
               </a>
             </p>
