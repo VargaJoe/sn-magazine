@@ -72,6 +72,10 @@ export function BindedContext(props, withChildren) {
       options.query = '(' + widget.ContentQuery + ` +InFolder:'${contextObj.contextPath}') Path:'${contextObj.contextPath}'`
     } 
 
+    if (widget.Expand !== undefined && widget.Expand !== '') {
+      options.expand = widget.Expand
+    } 
+
     // relativepath have to be loaded
     const result = await repo.loadCollection({
       path: `${contextObj.contextPath}`,
