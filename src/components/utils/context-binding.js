@@ -25,31 +25,34 @@ export function BindedContext(props, withChildren) {
             level: widget.ChildrenLevel[0]
 
       }
-      switch (widget.ContextBinding[0]) {
-        case "customroot":
-          if (widget.CustomRoot !== undefined) {
-            resultObj.contextPath = widget.CustomRoot.Path
-            resultObj.content = widget.CustomRoot
-          } else {
-            console.log("customroot is not set");
-          }
-          break;
-        case "currentsite":
-          if (context.Workspace !== null && context.Workspace !== undefined) {
-            resultObj.contextPath = context.Workspace?.Path
-            resultObj.content = context.Workspace
-          } else {
-            resultObj.contextPath = process.env.REACT_APP_DATA_PATH || DATA.dataPath
-            resultObj.content = context.Workspace
-          }
-          break;
-        default:
-          //no problem
-      }
-  
-      if (widget.RelativePath !== null && widget.RelativePath !== undefined) {
-        resultObj.contextPath += widget.RelativePath
-        resultObj.reload = true
+
+      if (widget !== undefined) {
+        switch (widget.ContextBinding[0]) {
+          case "customroot":
+            if (widget.CustomRoot !== undefined) {
+              resultObj.contextPath = widget.CustomRoot.Path
+              resultObj.content = widget.CustomRoot
+            } else {
+              console.log("customroot is not set");
+            }
+            break;
+          case "currentsite":
+            if (context.Workspace !== null && context.Workspace !== undefined) {
+              resultObj.contextPath = context.Workspace?.Path
+              resultObj.content = context.Workspace
+            } else {
+              resultObj.contextPath = process.env.REACT_APP_DATA_PATH || DATA.dataPath
+              resultObj.content = context.Workspace
+            }
+            break;
+          default:
+            //no problem
+        }
+    
+        if (widget.RelativePath !== null && widget.RelativePath !== undefined) {
+          resultObj.contextPath += widget.RelativePath
+          resultObj.reload = true
+        }
       }
 
       return resultObj;
@@ -104,7 +107,7 @@ export function BindedContext(props, withChildren) {
       setContext(contextObj);
     } else {
     }
-  }, [context, repo, widget.ChildrenLevel, widget.ContentQuery, widget.ContextBinding, widget.CustomRoot, widget.Expand, widget.RelativePath, withChildren]);
+  }, [context, repo, widget, withChildren]);
 
   useEffect(() => {
     loadContents();

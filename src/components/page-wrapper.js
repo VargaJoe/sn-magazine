@@ -64,11 +64,12 @@ export const PageWrapper = (props) => {
         } else {
           console.warn('no page was found - else:', context.Type.toLowerCase());
           console.groupEnd()
-          setCompo(addComponent('layouts', 'page', "wide", `page-${context.Id}`, context));
+          setCompo(addComponent('layouts', 'page', "explore", `page-${context.Id}`, context));
         }
       }).catch(error => {
         console.error('error on loading page: ', error);
         console.groupEnd()
+        // TODO: error page 
         setCompo(addComponent('layouts', 'page', "vanilla", `err-${context.Id}`, context)); 
       });
     };
