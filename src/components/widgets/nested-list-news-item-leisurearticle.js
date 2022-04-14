@@ -5,9 +5,8 @@ import LazyImage from "../utils/lazyload-image";
 
 const DATA = require('../../config.json');
 
-export function CustomNewsItem(props) {
-  console.log('gallery item');
-  console.log(props);
+export function NestedLeisureArticleItem(props) {
+  console.log('nestedLeisureArticleItem', props);
   const layout = props.page;
   const context = props.data;
   const widget = props.widget;
@@ -54,4 +53,4 @@ export function CustomNewsItem(props) {
   );
 }
 
-export default CustomNewsItem
+export default NestedLeisureArticleItem;

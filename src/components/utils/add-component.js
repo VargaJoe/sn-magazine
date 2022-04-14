@@ -19,7 +19,6 @@ function importView(type, prefix, component) {
     } else {
       console.log('already loaded component: ', lazyView.component);
     };
-    console.log('already loaded component: ', lazyView.view);
     return lazyView.view;
   }
 };

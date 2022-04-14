@@ -5,8 +5,8 @@ import LazyImage from "../utils/lazyload-image";
 
 const DATA = require('../../config.json');
 
-export function NestedLeisureMangaReviewItem(props) {
-  console.log('nestedLeisureMangaReviewItem', props);
+export function NestedLeisureBookReviewItem(props) {
+  console.log('nestedLeisureBookReviewItem', props);
   const layout = props.page;
   const context = props.data;
   const widget = props.widget;
@@ -58,4 +58,4 @@ export function NestedLeisureMangaReviewItem(props) {
   );
 }
 
-export default NestedLeisureMangaReviewItem
+export default NestedLeisureBookReviewItem

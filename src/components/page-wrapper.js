@@ -10,13 +10,16 @@ export const PageWrapper = (props) => {
   const [context, setContext] = useState();
   const locationPath = props.location.pathname;
   const path = props.location.pathname.split('/');
-  console.log("page wrapper", props, path);
+  console.groupCollapsed('%cpageWrapper', "font-size:16px;color:green");
+  console.log("props", props, path);
 
   const layoutContentType = process.env.REACT_APP_LAYOUT_TYPE || DATA.layoutType || "Layout";
   const widgetContentType = process.env.REACT_APP_WIDGET_TYPE || DATA.widgetType || "Widget";
 
   // refactor: filters should get from page fields
   const loadPage = useCallback(async () => {
+    console.groupCollapsed('%cloadPage', "font-size:14px;color:green");
+    console.log("Load page context:", context);
     const pageQuery = () => { 
       let query="";
       if (context.Type === layoutContentType) {
@@ -55,20 +58,25 @@ export const PageWrapper = (props) => {
           const widgets = result.d.results.filter(pcnt => pcnt.ParentId === page.Id);
           const layout = page.PageTemplate === '' || page.PageTemplate === null ? "vanilla" : page.PageTemplate;
           console.log('selected page: ', result.d.results, page, widgets, layout );
-
-          setCompo(addComponent('layouts', 'page', layout, `page-${context.Id}`, context, page, widgets)); 
+          const addedComponent = addComponent('layouts', 'page', layout, `page-${context.Id}`, context, page, widgets)
+          console.groupEnd()
+          setCompo(addedComponent);
         } else {
-          console.log('no page was found - else:', context.Type.toLowerCase());
+          console.warn('no page was found - else:', context.Type.toLowerCase());
+          console.groupEnd()
           setCompo(addComponent('layouts', 'page', "wide", `page-${context.Id}`, context));
         }
       }).catch(error => {
-        console.log('error on loading page: ', error);
+        console.error('error on loading page: ', error);
+        console.groupEnd()
         setCompo(addComponent('layouts', 'page', "vanilla", `err-${context.Id}`, context)); 
       });
     };
   }, [context, layoutContentType, repo, widgetContentType]);
 
   const loadContent = useCallback(async () => {
+    console.groupCollapsed('%cloadContent', "font-size:14px;color:green");
+    console.log("Load content useEffect:", locationPath);
     const locationPathWorkaround = locationPath.replace("(", "%28").replace(")", "%29");
     await repo.load({
       idOrPath: `${process.env.REACT_APP_DATA_PATH || DATA.dataPath}/${locationPathWorkaround}`,
@@ -79,6 +87,7 @@ export const PageWrapper = (props) => {
     }).then(result => {
       if (result?.d?.Type) {
         console.log('First level context:', result.d);
+        console.groupEnd()
         setContext(result.d);
       };
     })
@@ -88,18 +97,17 @@ export const PageWrapper = (props) => {
   }, [locationPath, repo]);
 
   useEffect(() => {
-    console.log("Load content useEffect:", locationPath);
     loadContent();
-  }, [locationPath, loadContent, repo]);
+  }, [loadContent]);
 
   useEffect(() => {
     if (context !== undefined && context !== []) {
-      console.log("Load page useEffect:", context);
       loadPage();
     } else {
-      console.log('Skip page load useEffect');
+      console.warn('Skip page load useEffect');
     }
   }, [context, loadPage, repo]);
+  console.groupEnd()
 
   return ( 
     <React.Suspense fallback='Loading views...'>

@@ -4,10 +4,11 @@ import { Helmet } from 'react-helmet';
 const DATA = require('../../config.json');
 const defaultImage = require('../../images/logo.png');
 
-export const CustomPageTemplate = (props) => {
+export const LeisureSimpleLayout = (props) => {
   const context = props.data;
   const layout = props.page;
   const widgets = props.widget;
+  console.groupCollapsed('%cleisureSimpleLayout', "font-size:16px;color:green");
   console.log('leisure-simple layout: ', props, context, layout, widgets );
   
   const sideboxes = addComponentsByZone('widgets', 'side', context, layout, widgets);
@@ -53,7 +54,7 @@ export const CustomPageTemplate = (props) => {
               <div className="w3-col m12">
                 <div className="w3-card w3-round w3-white">
                   <div className="w3-container w3-padding">
-                    <b>VANILLA</b>
+                    <b>Leisure Simple Layout</b>
                   </div>
                 </div>
               </div>
@@ -82,9 +83,10 @@ export const CustomPageTemplate = (props) => {
           Powered by <a href="https://sensenet.com" target="_blank" rel="noreferrer">sensenet</a>, <a href="https://reactjs.org/" target="_blank" rel="noreferrer">react</a> and <a href="https://www.w3schools.com/w3css/default.asp" target="_blank" rel="noreferrer">w3.css</a>
         </p>
       </footer>
+      {console.groupEnd()}
       {/* End Footer */}
     </div>
   );
 }
 
-export default CustomPageTemplate;
+export default LeisureSimpleLayout;
