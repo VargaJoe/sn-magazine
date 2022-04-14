@@ -2,22 +2,16 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useRepository } from "@sensenet/hooks-react";
 import { addComponent } from '../utils/add-component';
 import ShowDebugInfo from "../utils/show-debuginfo"
-import LazyLoad from 'react-lazyload';
-import { Link } from "react-router-dom";
 import Moment from 'moment';
-
-const DATA = require('../../config.json');
   
-export function LeisureMangaTranslationItem(props) {
+export function NestedLeisureMangaTranslationItem(props) {
   const repo = useRepository();
   const [itemCollection, setCollection] = useState([]);
   const layout = props.page;
   let context = props.data;
   const widget = props.widget;
-  const relativePath = context.Path.substr((process.env.REACT_APP_DATA_PATH || DATA.dataPath).length + 1);
+  console.log('nestedLeisureMangaTranslationItem', props, context);
   
-  console.log('leisure manga translation content', props, context);
-
   const loadContents = useCallback(async () => {
     const result = await repo.loadCollection({
       path: `/Root/Content/mangajanlo/manga`,
@@ -29,11 +23,6 @@ export function LeisureMangaTranslationItem(props) {
     if (result?.d?.results) {
       console.log('manga with translation: ', result);
       setCollection(result.d.results);
-      // const View = importView(result.d.Type.toLowerCase());
-      // setCompo(<View key={result.d.Id} />);
-    } else {
-      // const View = importView('missing');
-      // setCompo(<View key={'1'} />);
     }
   }, [context, repo]);
 
@@ -65,10 +54,7 @@ export function LeisureMangaTranslationItem(props) {
                 {itemCollection.map((child) => 
                     addComponent('widgets', 'nested','review-list-item', `${context.Id}-${child.Id}`, child, layout, child)
                   )}
-               
-            
-              
-          </div>          
+          </div>
         </div>
       </div>
     </div>
@@ -76,4 +62,4 @@ export function LeisureMangaTranslationItem(props) {
   );
 }
 
-export default LeisureMangaTranslationItem
+export default NestedLeisureMangaTranslationItem

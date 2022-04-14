@@ -1,50 +1,16 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { useRepository } from '@sensenet/hooks-react';
+import React from 'react';
 import { addComponent } from '../utils/add-component';
 import ShowDebugInfo from "../utils/show-debuginfo"
+import BindedContext from "../utils/context-binding"
 
-// task: rename to reviewgallery or else...
+// Todo: rename manual-list-review to be consistent
 export function ReviewListComponent(props) {
-  const repo = useRepository();
-  const [itemCollection, setCollection] = useState([]);
-  
   console.log('gallery component');
   console.log(props);
   const layout = props.page;
   let context = props.data;
   const widget = props.widget;
-
-  console.log(widget.Name + ' - ' + widget.ContextBinding);
-  if (widget.ContextBinding[0] === 'customroot' ) {
-    if (widget.CustomRoot !== undefined) {
-      context = widget.CustomRoot
-    } else {
-      console.log('customroot is not set');
-    }
-  }
-
-  const loadContents = useCallback(async () => {
-    const result = await repo.loadCollection({
-      path: `${context.Path}`,
-      oDataOptions: {
-        query: widget.ContentQuery,
-        select: 'all',
-      },
-    });
-    if (result?.d?.results) {
-      console.log(result);
-      setCollection(result.d.results);
-      // const View = importView(result.d.Type.toLowerCase());
-      // setCompo(<View key={result.d.Id} />);
-    } else {
-      // const View = importView('missing');
-      // setCompo(<View key={'1'} />);
-    }
-  }, [context, widget, repo]);
-
-  useEffect(() => {
-    loadContents();
-  }, [context, loadContents, repo]);
+  const bindedContext = BindedContext(props, true);
 
   return (
     // <div className="w3-col m9 w3-right">
@@ -55,7 +21,7 @@ export function ReviewListComponent(props) {
             <div className="w3-container w3-padding">
             <h1>{context.DisplayName}</h1>
               <div>
-                {itemCollection.map((child) => { 
+                {bindedContext.children?.map((child) => { 
                   return addComponent('widgets', 'nested','review-list-item', `${widget.Id}-${context.Id}-${child.Id}`, child, layout, child); 
                 })}
               </div>

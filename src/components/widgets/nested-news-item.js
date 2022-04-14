@@ -5,6 +5,8 @@ import LazyImage from "../utils/lazyload-image";
 
 const DATA = require('../../config.json');
 
+// Todo: this component is flagged for deletion after next release
+
 export function CustomNewsItem(props) {
   console.log('gallery item');
   console.log(props);

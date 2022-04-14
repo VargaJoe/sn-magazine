@@ -1,40 +1,20 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { useRepository } from '@sensenet/hooks-react';
-// import { addComponent } from '../utils/add-component';
+import React from 'react';
 import { Link } from "react-router-dom";
 import ShowDebugInfo from "../utils/show-debuginfo"
+import BindedContext from "../utils/context-binding"
 
 const DATA = require('../../config.json');
 const defaultImage = require('../../images/logo.png');
 
 export function MenuWithLogo(props) {
-  const repo = useRepository();
-  const [itemCollection, setCollection] = useState([]);
-
+  console.groupCollapsed('%cmenuWithLogo', 'font-size:16px;color:green');
   console.log('contentview sidemenu');
   console.log(props);
   const layout = props.page;
   let context = props.data;
-  let widget = props.widget;
+  let widget = props.widget;  
+  const bindedContext = BindedContext(props, true);
   
-  console.log(widget.ContextBinding);
-  let contextPath = context.Path;
-  switch(widget.ContextBinding[0]) {
-    case "customroot":
-      if (widget.CustomRoot !== undefined) {
-        context = widget.CustomRoot
-        contextPath = context.Path;
-      } else {
-        console.log('customroot is not set');
-      }
-      break;
-    case "currentsite":
-      contextPath = process.env.REACT_APP_DATA_PATH || DATA.dataPath;
-      break;
-    default:
-      // code block
-  }  
-
   let logoPath = process.env.REACT_APP_LOGO_PATH || DATA.siteLogo;
   let apiUrl = process.env.REACT_APP_API_URL || DATA.apiUrl;
   let dataPath = process.env.REACT_APP_DATA_PATH || DATA.dataPath;
@@ -42,26 +22,6 @@ export function MenuWithLogo(props) {
 		if (logoPath === undefined || logoUrl === apiUrl) {
 			logoUrl = defaultImage;
 		}
-
-  const loadContents = useCallback(async () => {
-    const result = await repo.loadCollection({
-      path: `${contextPath}`,
-      oDataOptions: {
-        query: widget.ContentQuery + ` +InFolder:'${contextPath}'`,
-        orderby: ['Index', 'DisplayName'],
-        select: 'all',
-      },
-    });
-    if (result?.d?.results) {
-      console.log(result);
-      setCollection(result.d.results);
-    } else {
-    }
-  }, [contextPath, widget.ContentQuery, repo]);
-
-  useEffect(() => {
-    loadContents();
-  }, [context, loadContents, repo]);
 
   function iconItem (item) { 
     if (item.Type === "LeisureCategory") {
@@ -82,7 +42,6 @@ export function MenuWithLogo(props) {
   // if (itemCollection?.length === 0) {
   //   return (<div>loading</div>)
   // }
-
   return (
     <div className="w3-card w3-round w3-white w3-margin-bottom">
       {ShowDebugInfo("side menu with logo", context, layout, widget)}
@@ -94,8 +53,7 @@ export function MenuWithLogo(props) {
       {/* <p className="w3-center"><img src="/w3images/avatar3.png" className="w3-circle w3-circle-side-avatar" alt="Avatar" /></p> */}
       <hr className="no-margin"/>
       <div className="side-menu-uppercase">
-        {console.log('itemCollection', itemCollection)}
-        {itemCollection?.filter(item => item.DisplayZone?.includes("menuitem")).map((child) => {
+        {bindedContext.children?.filter(item => item.DisplayZone?.includes("menuitem")).map((child) => {
           console.log(child.Name);
           return (
           <p key={`sidemenu-${child.Id}`}>
@@ -109,11 +67,12 @@ export function MenuWithLogo(props) {
       </div>
       <hr className="no-margin"/>
         <p>
-          {itemCollection?.filter(item => item.DisplayZone?.includes("menuicon")).map((child) => {
+          {bindedContext.children?.filter(item => item.DisplayZone?.includes("menuicon")).map((child) => {
             return iconItem(child);
           })}
         </p>
       </div>
+      {console.groupEnd()}
     </div>
   );
 }
