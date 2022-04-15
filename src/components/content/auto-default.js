@@ -16,9 +16,6 @@ export function GenericContent(props) {
         {ShowDebugInfo("default content", context, layout, widget)}
           <div className="w3-container w3-padding">
             <h1>{context.DisplayName}</h1>
-            <div className="context-info">
-              <div dangerouslySetInnerHTML={{ __html: context.Description }}/>
-            </div>
             <table className="w3-table-all">
               <tbody>
                 <tr>
