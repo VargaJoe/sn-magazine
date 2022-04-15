@@ -13,5 +13,6 @@ Boxes resolved by
 - selected by type of context when widget is not defined (e.g auto-contextContentTypeName.js)
 - selected by default setting (e.g. auto-default.js)
 
-layout = formerly known as page content
-widget = formerly known as pagecomponent or portlet
+Note:
+- layout = formerly known as page content
+- widget = formerly known as pagecomponent or portlet
