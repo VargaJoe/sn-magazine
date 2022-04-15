@@ -1,7 +1,5 @@
 import ShowDebugInfo from "../utils/show-debuginfo"
 
-const DATA = require('../../config.json');
-
 export function GenericContent(props) {
   const layout = props.page;
   let context = props.data;

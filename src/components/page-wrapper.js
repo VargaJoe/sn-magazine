@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useRepository } from '@sensenet/hooks-react';
-import { addComponent } from './utils/add-component';
+import { addComponent, addLayout } from './utils/add-component';
 
 const DATA = require('../config.json');
 
@@ -64,7 +64,8 @@ export const PageWrapper = (props) => {
         } else {
           console.warn('no page was found - else:', context.Type.toLowerCase());
           console.groupEnd()
-          setCompo(addComponent('layouts', 'page', "explore", `page-${context.Id}`, context));
+          // setCompo(addComponent('layouts', 'page', "explore", `page-${context.Id}`, context));
+          setCompo(addLayout(context));          
         }
       }).catch(error => {
         console.error('error on loading page: ', error);

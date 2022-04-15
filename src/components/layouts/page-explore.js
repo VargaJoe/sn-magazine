@@ -1,28 +1,18 @@
 import { MenuList } from "../widgets/manual-list-menu";
 import { addComponentsByZone } from '../utils/add-component';
 import { Link } from 'react-router-dom';
-const DATA = require('../../config.json');
-const defaultImage = require('../../images/logo.png');
 
 export const ExploreLayout = (props) => {
-  let logoPath = process.env.REACT_APP_LOGO_PATH || DATA.siteLogo;
-  let apiUrl = process.env.REACT_APP_API_URL || DATA.apiUrl;
-  
   const context = props.data;
   const layout = props.page;
   const widgets = props.widget;
-  console.log('vanilla layout: ', props, context, layout, widgets);
+  console.log('explore layout: ', props, context, layout, widgets);
 
   const sideboxes = addComponentsByZone('widgets', 'side', context, layout, widgets);
   const components = addComponentsByZone('widgets', 'content', context, layout, widgets);
 
-  let logoUrl = (logoPath === undefined || logoPath === '') ? '' : apiUrl + logoPath;
-	if (logoPath === undefined || logoUrl === '' || logoUrl === apiUrl) {
-		logoUrl = defaultImage.default;
-	}
-
-  console.log('vanilla layout sideboxes', sideboxes);
-  console.log('vanilla layout components', components);
+  console.log('explore layout sideboxes', sideboxes);
+  console.log('explore layout components', components);
 
   return (
     <div className="App w3-theme-l5">
@@ -34,15 +24,11 @@ export const ExploreLayout = (props) => {
           >
             <i className="fa fa-bars"></i>
           </a>
-          <Link to={'/'}>
-            <img src={logoUrl} height='52px' alt="site title" className="w3-bar-item w3-button w3-padding-large w3-theme-d4" />
-          </Link> 
-          {/* <a
-            href="/"
+          <Link to={'/'}
             className="w3-bar-item w3-button w3-padding-large w3-theme-d4"
           >
             <i className="fa fa-home w3-margin-right"></i>Logo
-          </a> */}
+          </Link>
           <a
             href="/"
             className="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white"
@@ -57,7 +43,13 @@ export const ExploreLayout = (props) => {
           >
             <i className="fa fa-user"></i>
           </a> */}
-          <i className="fa fa-envelope"></i>
+          <a
+           href="mailto:info@sensenet.com"
+           className="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white"
+           title="Messages"
+         >
+           <i className="fa fa-envelope"></i>
+         </a>
           {/* <div className="w3-dropdown-hover w3-hide-small">
             <button
               className="w3-button w3-padding-large"
@@ -103,7 +95,7 @@ export const ExploreLayout = (props) => {
       </div>
       
       {/* Page Container */}
-      <div className="w3-container w3-content w3-content-custom pagetemplate-vanilla">
+      <div className="w3-container w3-content w3-content-custom pagetemplate-explore">
         {/* The Grid */}
         <div className="w3-row">
           {/* Left Column */}
@@ -126,7 +118,7 @@ export const ExploreLayout = (props) => {
               <div className="w3-col m12">
                 <div className="w3-card w3-round w3-white">
                   <div className="w3-container w3-padding">
-                    <b>VANILLA</b>
+                    <b>EXPLORE</b>
                   </div>
                 </div>
               </div>

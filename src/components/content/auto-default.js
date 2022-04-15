@@ -1,12 +1,11 @@
 import ShowDebugInfo from "../utils/show-debuginfo"
-
-const DATA = require('../../config.json');
+import BindedContext from "../utils/context-binding"
 
 export function GenericContent(props) {
   const layout = props.page;
   let context = props.data;
   const widget = props.widget;
-
+  const bindedContext = BindedContext(props, true);
   console.log('default content', context.DisplayName, props, layout, context, widget);
 
   return (
@@ -20,6 +19,29 @@ export function GenericContent(props) {
             <div className="context-info">
               <div dangerouslySetInnerHTML={{ __html: context.Description }}/>
             </div>
+            <table className="w3-table-all">
+              <tbody>
+                <tr>
+                  <th>Field Name</th>
+                  <th>Field Value</th>
+                </tr>
+                {Object.keys(bindedContext.content).map((key, i) => {
+                if (typeof bindedContext.content[key] !== 'object') {
+                return ( 
+                  <tr key={Math.floor(Math.random() * 100000)}>
+                    <td >{key}</td>
+                    <td>{bindedContext.content[key]?.toString()}</td>
+                  </tr>
+                )} else {return (
+                  <tr  key={Math.floor(Math.random() * 100000)} className="hidden">
+                    <td >{key}</td>
+                    <td>{bindedContext.content[key]?.toString()}</td>
+                  </tr>
+                )}
+                }
+                )}
+                </tbody>
+              </table>
           </div>
         </div>
       </div>

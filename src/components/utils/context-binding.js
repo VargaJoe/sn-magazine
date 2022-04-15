@@ -22,7 +22,7 @@ export function BindedContext(props, withChildren) {
             content: context,
             children: [],
             reload: (withChildren) ? true : false,
-            level: widget.ChildrenLevel[0]
+            level: (widget?.ChildrenLevel !== undefined) ? widget.ChildrenLevel[0] : null
 
       }
 
@@ -79,15 +79,20 @@ export function BindedContext(props, withChildren) {
         || contextObj.level === null        
         || contextObj.level === 'child'
         || contextObj.level === '') {
+
+        if (widget !== undefined && widget.ContentQuery !== undefined) {
+          options.query = widget.ContentQuery
+        }
+
         // only first level children
-        options.query = `(${widget.ContentQuery} +InFolder:'${contextObj.contextPath}') Path:'${contextObj.contextPath}'`
+        options.query += `(${options.query} +InFolder:'${contextObj.contextPath}') Path:'${contextObj.contextPath}'`
       } else if (contextObj.level === 'deep') {
         // get deep descendants
         options.query = widget.ContentQuery
       }
     } 
 
-    if (widget.Expand !== null && widget.Expand !== '') {
+    if (widget !== undefined && widget?.Expand !== null && widget?.Expand !== '') {
       options.expand += ','+widget.Expand
     } 
 

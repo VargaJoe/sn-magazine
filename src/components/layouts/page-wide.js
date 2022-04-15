@@ -1,8 +1,6 @@
 // import { SideMenu } from "../side-menu";
 import { addComponentsByZone } from '../utils/add-component';
 import { Link } from 'react-router-dom';
-const DATA = require('../../config.json');
-const defaultImage = require('../../images/logo.png');
 
 export const WidePageTemplate = (props) => {
   const context = props.data;
@@ -43,7 +41,7 @@ export const WidePageTemplate = (props) => {
             <i className="fa fa-user"></i>
           </a> */}
           <a
-            href="/"
+            href="mailto:info@sensenet.com"
             className="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white"
             title="Messages"
           >
