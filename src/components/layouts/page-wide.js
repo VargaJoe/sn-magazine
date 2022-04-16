@@ -1,3 +1,4 @@
+import { Breadcrumb } from "../widgets/manual-list-breadcrumb";
 // import { SideMenu } from "../side-menu";
 import { addComponentsByZone } from '../utils/add-component';
 import { Link } from 'react-router-dom';
@@ -106,6 +107,10 @@ export const WidePageTemplate = (props) => {
                   </div>
                 </div>
               </div>
+              <Breadcrumb data={props.data} page={props.page} widget={{
+                ContextBinding: [ "currentcontext" ],
+                ChildrenLevel: [ "child" ]
+              }}/>
              {components}
           </div>
           {/* End Middle Column */}
