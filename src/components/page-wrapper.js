@@ -20,20 +20,48 @@ export const PageWrapper = (props) => {
   const loadPage = useCallback(async () => {
     console.groupCollapsed('%cloadPage', "font-size:14px;color:green");
     console.log("Load page context:", context);
+   
+    const layoutPathList = () => {
+      const splittedPath = context.Path.split('/').filter(element => element);
+      const basePath = process.env.REACT_APP_PAGECONTAINER_PATH || DATA.pagecontainerPath;
+      const lpl = [];
+      var newPathName = "";
+      for (var i = 0; i < splittedPath.length; i++) {
+        newPathName += "/";
+        newPathName += splittedPath[i];
+        lpl[i] = `'${newPathName}/(layout)'`;
+      }
+      lpl.reverse();
+      if (!lpl.includes(`'${basePath}'`))
+      {
+        lpl[lpl.length]=`'${basePath}'`;
+      }
+      console.log(lpl);
+      return lpl;
+    };
+
     const pageQuery = () => { 
       let query="";
       if (context.Type === layoutContentType) {
-        query = `Path:'${context.Path}' OR TypeIs:${widgetContentType} AND InTree:'${context.Path}' AND Hidden:0`;
+        query = `Path:'${context.Path}' OR TypeIs:${widgetContentType} AND InFolder:'${context.Path}' AND Hidden:0`;
       } else {
-        query =`((Name:'${context.Type}' OR (Name:'This' AND InFolder:'${context.Path}/(layout)')) AND Type:${layoutContentType})
-        OR TypeIs:${widgetContentType} 
-        AND InTree:(
-          '${context.Path}/(layout)' 
-          '${process.env.REACT_APP_PAGECONTAINER_PATH || DATA.pagecontainerPath}/${context.Type}'       
-          ) 
-        AND Hidden:0`;
-      }
-  
+        query =`
+        (
+          Name:This AND TypeIs:${layoutContentType} AND Path:'${context.Path}/(layout)/This'
+        )
+        OR
+        (
+          (
+            (Name:'${context.Type}' AND TypeIs:${layoutContentType})
+            OR 
+            TypeIs:${widgetContentType}
+          )
+          AND InTree:(
+            ${layoutPathList().join(' ')}
+            ) 
+          AND Hidden:0
+        )`
+      }  
       console.log('query to select layout', query);
       return query;   
     };
@@ -64,14 +92,14 @@ export const PageWrapper = (props) => {
         } else {
           console.warn('no page was found - else:', context.Type.toLowerCase());
           console.groupEnd()
-          // setCompo(addComponent('layouts', 'page', "explore", `page-${context.Id}`, context));
-          setCompo(addLayout(context));          
+          setCompo(addLayout(context));
         }
       }).catch(error => {
         console.error('error on loading page: ', error);
         console.groupEnd()
         // TODO: error page 
-        setCompo(addComponent('layouts', 'page', "vanilla", `err-${context.Id}`, context)); 
+        // setCompo(addComponent('layouts', 'page', "vanilla", `err-${context.Id}`, context)); 
+        setCompo(addLayout(context));
       });
     };
   }, [context, layoutContentType, repo, widgetContentType]);
