@@ -1,0 +1,41 @@
+<ContentType name="Layout" parentType="Folder" handler="SenseNet.ContentRepository.Folder" xmlns="http://schemas.sensenet.com/SenseNet/ContentRepository/ContentTypeDefinition">
+  <DisplayName>Layout</DisplayName>
+  <Description></Description>
+  <Icon>Layout</Icon>
+  <AllowedChildTypes>
+    Folder,File,WidgetContentView,WidgetContentCollection,WidgetSimpleText
+  </AllowedChildTypes>
+  <Fields>
+    <Field name="MetaTitle" type="ShortText">
+      <DisplayName>Title (HTML title)</DisplayName>
+      <Description>Meta tag - Title</Description>
+    </Field>
+    <Field name="MetaDescription" type="LongText">
+      <DisplayName>Description (meta name description)</DisplayName>
+      <Description>Meta tag - Description</Description>
+    </Field>
+    <Field name="MetaRobots" type="ShortText">
+      <DisplayName>Robots (meta name robots)</DisplayName>
+      <Description>Meta tag - Robots</Description>
+    </Field>
+    <Field name="PageTemplate" type="ShortText">
+      <DisplayName>PageTemplate</DisplayName>
+      <Description>PageTemplate</Description>
+    </Field>
+    <Field name="Hidden" type="Boolean">
+      <Configuration>
+        <VisibleBrowse>Show</VisibleBrowse>
+        <VisibleEdit>Show</VisibleEdit>
+        <VisibleNew>Show</VisibleNew>
+      </Configuration>
+    </Field>
+    <Field name="WithLayout" type="Boolean">
+      <DisplayName>With Layout</DisplayName>
+      <Description>Have a layout it?</Description>
+    </Field>
+    <Field name="AllowDirectChildOpen" type="Boolean">
+      <DisplayName>Allow direct child open</DisplayName>
+      <Description>Children components of the page are accessible on the site directly by /[page]/[content] path.</Description>
+    </Field>
+  </Fields>
+</ContentType>
