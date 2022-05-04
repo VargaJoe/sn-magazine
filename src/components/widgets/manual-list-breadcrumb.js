@@ -55,9 +55,9 @@ export function Breadcrumb(props) {
               })}
             </div>
           </div>
-          {console.groupEnd()}
         </div>
       </div>
+      {console.groupEnd()}
     </div>
   );
 }
