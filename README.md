@@ -11,7 +11,7 @@ The following concepts are covered to generate webapp layout by:
 
 # Prerequisites
 
-When you register a snaas repository, you will get a sample workspace content structure. You can manage sensenet contents through  sensenet [admin ui](https://admin.sensenet.com). The sample workspace is set to be private by default, so you will have to make it public to try this app with your repository. I recommend to set `See` permission on your Content (Globe icon) and `Read` permission (or with `Make Content Public` action).
+When you register a snaas repository, you will get a sample workspace content structure. You can manage sensenet contents through  sensenet [admin ui](https://admin.sensenet.com). The sample workspace is set to be private by default, so you will have to make it public to try this app with your repository. I recommend to set `See` permission on your Content (Globe icon) and `Read` permission (or with `Make Content Public` action) on SampleWorkspace.
 
 Now you can set your repository with this app. Clone this github repository and set `config.json` to your sensenet repository:
 - apiUrl is your snaas repo url
