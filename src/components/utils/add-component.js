@@ -1,4 +1,5 @@
 import React, { lazy } from 'react';
+const DATA = require('../../config.json');
 
 const defaultComponent = 'default';
 let lazyComponents = [];
@@ -52,3 +53,16 @@ export const addComponentsByZone = (type, zone, context, page, widgets) => {
     })
   );
 };
+
+export const addLayout = (context) => {
+  if (DATA.autoLayout[context.Type] !== undefined) {
+    return addComponent('layouts', 'page', DATA.autoLayout[context.Type], `page-${context.Id}`, context);
+  } else if (context.IsFolder && DATA.autoLayout.isFolder !== undefined) {
+    return addComponent('layouts', 'page', DATA.autoLayout.isFolder, `page-${context.Id}`, context);
+  } else if (!context.IsFolder && DATA.autoLayout.notFolder !== undefined) {
+    return addComponent('layouts', 'page', DATA.autoLayout.notFolder, `page-${context.Id}`, context);
+  } else {
+    return addComponent('layouts', 'page', "explore", `page-${context.Id}`, context);
+  }
+};
+

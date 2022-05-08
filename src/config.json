@@ -4,5 +4,13 @@
 	"pagecontainerPath": 	"/Root/Content/(layout)",
 	"layoutType": 			"Layout",
 	"widgetType": 			"Widget",
-	"siteLogo": 			"/(structure)/Site/logo.png"
+	"siteLogo": 			"/(structure)/Site/logo.png",
+	"autoLayout": {
+		"default": 			"wide",
+		"folder" :			"explore",
+		"content" : 		"wide",
+		"isFolder" :		"explore",
+		"notFolder" : 		"wide"
+		
+	}
 } 

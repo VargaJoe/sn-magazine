@@ -10,6 +10,8 @@ export function MenuList(props) {
   let context = props.data;
   let widget = props.widget;  
   const bindedContext = BindedContext(props, true);
+
+  const DATA = require('../../config.json');
   
   // if (itemCollection?.length === 0) {
   //   return (<div>loading</div>)
@@ -22,11 +24,12 @@ export function MenuList(props) {
         <hr className="no-margin"/>
         <div className="side-menu-uppercase">
           {bindedContext.children?.map((child) => {
+            const relativePath = child.Path.substr((process.env.REACT_APP_DATA_PATH || DATA.dataPath).length + 1);
             console.log(child.Name);
             return (
             <p key={`sidemenu-${child.Id}`}>
               {/* <i className="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i>  */}
-              <Link key={`sidemenu-link-${child.Id}`} to={'/' + child.Name} className="side-menu-link" title={'index: '+child.Index}>
+              <Link key={`sidemenu-link-${child.Id}`} to={'/' + relativePath} className="side-menu-link" title={'index: '+child.Index}>
                 {child.DisplayName}
               </Link>
             </p>

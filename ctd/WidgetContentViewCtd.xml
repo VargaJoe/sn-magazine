@@ -1,0 +1,53 @@
+<ContentType name="WidgetContentView" parentType="Widget" handler="SenseNet.ContentRepository.Folder" xmlns="http://schemas.sensenet.com/SenseNet/ContentRepository/ContentTypeDefinition">
+  <DisplayName>WidgetContentView</DisplayName>
+  <Description></Description>
+  <Icon>WebContent</Icon>
+  <AllowedChildTypes></AllowedChildTypes>
+  <Fields>
+    <Field name="Title" type="ShortText">
+      <DisplayName>Title</DisplayName>
+      <Description>Component title</Description>
+    </Field>
+	<Field name="ContextBinding" type="Choice">
+      <DisplayName>Context binding</DisplayName>
+      <Description></Description>
+      <Configuration>
+        <AllowMultiple>false</AllowMultiple>
+        <AllowExtraValue>false</AllowExtraValue>
+        <Options>
+          <Option value="currentcontext" selected="true">Current context</Option>
+          <Option value="customroot">Custom root</Option>
+        </Options>
+        <ReadOnly>false</ReadOnly>
+        <Compulsory>false</Compulsory>
+        <DefaultValue></DefaultValue>
+      </Configuration>
+    </Field>
+	<Field name="CustomRoot" type="Reference">
+      <DisplayName>ContextPath</DisplayName>
+      <Description>Context path</Description>
+    </Field>
+	<Field name="ClientComponent" type="ShortText">
+      <DisplayName>ClientComponent</DisplayName>
+      <Description>Client component</Description>
+    </Field>
+    <Field name="PortletZone" type="ShortText">
+      <DisplayName>PortletZone</DisplayName>
+      <Description>Portlet Zone</Description>
+    </Field>
+    <Field name="ComponentDescription" type="RichText">
+      <DisplayName>Description</DisplayName>
+      <Description>Component description</Description>
+      <Configuration>
+        <TextType>RichText</TextType>
+      </Configuration>
+    </Field>
+    <Field name="ComponentContent" type="RichText">
+      <DisplayName>Content</DisplayName>
+      <Description>Component content</Description>
+      <Configuration>
+        <TextType>RichText</TextType>
+      </Configuration>
+    </Field>
+  </Fields>
+</ContentType>

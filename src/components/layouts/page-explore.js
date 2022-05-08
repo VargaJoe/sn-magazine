@@ -1,16 +1,19 @@
 import { Breadcrumb } from "../widgets/manual-list-breadcrumb";
-// import { SideMenu } from "../side-menu";
+import { MenuList } from "../widgets/manual-list-menu";
 import { addComponentsByZone } from '../utils/add-component';
 import { Link } from 'react-router-dom';
 
-export const WidePageTemplate = (props) => {
+export const ExploreLayout = (props) => {
   const context = props.data;
   const layout = props.page;
   const widgets = props.widget;
-  console.log('wide layout: ', props, context, layout, widgets );
+  console.log('explore layout: ', props, context, layout, widgets);
 
-  const components = addComponentsByZone('content', 'content', context, layout, widgets);
-  console.log(components);
+  const sideboxes = addComponentsByZone('widgets', 'side', context, layout, widgets);
+  const components = addComponentsByZone('widgets', 'content', context, layout, widgets);
+
+  console.log('explore layout sideboxes', sideboxes);
+  console.log('explore layout components', components);
 
   return (
     <div className="App w3-theme-l5">
@@ -42,12 +45,12 @@ export const WidePageTemplate = (props) => {
             <i className="fa fa-user"></i>
           </a> */}
           <a
-            href="mailto:info@sensenet.com"
-            className="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white"
-            title="Messages"
-          >
-            <i className="fa fa-envelope"></i>
-          </a>
+           href="mailto:info@sensenet.com"
+           className="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white"
+           title="Messages"
+         >
+           <i className="fa fa-envelope"></i>
+         </a>
           {/* <div className="w3-dropdown-hover w3-hide-small">
             <button
               className="w3-button w3-padding-large"
@@ -68,7 +71,7 @@ export const WidePageTemplate = (props) => {
               </a>
             </div>
           </div> */}
-          <a
+          {/* <a
             href="/"
             className="w3-bar-item w3-button w3-hide-small w3-right w3-padding-large w3-hover-white"
             title="My Account"
@@ -78,7 +81,7 @@ export const WidePageTemplate = (props) => {
               className="w3-circle w2-circle-custom"
               alt="Avatar"
             />
-          </a>
+          </a> */}
         </div>
       </div>
 
@@ -93,32 +96,47 @@ export const WidePageTemplate = (props) => {
       </div>
       
       {/* Page Container */}
-      <div className="w3-container w3-content w3-content-custom pagetemplate-wide">        
+      <div className="w3-container w3-content w3-content-custom pagetemplate-explore">
         {/* The Grid */}
         <div className="w3-row">
+          {/* Left Column */}
+          <div className="w3-col m3">
+            <MenuList data={props.data} page={props.page} widget={{
+              ContextBinding: [ "currentcontext" ],
+              ContentQuery: ".SORT:Name",
+              ChildrenLevel: [ "child" ]
+            }}/>
+            <br/> 
+            {sideboxes}
+          </div>
+          
+          {/* End Left Column */}
+
           {/* Middle Column */}
-          <div className="w3-col m12">
-            <div className="w3-row-padding w3-margin-bottom hidden">
-                <div className="w3-col m12">
-                  <div className="w3-card w3-round w3-white">
-                    <div className="w3-container w3-padding">
-                      <b>WIDE</b>
-                    </div>
+          <div className="w3-col m7">
+            <div className="w3-row-padding w3-margin-bottom pagetemplate-sign">
+              <div className="w3-col m12">
+                <div className="w3-card w3-round w3-white">
+                  <div className="w3-container w3-padding">
+                    <b>EXPLORE</b>
                   </div>
                 </div>
               </div>
-              <Breadcrumb data={props.data} page={props.page} widget={{
-                ContextBinding: [ "currentcontext" ],
-                ChildrenLevel: [ "child" ]
-              }}/>
-             {components}
+            </div>
+            <Breadcrumb data={props.data} page={props.page} widget={{
+              ContextBinding: [ "currentcontext" ],
+              ChildrenLevel: [ "child" ]
+            }}/>
+            {components}
           </div>
           {/* End Middle Column */}
 
-          {/* Hidden Column */}
-          <div className="hidden">
-          </div>
-          {/* Hidden Column */}
+          {/* Right Column */}
+          {/* <div className="w3-col m2">
+            <SideReviews />
+            <SideTranslations />
+          </div> */}
+          {/* End Right Column */}
         </div>
         {/* End Grid */}
       </div>
@@ -143,4 +161,4 @@ export const WidePageTemplate = (props) => {
   );
 }
 
-export default WidePageTemplate;
+export default ExploreLayout;

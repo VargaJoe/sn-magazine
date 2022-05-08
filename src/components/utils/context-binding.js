@@ -22,34 +22,37 @@ export function BindedContext(props, withChildren) {
             content: context,
             children: [],
             reload: (withChildren) ? true : false,
-            level: widget.ChildrenLevel[0]
+            level: (widget?.ChildrenLevel !== undefined) ? widget.ChildrenLevel[0] : null
 
       }
-      switch (widget.ContextBinding[0]) {
-        case "customroot":
-          if (widget.CustomRoot !== undefined) {
-            resultObj.contextPath = widget.CustomRoot.Path
-            resultObj.content = widget.CustomRoot
-          } else {
-            console.log("customroot is not set");
-          }
-          break;
-        case "currentsite":
-          if (context.Workspace !== null && context.Workspace !== undefined) {
-            resultObj.contextPath = context.Workspace?.Path
-            resultObj.content = context.Workspace
-          } else {
-            resultObj.contextPath = process.env.REACT_APP_DATA_PATH || DATA.dataPath
-            resultObj.content = context.Workspace
-          }
-          break;
-        default:
-          //no problem
-      }
-  
-      if (widget.RelativePath !== null && widget.RelativePath !== undefined) {
-        resultObj.contextPath += widget.RelativePath
-        resultObj.reload = true
+
+      if (widget !== undefined) {
+        switch (widget.ContextBinding[0]) {
+          case "customroot":
+            if (widget.CustomRoot !== undefined) {
+              resultObj.contextPath = widget.CustomRoot.Path
+              resultObj.content = widget.CustomRoot
+            } else {
+              console.log("customroot is not set");
+            }
+            break;
+          case "currentsite":
+            if (context.Workspace !== null && context.Workspace !== undefined) {
+              resultObj.contextPath = context.Workspace?.Path
+              resultObj.content = context.Workspace
+            } else {
+              resultObj.contextPath = process.env.REACT_APP_DATA_PATH || DATA.dataPath
+              resultObj.content = context.Workspace
+            }
+            break;
+          default:
+            //no problem
+        }
+    
+        if (widget.RelativePath !== null && widget.RelativePath !== undefined) {
+          resultObj.contextPath += widget.RelativePath
+          resultObj.reload = true
+        }
       }
 
       return resultObj;
@@ -76,15 +79,20 @@ export function BindedContext(props, withChildren) {
         || contextObj.level === null        
         || contextObj.level === 'child'
         || contextObj.level === '') {
+
+        if (widget !== undefined && widget.ContentQuery !== undefined) {
+          options.query = widget.ContentQuery
+        }
+
         // only first level children
-        options.query = `(${widget.ContentQuery} +InFolder:'${contextObj.contextPath}') Path:'${contextObj.contextPath}'`
+        options.query += `(${options.query} +InFolder:'${contextObj.contextPath}') Path:'${contextObj.contextPath}'`
       } else if (contextObj.level === 'deep') {
         // get deep descendants
         options.query = widget.ContentQuery
       }
     } 
 
-    if (widget.Expand !== null && widget.Expand !== '') {
+    if (widget !== undefined && widget?.Expand !== null && widget?.Expand !== '') {
       options.expand += ','+widget.Expand
     } 
 
@@ -104,7 +112,7 @@ export function BindedContext(props, withChildren) {
       setContext(contextObj);
     } else {
     }
-  }, [context, repo, widget.ChildrenLevel, widget.ContentQuery, widget.ContextBinding, widget.CustomRoot, widget.Expand, widget.RelativePath, withChildren]);
+  }, [context, repo, widget, withChildren]);
 
   useEffect(() => {
     loadContents();

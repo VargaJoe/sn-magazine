@@ -5,9 +5,6 @@ const DATA = require('../../config.json');
 const defaultImage = require('../../images/logo.png');
 
 export const VanillaPageTemplate = (props) => {
-  let logoPath = process.env.REACT_APP_LOGO_PATH || DATA.siteLogo;
-  let apiUrl = process.env.REACT_APP_API_URL || DATA.apiUrl;
-  
   const context = props.data;
   const layout = props.page;
   const widgets = props.widget;
@@ -15,11 +12,6 @@ export const VanillaPageTemplate = (props) => {
 
   const sideboxes = addComponentsByZone('widgets', 'side', context, layout, widgets);
   const components = addComponentsByZone('widgets', 'content', context, layout, widgets);
-
-  let logoUrl = (logoPath === undefined || logoPath === '') ? '' : apiUrl + logoPath;
-	if (logoPath === undefined || logoUrl === '' || logoUrl === apiUrl) {
-		logoUrl = defaultImage.default;
-	}
 
   console.log('vanilla layout sideboxes', sideboxes);
   console.log('vanilla layout components', components);
@@ -34,15 +26,11 @@ export const VanillaPageTemplate = (props) => {
           >
             <i className="fa fa-bars"></i>
           </a>
-          <Link to={'/'}>
-            <img src={logoUrl} height='52px' alt="site title" className="w3-bar-item w3-button w3-padding-large w3-theme-d4" />
-          </Link> 
-          {/* <a
-            href="/"
+          <Link to={'/'}
             className="w3-bar-item w3-button w3-padding-large w3-theme-d4"
           >
             <i className="fa fa-home w3-margin-right"></i>Logo
-          </a> */}
+          </Link>        
           <a
             href="/"
             className="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white"
@@ -57,7 +45,13 @@ export const VanillaPageTemplate = (props) => {
           >
             <i className="fa fa-user"></i>
           </a> */}
-          <i className="fa fa-envelope"></i>
+            <a
+           href="mailto:info@sensenet.com"
+           className="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white"
+           title="Messages"
+         >
+           <i className="fa fa-envelope"></i>
+         </a>
           {/* <div className="w3-dropdown-hover w3-hide-small">
             <button
               className="w3-button w3-padding-large"
