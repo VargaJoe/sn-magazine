@@ -5,7 +5,7 @@
   "dependencies": {
     "@sensenet/client-core": "3.6.0",
     "@sensenet/hooks-react": "1.4.2",
-    "moment": "^2.29.2",
+    "moment": "^2.29.4",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "react-helmet": "^6.1.0",
