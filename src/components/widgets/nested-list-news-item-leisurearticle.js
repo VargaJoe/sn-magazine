@@ -38,7 +38,7 @@ export function NestedLeisureArticleItem(props) {
                 <Link key={`news-item-${context.Id}`} to={'/' + relativePath} className="no-score">
                     {newsImage()}
                     <div className="w3-left w3-padding news-meta">
-                      <div className="w3-large">{context.DisplayName}</div>
+                      <div className="title w3-large">{context.DisplayName}</div>
                       <div className="small" dangerouslySetInnerHTML={{ __html: context.Lead }}></div>
                       <div className="small hidden">{context.Author}</div>
                       <div>{Moment(context.PublishDate).format('yyyy.MM.DD')}</div>

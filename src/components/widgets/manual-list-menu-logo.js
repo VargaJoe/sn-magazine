@@ -56,21 +56,21 @@ export function MenuWithLogo(props) {
         {bindedContext.children?.filter(item => item.DisplayZone?.includes("menuitem")).map((child) => {
           console.log(child.Name);
           return (
-          <p key={`sidemenu-${child.Id}`}>
+          <div className="sidemenu-link" key={`sidemenu-${child.Id}`}>
             {/* <i className="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i>  */}
             <Link key={`sidemenu-link-${child.Id}`} to={'/' + child.Name} className="side-menu-link" title={'index: '+child.Index}>
               {child.DisplayName}
             </Link>
-          </p>
+          </div>
         )}
         )}
       </div>
       <hr className="no-margin"/>
-        <p>
+        <div className="sidemenu-icons-wrapper">
           {bindedContext.children?.filter(item => item.DisplayZone?.includes("menuicon")).map((child) => {
             return iconItem(child);
           })}
-        </p>
+        </div>
       </div>
       {console.groupEnd()}
     </div>

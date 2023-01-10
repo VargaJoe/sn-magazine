@@ -33,11 +33,11 @@ export function BannerListWidget(props) {
         <div className="side-menu-uppercase">
           {bindedContext.children?.map((child) => {
             return (
-              <p key={`banner-${child.Id}`}>
+              <div className="banner-wrapper" key={`banner-${child.Id}`}>
                 <a key={`banner-link-${child.Id}`} href={child.Url} target="_blank" className="side-menu-link" title={'index: '+child.Index} rel="noreferrer">
                 <img src={(process.env.REACT_APP_API_URL || DATA.apiUrl) + child.Binary.__mediaresource.media_src} alt={child.DisplayName} className="banner-image"/>
                 </a>
-              </p>
+              </div>
             )
           })}
         </div>
