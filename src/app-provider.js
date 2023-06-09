@@ -38,12 +38,19 @@ export const RepositoryProvider = ({ children }) => {
   const { login } = useOidcAuthentication();
   
   if (!oidcUser) {
-    return <button onClick={login}>Login</button>;
+    return (
+      <RepositoryContext.Provider
+      value={new Repository({ repositoryUrl })}
+    >
+      <button onClick={login}>Login</button>
+      {children}
+    </RepositoryContext.Provider>    
+    );
   }
   
   return (
     <RepositoryContext.Provider
-      value={new Repository({ repositoryUrl, token: oidcUser.access_token })}
+      value={new Repository({ repositoryUrl, accessToken: oidcUser.access_token })}
     >
       {children}
     </RepositoryContext.Provider>
