@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useRepository } from '@sensenet/hooks-react';
-import { addComponent } from '../utils/add-component';
 import { Link } from "react-router-dom";
 
 export function MenuSide(props) {
@@ -9,7 +8,6 @@ export function MenuSide(props) {
 
   console.log('contentview sidemenu');
   console.log(props);
-  const layout = props.page;
   let context = props.data;
   let widget = props.widget;
   console.log(widget.ContextBinding);
@@ -35,7 +33,7 @@ export function MenuSide(props) {
       setCollection(result.d.results);
     } else {
     }
-  }, [context, repo]);
+  }, [context, widget, repo]);
 
   useEffect(() => {
     loadContents();
