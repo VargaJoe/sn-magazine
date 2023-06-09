@@ -107,7 +107,6 @@ export const PageWrapper = (props) => {
   }, [context, layoutContentType, repo, widgetContentType]);
 
   const loadContent = useCallback(async () => {
-    console.groupCollapsed('%cloadContent', "font-size:14px;color:green");
     console.log("Load content useEffect:", locationPath);
     const locationPathWorkaround = locationPath.replace("(", "%28").replace(")", "%29");
     await repo.load({
@@ -139,7 +138,6 @@ export const PageWrapper = (props) => {
       console.warn('Skip page load useEffect');
     }
   }, [context, loadPage, repo]);
-  console.groupEnd()
 
   return ( 
     <React.Suspense fallback='Loading views...'>
