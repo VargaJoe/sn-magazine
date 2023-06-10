@@ -42,7 +42,7 @@ export const RepositoryProvider = ({ children }) => {
       <RepositoryContext.Provider
       value={new Repository({ repositoryUrl })}
     >
-      <button onClick={login}>Login</button>
+      {/* <button onClick={login}>Login</button> */}
       {children}
     </RepositoryContext.Provider>    
     );
