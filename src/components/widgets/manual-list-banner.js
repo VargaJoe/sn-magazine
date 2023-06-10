@@ -42,7 +42,6 @@ export function BannerListWidget(props) {
           })}
         </div>
       </div>
-      {}
     </div>
   );
 }
