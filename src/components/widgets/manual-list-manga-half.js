@@ -4,7 +4,7 @@ import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
 
 export function HalfSizedMangaList(props) {
-  console.groupCollapsed('%chalfSizedMangaList', "font-size:16px;color:green");
+  console.log('%chalfSizedMangaList', "font-size:16px;color:green");
     
   console.log('gallery component');
   console.log(props);

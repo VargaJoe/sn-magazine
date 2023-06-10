@@ -1,6 +1,6 @@
 import ShowDebugInfo from "../utils/show-debuginfo"
 export function SimpletTextWidget(props) {
-  console.groupCollapsed('%csimpleTextWidget', "font-size:16px;color:green");
+  console.log('%csimpleTextWidget', "font-size:16px;color:green");
   console.log('simpletext component');  
   console.log(props);
   const layout = props.page;
@@ -21,7 +21,7 @@ export function SimpletTextWidget(props) {
             </div>
           </div>
         </div>
-        {console.groupEnd()}
+        {}
       </div>
     // </div>
   );

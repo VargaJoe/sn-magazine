@@ -2,7 +2,7 @@ import ShowDebugInfo from "../utils/show-debuginfo"
 
 export function Memo(props) {
   const componentName = 'memo'
-  console.groupCollapsed(`%c${componentName}`, 'font-size:16px;color:green');
+  console.log(`%c${componentName}`, 'font-size:16px;color:green');
   const layout = props.page;
   let context = props.data;
   const widget = props.widget;
@@ -22,7 +22,7 @@ export function Memo(props) {
           </div>
         </div>
       </div>
-      {console.groupEnd()}
+      {}
     </div>
     // </div>
   );

@@ -12,7 +12,7 @@ export const PageWrapper = (props) => {
   const [context, setContext] = useState();
   const locationPath = location.pathname;
   const path = locationPath.split('/');
-  console.groupCollapsed('%cpageWrapper', "font-size:16px;color:green");
+  console.log('%cpageWrapper', "font-size:16px;color:green");
   console.log("props", props, path);
 
   const layoutContentType = process.env.REACT_APP_LAYOUT_TYPE || DATA.layoutType || "Layout";
@@ -20,7 +20,7 @@ export const PageWrapper = (props) => {
 
   // refactor: filters should get from page fields
   const loadPage = useCallback(async () => {
-    console.groupCollapsed('%cloadPage', "font-size:14px;color:green");
+    console.log('%cloadPage', "font-size:14px;color:green");
     console.log("Load page context:", context);
    
     const layoutPathList = () => {
@@ -89,16 +89,16 @@ export const PageWrapper = (props) => {
           const layout = page.PageTemplate === '' || page.PageTemplate === null ? "vanilla" : page.PageTemplate;
           console.log('selected page: ', result.d.results, page, widgets, layout );
           const addedComponent = addComponent('layouts', 'page', layout, `page-${context.Id}`, context, page, widgets)
-          console.groupEnd()
+          
           setCompo(addedComponent);
         } else {
           console.warn('no page was found - else:', context.Type.toLowerCase());
-          console.groupEnd()
+          
           setCompo(addLayout(context));
         }
       }).catch(error => {
         console.error('error on loading page: ', error);
-        console.groupEnd()
+        
         // TODO: error page 
         // setCompo(addComponent('layouts', 'page', "vanilla", `err-${context.Id}`, context)); 
         setCompo(addLayout(context));
@@ -118,7 +118,7 @@ export const PageWrapper = (props) => {
     }).then(result => {
       if (result?.d?.Type) {
         console.log('First level context:', result.d);
-        console.groupEnd()
+        
         setContext(result.d);
       };
     })

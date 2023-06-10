@@ -6,7 +6,7 @@ const DATA = require('../../config.json');
 const defaultImage = require('../../images/logo.png');
 
 export function BannerListWidget(props) {
-  console.groupCollapsed('%cbannerList', "font-size:16px;color:green");
+  console.log('%cbannerList', "font-size:16px;color:green");
   console.log(props);
   const layout = props.page;
   let context = props.data;
@@ -42,7 +42,7 @@ export function BannerListWidget(props) {
           })}
         </div>
       </div>
-      {console.groupEnd()}
+      {}
     </div>
   );
 }

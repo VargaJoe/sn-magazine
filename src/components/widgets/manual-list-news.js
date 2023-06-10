@@ -5,7 +5,7 @@ import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
 
 export function NewsListComponent(props) {
-  console.groupCollapsed('%cnewsList', "font-size:16px;color:green");
+  console.log('%cnewsList', "font-size:16px;color:green");
   console.log('props', props);
   const layout = props.page;
   let context = props.data;
@@ -33,7 +33,7 @@ export function NewsListComponent(props) {
               </div>
             </div>
           </div>
-          {console.groupEnd()}
+          {}
         </div>
     // </div>
   );

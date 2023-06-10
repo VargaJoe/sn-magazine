@@ -4,7 +4,7 @@ import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
 
 export function MenuList(props) {
-  console.groupCollapsed('%cmenu', 'font-size:16px;color:green');
+  console.log('%cmenu', 'font-size:16px;color:green');
   console.log('menu list', props);
   const layout = props.page;
   let context = props.data;
@@ -36,7 +36,7 @@ export function MenuList(props) {
           )})}
         </div>
       </div>
-      {console.groupEnd()}
+      {}
     </div>
   );
 }

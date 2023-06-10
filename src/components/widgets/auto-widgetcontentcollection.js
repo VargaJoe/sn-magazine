@@ -4,7 +4,7 @@ import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
 
 export function ContentCollectionWidgetComponent(props) {
-  console.groupCollapsed('%ccontentcollection', 'font-size:16px;color:green');
+  console.log('%ccontentcollection', 'font-size:16px;color:green');
   console.log('contentcollection', props);
   const layout = props.page;
   let context = props.data;
@@ -33,7 +33,7 @@ export function ContentCollectionWidgetComponent(props) {
             </div>
           </div>
         </div>
-        {console.groupEnd()}
+        {}
       </div>
     // </div>
   );

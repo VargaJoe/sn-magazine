@@ -7,7 +7,7 @@ const DATA = require('../../config.json');
 const defaultImage = require('../../images/logo.png');
 
 export function MenuWithLogo(props) {
-  console.groupCollapsed('%cmenuWithLogo', 'font-size:16px;color:green');
+  console.log('%cmenuWithLogo', 'font-size:16px;color:green');
   console.log('contentview sidemenu');
   console.log(props);
   const layout = props.page;
@@ -72,7 +72,7 @@ export function MenuWithLogo(props) {
           })}
         </p>
       </div>
-      {console.groupEnd()}
+      {}
     </div>
   );
 }

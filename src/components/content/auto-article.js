@@ -2,7 +2,7 @@ import ShowDebugInfo from "../utils/show-debuginfo"
 
 export function Article(props) {
   const componentName = 'article'
-  console.groupCollapsed(`%c${componentName}`, 'font-size:16px;color:green');
+  console.log(`%c${componentName}`, 'font-size:16px;color:green');
   console.log('article', props);
   const layout = props.page;
   let context = props.data;
@@ -23,7 +23,7 @@ export function Article(props) {
           </div>
         </div>
       </div>
-      {console.groupEnd()}
+      {}
     </div>
     // </div>
   );
