@@ -1,5 +1,5 @@
 import { addComponentsByZone } from '../utils/add-component';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 const DATA = require('../../config.json');
 const defaultImage = require('../../images/logo.png');
@@ -35,7 +35,6 @@ export const LeisureSimpleLayout = (props) => {
 					<title>{pageTitle}</title>
 					<link rel="canonical" href={`${apiUrl}/${context.Path}/`} />
 				</Helmet>
-
       
       {/* Page Container */}
       <div className="w3-container w3-content w3-content-custom pagetemplate-custom">

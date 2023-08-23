@@ -1,15 +1,17 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useRepository } from '@sensenet/hooks-react';
 import { addComponent, addLayout } from './utils/add-component';
+import { useLocation } from 'react-router-dom'; 
 
 const DATA = require('../config.json');
 
 export const PageWrapper = (props) => {
+  const location = useLocation();
   const repo = useRepository();
   const [wrappercompo, setCompo] = useState([]);
   const [context, setContext] = useState();
-  const locationPath = props.location.pathname;
-  const path = props.location.pathname.split('/');
+  const locationPath = location.pathname;
+  const path = locationPath.split('/');
   console.groupCollapsed('%cpageWrapper', "font-size:16px;color:green");
   console.log("props", props, path);
 

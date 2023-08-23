@@ -1,16 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useRepository } from '@sensenet/hooks-react';
 import { addComponent } from '../utils/add-component';
-import { Component } from 'react/cjs/react.production.min';
-import { useLocation } from "react-router-dom";
 import ShowDebugInfo from "../utils/show-debuginfo"
 
 // task: rename to reviewgallery or else...
 export function CustomGalleryView(props) {
   const repo = useRepository();
   const [widgetCollection, setCollection] = useState([]);
-  const [showDebug, setDebug] = useState(false); 
-  const { search } = useLocation();
   
   console.log('gallery component');
   console.log(props);
