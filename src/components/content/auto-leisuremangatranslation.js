@@ -3,8 +3,6 @@ import { useRepository } from "@sensenet/hooks-react";
 import { addComponent } from '../utils/add-component';
 import ShowDebugInfo from "../utils/show-debuginfo"
 
-const DATA = require('../../config.json');
-
 export function LeisureMangaTranslationContent(props) {
   const repo = useRepository();
   const [itemCollection, setCollection] = useState([]);

@@ -12,11 +12,9 @@ export function ContentViewWidgetComponent(props) {
 
   return (
     <div>
-    
-                {addComponent('content', 'auto', bindedContext.content.Type.toLowerCase(), `cv-${context.Id}-${bindedContext.content.Id}`, bindedContext.content, props.page, widget)}
-    
+        {ShowDebugInfo("contentview widget", context, layout, widget)}
+        {addComponent('content', 'auto', bindedContext.content.Type.toLowerCase(), `cv-${context.Id}-${bindedContext.content.Id}`, bindedContext.content, props.page, widget)}
         {console.groupEnd()}
-    
     </div>
   );
 }
