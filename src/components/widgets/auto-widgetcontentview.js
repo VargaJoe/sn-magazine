@@ -14,7 +14,6 @@ export function ContentViewWidgetComponent(props) {
     <div>
         {ShowDebugInfo("contentview widget", context, layout, widget)}
         {addComponent('content', 'auto', bindedContext.content.Type.toLowerCase(), `cv-${context.Id}-${bindedContext.content.Id}`, bindedContext.content, props.page, widget)}
-        {}
     </div>
   );
 }

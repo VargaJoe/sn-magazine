@@ -1,6 +1,6 @@
 import "./App.css";
 import "./App-Custom.css";
-import { Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import SiteRoutes from "./navigation";
 import { HelmetProvider } from 'react-helmet-async';
 
@@ -9,7 +9,7 @@ function App() {
 
   return (
     <HelmetProvider context={helmetContext}>
-      
+      <BrowserRouter>
         <Routes>
           {SiteRoutes.public.map((route, index) => (
             <Route
@@ -19,7 +19,7 @@ function App() {
               element={<route.component />} />
           ))}
         </Routes>
-      
+      </BrowserRouter>
     </HelmetProvider>
   );
 }

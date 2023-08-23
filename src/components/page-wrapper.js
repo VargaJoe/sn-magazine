@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useRepository } from '@sensenet/hooks-react';
 import { addComponent, addLayout } from './utils/add-component';
-import { useLocation } from 'react-router-dom'; 
+import { useLocation } from 'react-router-dom';
 
 const DATA = require('../config.json');
 
