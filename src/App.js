@@ -8,8 +8,8 @@ function App() {
   const helmetContext = {};
 
   return (
-    <BrowserRouter>
-      <HelmetProvider context={helmetContext}>
+    <HelmetProvider context={helmetContext}>
+      <BrowserRouter>
         <Routes>
           {SiteRoutes.public.map((route, index) => (
             <Route
@@ -20,8 +20,8 @@ function App() {
             />
           ))}
         </Routes>
-      </HelmetProvider>
-    </BrowserRouter>
+      </BrowserRouter>
+    </HelmetProvider>
   );
 }
 
