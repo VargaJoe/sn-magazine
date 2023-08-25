@@ -44,8 +44,8 @@
 
 .gallery-item img {
   object-fit: cover;
-  max-width: 250px;
-  max-height: 250px;
+  width: 185px;
+  height: 250px;
 }
 
 .component-news-half,
