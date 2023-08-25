@@ -1,25 +1,15 @@
-import React, { lazy, useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useRepository } from '@sensenet/hooks-react';
-import { useParams } from 'react-router-dom';
 import { Link } from "react-router-dom";
 import { addComponent } from '../utils/add-component';
 
 const DATA = require('../../config.json');
 
-const defaultComponent = 'folder';
-
-const importView = component =>
-  lazy(() =>
-    import(`./content-${component}`).catch(() =>
-      import(`./content-${defaultComponent}`)
-    )
-  );
-
 const MemoListContent = (props) => {
   console.log('memolist component');
   console.log(props.data);
   const repo = useRepository();
-  const [dynacompo, setCompo] = useState([]);
+  const [dynacompo] = useState([]);
   // const { categoryName } = useParams();
   const contextPath = props.data.Path;
   const [articles, setArts] = useState([]);
@@ -44,12 +34,6 @@ const MemoListContent = (props) => {
       // setCompo(<View key={'1'} />);
     }
   }, [contextPath, repo]);
-
-const loadCompo = (data) => {
-   const View = importView(data.Type.toLowerCase());
-   //setCompo(<View key={result.d.Id} />);
-   return (<View key={'load-'+data.Id} data={data}/>);
-}
 
   useEffect(() => {
     loadContents();

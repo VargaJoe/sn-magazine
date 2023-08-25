@@ -1,5 +1,5 @@
 import { addComponent } from '../utils/add-component';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 const DATA = require('../../config.json');
 const defaultImage = require('../../images/logo.png');

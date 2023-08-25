@@ -1,18 +1,9 @@
-import React, { lazy, useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useRepository } from '@sensenet/hooks-react';
 import { useParams } from 'react-router-dom';
 import { addComponent } from '../utils/add-component';
 
 const DATA = require('../../config.json');
-
-const defaultComponent = 'folder';
-
-const importView = component =>
-  lazy(() =>
-    import(`./content-${component}`).catch(() =>
-      import(`./content-${defaultComponent}`)
-    )
-  );
 
 // pagecomponent walker instead of single content view
 
@@ -21,7 +12,7 @@ const MemoListContent = (props) => {
   console.log(props.data);
 
   const repo = useRepository();
-  const [dynacompo, setCompo] = useState([]);
+  const [dynacompo] = useState([]);
   const { categoryName } = useParams();
   const [articles, setArts] = useState([]);
 
@@ -44,13 +35,6 @@ const MemoListContent = (props) => {
       // setCompo(<View key={'1'} />);
     }
   }, [categoryName, repo]);
-
-const loadCompo = (data) => {
-   const View = importView(data.Type.toLowerCase());
-   console.log('memo-compo-'+data.Id);
-   //setCompo(<View key={result.d.Id} />);
-   return (<View key={'memo-compo-'+data.Id} data={data}/>);
-}
 
   useEffect(() => {
     loadContents();

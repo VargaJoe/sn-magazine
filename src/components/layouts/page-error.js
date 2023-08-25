@@ -1,13 +1,9 @@
-import { addComponentsByZone } from '../utils/add-component';
 import { addComponent } from '../utils/add-component';
 
 export const ErrorLayout = (props) => {
   console.log('pagetemplate: wide');
   console.log(props);
   const context = props.context;
-  const layout = props.layout;
-  const widgets = props.widget;
-
   
   return (
     <div className="App w3-theme-l5">

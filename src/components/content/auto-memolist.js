@@ -3,11 +3,8 @@ import { useRepository } from '@sensenet/hooks-react';
 import { addComponent } from '../utils/add-component';
 import ShowDebugInfo from "../utils/show-debuginfo"
 
-const DATA = require('../../config.json');
-
-const MemoListContent = (props) => {
-  console.log('memolist component');
-  console.log(props.data);
+const MemoList = (props) => {
+  const componentName = 'memolist'
   const repo = useRepository();
   const contextPath = props.data.Path;
   const [articles, setArts] = useState([]);
@@ -15,7 +12,7 @@ const MemoListContent = (props) => {
   const layout = props.page;
   let context = props.data;
   const widget = props.widget;
-  console.log('memolist content', context.DisplayName, props, layout, context, widget);
+  console.log(componentName, context.DisplayName, props, layout, context, widget);
 
   
   const loadContents = useCallback(async () => {
@@ -50,7 +47,7 @@ const MemoListContent = (props) => {
         <div className="w3-row-padding">
           <div className="w3-col m12">
             <div className="w3-card w3-round w3-white w3-margin-bottom">
-              {ShowDebugInfo("memolist content", context, layout, widget)}
+              {ShowDebugInfo(componentName, context, layout, widget)}
             </div>
 
             <div className="w3-card w3-round w3-white">
@@ -83,4 +80,4 @@ const MemoListContent = (props) => {
   );
 };
 
-export default MemoListContent;
+export default MemoList;

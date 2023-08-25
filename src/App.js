@@ -1,24 +1,26 @@
 import "./App.css";
 import "./App-Custom.css";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import SiteRoutes from "./navigation";
-const DATA = require('./config.json');
-const defaultImage = require('./images/logo.png');
+import { HelmetProvider } from 'react-helmet-async';
 
 function App() {
+  const helmetContext = {};
+
   return (
-    <BrowserRouter>
-     <Switch>
-        {SiteRoutes.public.map((route, index) => (
-          <Route
-            key={index}
-            path={route.path}
-            exact={route.exact}
-            component={route.component}
-          />
-        ))}
-      </Switch>
-    </BrowserRouter>
+    <HelmetProvider context={helmetContext}>
+      <BrowserRouter>
+        <Routes>
+          {SiteRoutes.public.map((route, index) => (
+            <Route
+              key={index}
+              path={route.path}
+              exact={route.exact}
+              element={<route.component />} />
+          ))}
+        </Routes>
+      </BrowserRouter>
+    </HelmetProvider>
   );
 }
 

@@ -3,8 +3,6 @@ import { addComponent } from '../utils/add-component';
 import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
 
-const DATA = require('../../config.json');
-
 // Todo: this component is flagged for deletion after next release
 
 export function HalfSizedNewsComponent(props) {
