@@ -1,5 +1,5 @@
 const DATA = require('./config.json');
-// let clientId = process.env.REACT_APP_CLIENT_ID || DATA.clientId;
+let clientId = process.env.REACT_APP_CLIENT_ID || DATA.clientId;
 // let automaticSilentRenew = process.env.REACT_APP_AUTOMATIC_SILENT_RENEW || DATA.automaticSilentRenew;
 // let redirectUri = process.env.REACT_APP_REDIRECT_URI || DATA.redirectUri;
 // let responseType = process.env.REACT_APP_RESPONSE_TYPE || DATA.responseType;
@@ -16,7 +16,7 @@ const DATA = require('./config.json');
 export const repositoryUrl = apiUrl
 
 export const configuration = {
-    client_id: "clientid", // clientID of your repository
+    client_id: clientId, // spa clientID of your repository
     automaticSilentRenew: true,
     redirect_uri: `${window.location.origin}/authentication/callback`,
     response_type: "code",
