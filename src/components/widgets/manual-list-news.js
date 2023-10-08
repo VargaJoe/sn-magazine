@@ -22,7 +22,7 @@ export function NewsListComponent(props) {
           {ShowDebugInfo("news widget", context, layout, widget)}
             <div className="w3-container w3-padding component-news-half">
             <h3>{bindedContext?.content?.DisplayName}</h3>
-              <div>
+              <div className="news-cards">
                 {bindedContext.children?.map((child) => {
                   return (
                     <LazyLoad key={`news-list-${child.Id}`} className="lazy-load-news-item">

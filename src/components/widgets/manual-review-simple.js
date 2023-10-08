@@ -106,6 +106,9 @@ export function CustomBookReviewView(props) {
             <h1>
               {context.DisplayName} 
             </h1>
+            <h2>
+              {context.Subtitle} 
+            </h2>
             {newsImage()}
             <div className="w3-container w3-padding-large w3-bottombar">
               <div className="w3-margin-top italic" dangerouslySetInnerHTML={{ __html: context.Description }}/>
