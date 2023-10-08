@@ -39,7 +39,7 @@ export const LeisureSimpleLayout = (props) => {
       {/* Page Container */}
       <div className="w3-container w3-content w3-content-custom pagetemplate-custom">
         {/* The Grid */}
-        <div className="w3-row">
+        <div className="w3-row layout-container">
           {/* Left Column */}
           <div className="w3-col m2">
             {sideboxes}
@@ -48,7 +48,7 @@ export const LeisureSimpleLayout = (props) => {
           {/* End Left Column */}
 
           {/* Middle Column */}
-          <div className="w3-col m9">
+          <div className="w3-col m9 layout-middle">
             <div className="w3-row-padding w3-margin-bottom pagetemplate-sign">
               <div className="w3-col m12">
                 <div className="w3-card w3-round w3-white">
