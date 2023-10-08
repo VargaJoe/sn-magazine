@@ -72,7 +72,7 @@
 .gallery-item img {
   object-fit: cover;
   max-width: 250px;
-  max-height: 250px;
+  height: 250px;
 }
 
 .component-news-half,
@@ -167,7 +167,7 @@
 
 .related-link-meta {
   white-space: normal;
-  overflow: hidden;
+  over0w: hidden;
   /* text-overflow: ellipsis; */
 }
 
