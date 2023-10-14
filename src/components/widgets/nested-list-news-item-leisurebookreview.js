@@ -19,7 +19,7 @@ export function NestedLeisureBookReviewItem(props) {
     }
 
     return (
-      <div className="w3-left w3-padding">
+      <div className="news-image w3-left w3-padding">
          {/* {LazyImage((process.env.REACT_APP_API_URL || DATA.apiUrl) + context.Image.Url, context.DisplayName, "w3-hover-opacity")} */}
         <LazyImage src={(process.env.REACT_APP_API_URL || DATA.apiUrl) + context.Image.Url} alt={context.DisplayName} className="w3-hover-opacity"/>
       </div>
