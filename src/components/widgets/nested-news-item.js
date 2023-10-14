@@ -17,7 +17,7 @@ export function CustomNewsItem(props) {
   // max words split by space, max sentences split by dot+space, choice should come from widget setting
   const MAX_SENTENCES = 1; // should come from widget setting
   const leadSentences = context?.Lead?.split('. ');
-  const truncatedLead = leadSentences?.slice(0, MAX_SENTENCES).join('. ').trim() + (leadSentences?.length > MAX_SENTENCES ? '...' : '');
+  const truncatedLead = leadSentences&&leadSentences.slice(0, MAX_SENTENCES).join('. ').trim() + (leadSentences?.length > MAX_SENTENCES ? '...' : '');
 
   const relativePath = context.Path.substr((process.env.REACT_APP_DATA_PATH || DATA.dataPath).length + 1);
   
