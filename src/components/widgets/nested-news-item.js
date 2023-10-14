@@ -13,6 +13,13 @@ export function CustomNewsItem(props) {
   const layout = props.page;
   const context = props.data;
   const widget = props.widget;
+  // const MAX_WORDS = 30; // should come from widget setting
+  // const leadWords = context?.Lead?.split(' ');
+  // const truncatedLead = leadWords?.slice(0, MAX_WORDS).join(' ') + "...";
+
+  const MAX_SENTENCES = 1; // should come from widget setting
+  const leadSentences = context?.Lead?.split('. ');
+  const truncatedLead = leadSentences?.slice(0, MAX_SENTENCES).join('. ').trim() + ".";
 
   const relativePath = context.Path.substr((process.env.REACT_APP_DATA_PATH || DATA.dataPath).length + 1);
   
@@ -22,7 +29,7 @@ export function CustomNewsItem(props) {
     }
 
     return (
-      <div className="w3-left w3-padding">
+      <div className="news-image w3-padding">
          {/* {LazyImage((process.env.REACT_APP_API_URL || DATA.apiUrl) + context.Image.Url, context.DisplayName, "w3-hover-opacity")} */}
         <LazyImage src={(process.env.REACT_APP_API_URL || DATA.apiUrl) + context.Image.Url} alt={context.DisplayName} className="w3-hover-opacity"/>
       </div>
@@ -41,11 +48,11 @@ export function CustomNewsItem(props) {
                 <Link key={`news-item-${context.Id}`} to={'/' + relativePath} className="no-score">
                     {newsImage()}
                     <div className="w3-left w3-padding news-meta">
-                      <div className="w3-large">{context.DisplayName}</div>
-                      <div className="small" dangerouslySetInnerHTML={{ __html: context.Lead }}></div>
+                      <div className="w3-large">{context.DisplayName}</div>                      
                       <div className="small hidden">{context.Author}</div>
                       <div>{Moment(context.PublishDate).format('yyyy.MM.DD')}</div>
                     </div>
+                    <div className="small" dangerouslySetInnerHTML={{ __html: truncatedLead }}></div>
                 </Link>
               </div>
             </div>
