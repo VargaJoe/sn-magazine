@@ -13,13 +13,11 @@ export function CustomNewsItem(props) {
   const layout = props.page;
   const context = props.data;
   const widget = props.widget;
-  // const MAX_WORDS = 30; // should come from widget setting
-  // const leadWords = context?.Lead?.split(' ');
-  // const truncatedLead = leadWords?.slice(0, MAX_WORDS).join(' ') + "...";
 
+  // max words split by space, max sentences split by dot+space, choice should come from widget setting
   const MAX_SENTENCES = 1; // should come from widget setting
   const leadSentences = context?.Lead?.split('. ');
-  const truncatedLead = leadSentences?.slice(0, MAX_SENTENCES).join('. ').trim() + ".";
+  const truncatedLead = leadSentences?.slice(0, MAX_SENTENCES).join('. ').trim() + (leadSentences?.length > MAX_SENTENCES ? '...' : '');
 
   const relativePath = context.Path.substr((process.env.REACT_APP_DATA_PATH || DATA.dataPath).length + 1);
   
