@@ -1,10 +1,12 @@
 import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
+import { useSnStore } from "../store/sn-store";
 
 export function Workspace(props) {
-  const componentName = 'workspace'
-  const layout = props.page;
-  let context = props.data;
+  const componentName = 'content-auto-workspace'
+  // const layout = props.page;
+  // let context = props.data;
+  const {context, layout} = useSnStore((state) => state);
   const widget = props.widget;
   const bindedContext = BindedContext(props, true);
   console.log(componentName, context.DisplayName, props, layout, context, widget);
@@ -18,7 +20,7 @@ export function Workspace(props) {
           <div className="w3-container w3-padding">
             <h1>{bindedContext.content.DisplayName}</h1>
             <div className="context-info">
-              <div dangerouslySetInnerHTML={{ __html: context.Description }}/>
+              <div dangerouslySetInnerHTML={{ __html: bindedContext.content.Description }}/>
             </div>
           </div>
         </div>
