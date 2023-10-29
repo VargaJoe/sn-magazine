@@ -2,7 +2,7 @@ import "./App.css";
 import "./App-Custom.css";
 import { Routes, Route } from "react-router-dom";
 import SiteRoutes from "./navigation";
-import { HelmetProvider } from 'react-helmet-async';
+import { HelmetProvider } from "react-helmet-async";
 
 function App() {
   const helmetContext = {};

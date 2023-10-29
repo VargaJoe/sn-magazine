@@ -69,7 +69,7 @@ export const PageWrapper = (props) => {
     };
 
     console.log('context type', context.Type);
-    if (context !== undefined && context.Type !== undefined && context.Type !== []) {
+    if (context !== undefined && context.Type !== undefined) {
       const query = pageQuery();
       const queryPath = `/Root/Content`;
       await repo.loadCollection({
@@ -132,7 +132,7 @@ export const PageWrapper = (props) => {
   }, [loadContent]);
 
   useEffect(() => {
-    if (context !== undefined && context !== []) {
+    if (context !== undefined) {
       loadPage();
     } else {
       console.warn('Skip page load useEffect');
