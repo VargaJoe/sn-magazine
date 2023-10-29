@@ -3,12 +3,14 @@ import { addComponent } from '../utils/add-component';
 import LazyLoad from 'react-lazyload';
 import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
+import { useSnStore } from "../store/sn-store";
 
 export function NewsListComponent(props) {
   console.log('%cnewsList', "font-size:16px;color:green");
   console.log('props', props);
-  const layout = props.page;
-  let context = props.data;
+  // const layout = props.page;
+  // let context = props.data;
+  const {context, layout} = useSnStore((state) => state);
   let widget = props.widget;
   
   // binded context could be result back with all widget variables contet, children, widget, layout

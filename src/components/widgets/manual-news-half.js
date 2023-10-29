@@ -2,14 +2,16 @@ import React from 'react';
 import { addComponent } from '../utils/add-component';
 import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
+import { useSnStore } from "../store/sn-store";
 
 // Todo: this component is flagged for deletion after next release
 
 export function HalfSizedNewsComponent(props) {
   console.log('gallery component');
   console.log(props);
-  const layout = props.page;
-  const context = props.data;
+  // const layout = props.page;
+  // const context = props.data;
+  const {context, layout} = useSnStore((state) => state);
   const widget = props.widget;
   const bindedContext = BindedContext(props, true);
 

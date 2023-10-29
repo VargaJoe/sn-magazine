@@ -1,11 +1,14 @@
 import ShowDebugInfo from "../utils/show-debuginfo"
+import { useSnStore } from "../store/sn-store";
+
 export function SimpletTextWidget(props) {
   console.log('%csimpleTextWidget', "font-size:16px;color:green");
   console.log('simpletext component');  
   console.log(props);
-  const layout = props.page;
-  const context = props.data;
+  // const layout = props.page;
+  // const context = props.data;
   const widget = props.widget;
+  const {context, layout} = useSnStore((state) => state);
 
   return (
     // <div className="w3-col m9 w3-right">

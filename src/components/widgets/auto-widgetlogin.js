@@ -1,14 +1,16 @@
 import {
   useOidcAuthentication,
 } from "@sensenet/authentication-oidc-react";
-
 import ShowDebugInfo from "../utils/show-debuginfo"
+import { useSnStore } from "../store/sn-store";
+
 export function LoginWidget(props) {
   console.log('%clogin component', "font-size:16px;color:green");
   console.log(props);
-  const layout = props.page;
-  const context = props.data;
+  // const layout = props.page;
+  // const context = props.data;
   const widget = props.widget;
+  const {context, layout} = useSnStore((state) => state);
 
   const { oidcUser, login, logout } = useOidcAuthentication();
   const button = oidcUser ? <button onClick={logout}>Logout</button> : <button onClick={login}>Login</button>;
