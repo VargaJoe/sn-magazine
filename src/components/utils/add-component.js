@@ -33,7 +33,7 @@ export const addComponent = (type, prefix, component, id, context, page, widget)
 };
 
 export const addComponentsByZone = (type, zone, context, page, widgets) => {
-  if (widgets === undefined) {
+  if (!widgets || widgets.length === 0) {
     console.log('add component by zone - widgets undefined: ', type, zone, context, page);
     if (zone === null || zone === 'content') {
       return addComponent('content', 'auto', context.Type.toLowerCase(), `${type}-${zone}-err-${context.Id}`, null)
@@ -55,15 +55,19 @@ export const addComponentsByZone = (type, zone, context, page, widgets) => {
   );
 };
 
-export const addLayout = (context) => {
-  if (DATA.autoLayout[context.Type] !== undefined) {
-    return addComponent('layouts', 'page', DATA.autoLayout[context.Type], `page-${context.Id}`, context);
-  } else if (context.IsFolder && DATA.autoLayout.isFolder !== undefined) {
-    return addComponent('layouts', 'page', DATA.autoLayout.isFolder, `page-${context.Id}`, context);
-  } else if (!context.IsFolder && DATA.autoLayout.notFolder !== undefined) {
-    return addComponent('layouts', 'page', DATA.autoLayout.notFolder, `page-${context.Id}`, context);
-  } else {
-    return addComponent('layouts', 'page', "explore", `page-${context.Id}`, context);
+export const addLayout = (contextAsWidget, setLayout) => {
+  let layout = 'explore';
+
+  if (DATA.autoLayout[contextAsWidget.Type] !== undefined) {
+    layout = DATA.autoLayout[contextAsWidget.Type];
+  } else if (contextAsWidget.IsFolder && DATA.autoLayout.isFolder !== undefined) {
+    layout = DATA.autoLayout.isFolder;
+  } else if (!contextAsWidget.IsFolder && DATA.autoLayout.notFolder !== undefined) {
+    layout = DATA.autoLayout.notFolder;
   }
+
+  console.log(`add ${layout} layout`, { type: contextAsWidget.Type }, { isFolder: contextAsWidget.IsFolder }, { setting: layout });
+  setLayout(layout);
+  return addComponent('layouts', 'page', layout, `page-0`, contextAsWidget);
 };
 

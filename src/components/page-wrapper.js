@@ -107,7 +107,7 @@ export const PageWrapper = (props) => {
         } else {
           console.warn('no page was found - else:', context.Type.toLowerCase());
           
-          const addedComponent = addLayout(context, setLayout, setWidgets)
+          const addedComponent = addLayout(context, setLayout)
           if (wrappercompo.key !== addedComponent.key) {
             console.log('set page load useEffect else', { wrappercompo: wrappercompo }, { addedComponent: addedComponent });
             setCompo(addedComponent);
@@ -120,7 +120,7 @@ export const PageWrapper = (props) => {
         
         // TODO: error page 
         // setCompo(addComponent('layouts', 'page', "vanilla", `err-${context.Id}`, context)); 
-        const addedComponent = addLayout(context, setLayout, setWidgets)
+        const addedComponent = addLayout(context, setLayout)
           if (wrappercompo.key !== addedComponent.key) {
             console.log('set page load useEffect catch', { wrappercompo: wrappercompo }, { addedComponent: addedComponent });
             setCompo(addedComponent);
