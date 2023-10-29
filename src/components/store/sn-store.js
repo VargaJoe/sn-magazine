@@ -2,13 +2,13 @@ import { create } from 'zustand'
 
 export const useSnStore = create()((set) => ({
   // context sn content
-  context: {},
+  context: null,
   setContext: (context) => set(() => ({ context: context })),
   // page sn content
-  page: {},
+  page: null,
   setPage: (page) => set(() => ({ page: page })),
   // widget sn contents
-  widgets: [{}],
+  widgets: null,
   setWidgets: (widgets) => set(() => ({ widgets: widgets })),  
   // layout sn content
   layout: 'vanilla',
