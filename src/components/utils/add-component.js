@@ -36,7 +36,7 @@ export const addComponentsByZone = (type, zone, context, page, widgets) => {
   if (widgets === undefined) {
     console.log('add component by zone - widgets undefined: ', type, zone, context, page);
     if (zone === null || zone === 'content') {
-      return addComponent('content', 'auto', context.Type.toLowerCase(), `${type}-${zone}-err-${context.Id}`, context)
+      return addComponent('content', 'auto', context.Type.toLowerCase(), `${type}-${zone}-err-${context.Id}`, null)
     } else {
       return null;
     }
@@ -49,7 +49,8 @@ export const addComponentsByZone = (type, zone, context, page, widgets) => {
       const compoType = isAuto ? child.Type : child.ClientComponent;
       const prefix = (isAuto) ? "auto" : "manual";
       console.log('add component by zone - widget: ', type, zone, context, page, child, compoType);
-      return addComponent(type, prefix, compoType.toLowerCase(), `${type}-${zone}-${context.Id}-${child.Id}`, context, page, child);
+      // return addComponent(type, prefix, compoType.toLowerCase(), `${type}-${zone}-${context?.Id}-${child.Id}`, null, null, child);
+      return addComponent(type, prefix, compoType.toLowerCase(), `${type}-${zone}-0-1`, null, null, child);
     })
   );
 };
