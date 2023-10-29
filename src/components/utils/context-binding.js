@@ -119,7 +119,7 @@ export function BindedContext(props, withChildren) {
       setContext(contextObj);
     } else {
     }
-  }, [context, repo, widget, withChildren]);
+  }, [context.Workspace, expContext, repo, widget, withChildren]);
 
   useEffect(() => {
     loadContents();
