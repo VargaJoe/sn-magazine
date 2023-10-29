@@ -146,7 +146,7 @@ export const PageWrapper = (props) => {
   }, [loadContent]);
 
   useEffect(() => {
-    if (context !== undefined && context.Type !== undefined) {
+    if (context !== undefined) {
       loadPage();
     } else {
       console.warn('Skip page load useEffect');

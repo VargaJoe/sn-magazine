@@ -20,7 +20,7 @@ export function HalfSizedNewsComponent(props) {
             {ShowDebugInfo("half size news widget", context, layout, widget)}
             <div className="w3-container w3-padding component-news-half">
             <h3>{bindedContext.content.DisplayName}</h3>
-              <div>
+              <div className="news-cards">
                 {bindedContext.children?.map((child) => { 
                   return addComponent('widgets', 'nested','news-item', `${widget.Id}-${context.Id}-${child.Id}`, child, props.page, child); 
                 })}
