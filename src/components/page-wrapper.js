@@ -73,7 +73,7 @@ export const PageWrapper = (props) => {
     };
 
     // console.log('context type', context.Type);
-    if (context !== undefined && context.Type !== undefined) {
+    if (context !== null && context !== undefined && context.Type !== undefined) {
       const query = pageQuery();
       const queryPath = `/Root/Content`;
       await repo.loadCollection({
@@ -99,24 +99,34 @@ export const PageWrapper = (props) => {
           const addedComponent = addComponent('layouts', 'page', layout, `page-${layout}`, null, null, null)
           
           if (wrappercompo.key !== addedComponent.key) {
-            console.log('set page load useEffect', { wrappercompo: wrappercompo }, { addedComponent: addedComponent });
+            console.log('set page load useEffect then', { wrappercompo: wrappercompo }, { addedComponent: addedComponent });
             setCompo(addedComponent);
           } else {
-            console.log('skip page load useEffect');
+            console.log('skip page load useEffect then');
           }
-
-          // setCompo(addedComponent);
         } else {
           console.warn('no page was found - else:', context.Type.toLowerCase());
           
-          setCompo(addLayout(context));
+          const addedComponent = addLayout(context, setLayout, setWidgets)
+          if (wrappercompo.key !== addedComponent.key) {
+            console.log('set page load useEffect else', { wrappercompo: wrappercompo }, { addedComponent: addedComponent });
+            setCompo(addedComponent);
+          } else {
+            console.log('skip page load useEffect else');
+          }          
         }
       }).catch(error => {
         console.error('error on loading page: ', error);
         
         // TODO: error page 
         // setCompo(addComponent('layouts', 'page', "vanilla", `err-${context.Id}`, context)); 
-        setCompo(addLayout(context));
+        const addedComponent = addLayout(context, setLayout, setWidgets)
+          if (wrappercompo.key !== addedComponent.key) {
+            console.log('set page load useEffect catch', { wrappercompo: wrappercompo }, { addedComponent: addedComponent });
+            setCompo(addedComponent);
+          } else {
+            console.log('skip page load useEffect catch');
+          }     
       });
     };
   }, [context, layoutContentType, repo, setLayout, setPage, setWidgets, widgetContentType, wrappercompo]);
