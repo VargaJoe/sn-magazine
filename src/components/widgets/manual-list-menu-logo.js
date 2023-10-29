@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from "react-router-dom";
 import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
+import { useSnStore } from "../store/sn-store";
 
 const DATA = require('../../config.json');
 const defaultImage = require('../../images/logo.png');
@@ -10,9 +11,10 @@ export function MenuWithLogo(props) {
   console.log('%cmenuWithLogo', 'font-size:16px;color:green');
   console.log('contentview sidemenu');
   console.log(props);
-  const layout = props.page;
-  let context = props.data;
+  // const layout = props.page;
+  // let context = props.data;
   let widget = props.widget;  
+  const {context, layout} = useSnStore((state) => state);
   const bindedContext = BindedContext(props, true);
   
   let logoPath = process.env.REACT_APP_LOGO_PATH || DATA.siteLogo;
@@ -33,7 +35,7 @@ export function MenuWithLogo(props) {
     } else if (item.Url !== "") {
         return (
           <a key={`sidemenu-icon-${item.Id}`} href={item.Url} target="_blank" rel="noreferrer" className="no-score">
-            <i className={`fa ${item.IconName} fa-fw w3-margin-right w3-text-theme`}></i>
+           <i className={`fa ${item.IconName} fa-fw w3-margin-right w3-text-theme`}></i>
           </a>
         )
     }    

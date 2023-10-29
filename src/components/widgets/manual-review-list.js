@@ -2,13 +2,15 @@ import React from 'react';
 import { addComponent } from '../utils/add-component';
 import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
+import { useSnStore } from "../store/sn-store";
 
 // Todo: rename manual-list-review to be consistent
 export function ReviewListComponent(props) {
   console.log('gallery component');
   console.log(props);
-  const layout = props.page;
-  let context = props.data;
+  // const layout = props.page;
+  // let context = props.data;
+  const {context, layout} = useSnStore((state) => state);
   const widget = props.widget;
   const bindedContext = BindedContext(props, true);
 

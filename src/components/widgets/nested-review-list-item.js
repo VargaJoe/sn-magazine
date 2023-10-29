@@ -9,10 +9,15 @@ export function ReviewListItemComponent(props) {
   console.log('gallery item');
   console.log(props);
   const layout = props.page;
-  const context = props.data;
+  const context = props.data;  
   const widget = props.widget;
 
   const relativePath = context.Path.substr((process.env.REACT_APP_DATA_PATH || DATA.dataPath).length + 1);
+
+  if ( context === undefined || context === null) {
+    return (<div>loading</div>)
+  }
+
   return (
     // <div className="w3-col m9">
       <div className="w3-row-padding w3-margin-bottom w3-left gallery-item">
@@ -26,7 +31,7 @@ export function ReviewListItemComponent(props) {
                   {/* <svg width="200px" height="200px" > */}
                     {/* <img src={DATA.apiUrl + context.Path + '/cover.jpg'} alt={context.DisplayName} className="w3-hover-opacity w3-col"/> */}
                     {/* <img src={DATA.apiUrl + DATA.dataPath + '/(structure)/Site/sample.png'} alt={context.DisplayName} className="w3-hover-opacity w3-col"/> */}
-                      <LazyImage src={(process.env.REACT_APP_API_URL || DATA.apiUrl) + context.Image.Url} alt={context.DisplayName} className="w3-hover-opacity w3-col"/>
+                      <LazyImage src={(process.env.REACT_APP_API_URL || DATA.apiUrl) + context.Image?.Url} alt={context.DisplayName} className="w3-hover-opacity w3-col"/>
                   {/* </svg> */}
                     <div className="w3-container w3-white list-box-title">
                         <p>

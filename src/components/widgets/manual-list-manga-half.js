@@ -2,14 +2,16 @@ import React from 'react';
 import { addComponent } from '../utils/add-component';
 import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
+import { useSnStore } from "../store/sn-store";
 
 export function HalfSizedMangaList(props) {
   console.log('%chalfSizedMangaList', "font-size:16px;color:green");
     
   console.log('gallery component');
-  console.log(props);
-  const layout = props.page;
-  let context = props.data;
+  // console.log(props);
+  // const layout = props.page;
+  // let context = props.data;
+  const {context, layout} = useSnStore((state) => state);
   let widget = props.widget;
   const bindedContext = BindedContext(props, true);
 

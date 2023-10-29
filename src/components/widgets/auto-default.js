@@ -1,9 +1,11 @@
 import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
+import { useSnStore } from "../store/sn-store";
 
 export function GenericWidget(props) {
-  const layout = props.page;
-  let context = props.data;
+  // const layout = props.page;
+  // let context = props.data;
+  const {context, layout} = useSnStore((state) => state);
   const widget = props.widget;
   const bindedContext = BindedContext(props, true);
   console.log('default widget', context.DisplayName, props, layout, context, widget);

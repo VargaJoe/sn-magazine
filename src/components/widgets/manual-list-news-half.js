@@ -2,12 +2,14 @@ import React from 'react';
 import { addComponent } from '../utils/add-component';
 import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
+import { useSnStore } from "../store/sn-store";
 
 export function HalfSizedNewsList(props) {
   console.log('%chalfSizedNewsList', "font-size:16px;color:green");
   console.log('props', props);
-  const layout = props.page;
-  let context = props.data;
+  // const layout = props.page;
+  // let context = props.data;
+  const {context, layout} = useSnStore((state) => state);
   let widget = props.widget;
   const bindedContext = BindedContext(props, true);
 

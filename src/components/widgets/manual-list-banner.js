@@ -1,15 +1,17 @@
 import React from 'react';
 import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
+import { useSnStore } from "../store/sn-store";
 
 const DATA = require('../../config.json');
 const defaultImage = require('../../images/logo.png');
 
 export function BannerListWidget(props) {
   console.log('%cbannerList', "font-size:16px;color:green");
-  console.log(props);
-  const layout = props.page;
-  let context = props.data;
+  // console.log(props);
+  // const layout = props.page;
+  // let context = props.data;
+  const {context, layout} = useSnStore((state) => state);
   let widget = props.widget;
   const bindedContext = BindedContext(props, true);
   
