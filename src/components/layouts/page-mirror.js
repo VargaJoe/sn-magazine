@@ -1,12 +1,14 @@
 // import { SideMenu } from "../side-menu";
 import { addComponentsByZone } from '../utils/add-component';
+import { useSnStore } from "../store/sn-store";
 
 export const VanillaPageTemplate = (props) => {
-  console.log('pagetemplate: mirror');
-  console.log(props.data);
+  const {context, layout, widgets} = useSnStore((state) => state);
 
-  const sideboxes = addComponentsByZone('content', 'side', 'side', props.data, props.page);
-  const components = addComponentsByZone('content', 'component', 'content', props.data, props.page);
+  console.log('%cmirror layout', "font-size:16px;color:green", { props: props }, { context: context}, { layout: layout}, { widgets: widgets });
+
+  const sideboxes = addComponentsByZone('content', 'side', 'side', context, layout, widgets);
+  const components = addComponentsByZone('content', 'component', 'content', context, layout, widgets);
 
   console.log(components);
 

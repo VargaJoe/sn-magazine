@@ -2,12 +2,14 @@ import { Breadcrumb } from "../widgets/manual-list-breadcrumb";
 // import { SideMenu } from "../side-menu";
 import { addComponentsByZone } from '../utils/add-component';
 import { Link } from 'react-router-dom';
+import { useSnStore } from "../store/sn-store";
 
 export const WidePageTemplate = (props) => {
-  const context = props.data;
-  const layout = props.page;
-  const widgets = props.widget;
-  console.log('wide layout: ', props, context, layout, widgets );
+  // const context = props.data;
+  // const layout = props.page;
+  // const widgets = props.widget;
+  const {context, layout, widgets} = useSnStore((state) => state);
+  console.log('%cwide layout', "font-size:16px;color:green", { props: props }, { context: context}, { layout: layout}, { widgets: widgets });
 
   const components = addComponentsByZone('content', 'content', context, layout, widgets);
   console.log(components);

@@ -2,12 +2,14 @@ import { Breadcrumb } from "../widgets/manual-list-breadcrumb";
 import { MenuList } from "../widgets/manual-list-menu";
 import { addComponentsByZone } from '../utils/add-component';
 import { Link } from 'react-router-dom';
+import { useSnStore } from "../store/sn-store";
 
 export const ExploreLayout = (props) => {
-  const context = props.data;
-  const layout = props.page;
-  const widgets = props.widget;
-  console.log('explore layout: ', props, context, layout, widgets);
+  // const context = props.data;
+  // const layout = props.page;
+  // const widgets = props.widget;
+  const {context, layout, widgets} = useSnStore((state) => state);
+  console.log('%cexplore layout', "font-size:16px;color:green", { props: props }, { context: context}, { layout: layout}, { widgets: widgets });
 
   const sideboxes = addComponentsByZone('widgets', 'side', context, layout, widgets);
   const components = addComponentsByZone('widgets', 'content', context, layout, widgets);
@@ -101,7 +103,7 @@ export const ExploreLayout = (props) => {
         <div className="w3-row">
           {/* Left Column */}
           <div className="w3-col m3">
-            <MenuList data={props.data} page={props.page} widget={{
+            <MenuList data={null} page={null} widget={{
               ContextBinding: [ "currentcontext" ],
               ContentQuery: ".SORT:Name",
               ChildrenLevel: [ "child" ]

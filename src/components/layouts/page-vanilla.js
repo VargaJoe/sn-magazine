@@ -1,12 +1,14 @@
 // import { SideMenu } from "../side-menu";
 import { addComponentsByZone } from '../utils/add-component';
 import { Link } from 'react-router-dom';
+import { useSnStore } from "../store/sn-store";
 
 export const VanillaPageTemplate = (props) => {
-  const context = props.data;
-  const layout = props.page;
-  const widgets = props.widget;
-  console.log('vanilla layout: ', props, context, layout, widgets);
+  // const context = props.data;
+  // const layout = props.page;
+  // const widgets = props.widget;
+  const {context, layout, widgets} = useSnStore((state) => state);
+  console.log('%cvanilla layout', "font-size:16px;color:green", { props: props }, { context: context}, { layout: layout}, { widgets: widgets });
 
   const sideboxes = addComponentsByZone('widgets', 'side', context, layout, widgets);
   const components = addComponentsByZone('widgets', 'content', context, layout, widgets);

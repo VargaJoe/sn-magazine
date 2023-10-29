@@ -1,14 +1,16 @@
 import { addComponent } from '../utils/add-component';
 import { Helmet } from 'react-helmet-async';
+import { useSnStore } from "../store/sn-store";
 
 const DATA = require('../../config.json');
 const defaultImage = require('../../images/logo.png');
 
 export const LeisureErrorLayout = (props) => {
-  const context = props.data;
-  const layout = props.page;
-  const widgets = props.widget;
-  console.log('leisure-error layout: ', props, layout, widgets );
+  // const context = props.data;
+  // const layout = props.page;
+  // const widgets = props.widget;
+  const {context, layout, widgets} = useSnStore((state) => state);
+  console.log('%cleisure-error layout', "font-size:16px;color:green", { props: props }, { context: context}, { layout: layout}, { widgets: widgets });
   
   const components = addComponent('content', 'auto', 'missing', 1, context);
   console.log('leisure-error layout components', components);

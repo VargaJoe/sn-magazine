@@ -10,8 +10,7 @@ export const LeisureSimpleLayout = (props) => {
   // const layout = props.page;
   // const widgets = props.widget;
   const {context, layout, widgets} = useSnStore((state) => state);
-  console.log('%cleisureSimpleLayout', "font-size:16px;color:green");
-  console.log('leisure-simple layout: ', { props: props }, { context: context}, { layout: layout}, { widgets: widgets } );
+  console.log('%cleisure-simple layout', "font-size:16px;color:green", { props: props }, { context: context}, { layout: layout}, { widgets: widgets });
   
   const sideboxes = addComponentsByZone('widgets', 'side', null, layout, widgets);
   console.log('sideboxes');
