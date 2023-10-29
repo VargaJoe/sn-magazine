@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }) => {
 
 export const RepositoryProvider = ({ children }) => {
   const { oidcUser } = useOidcAuthentication();
-  const { login } = useOidcAuthentication();
+  // const { login } = useOidcAuthentication();
   
   if (!oidcUser) {
     return (

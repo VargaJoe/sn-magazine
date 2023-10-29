@@ -14,7 +14,7 @@ export const PageWrapper = (props) => {
   // const [context, setContext] = useState();
   const { context, setContext, setLayout, setPage, setWidgets } = useSnStore();
   const locationPath = location.pathname;
-  const path = locationPath.split('/');
+  // const path = locationPath.split('/');
   console.log('%cpageWrapper', "font-size:16px;color:green");
 
   const layoutContentType = process.env.REACT_APP_LAYOUT_TYPE || DATA.layoutType || "Layout";
