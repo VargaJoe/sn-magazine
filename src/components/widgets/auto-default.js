@@ -8,7 +8,7 @@ export function GenericWidget(props) {
   const {context, layout} = useSnStore((state) => state);
   const widget = props.widget;
   const bindedContext = BindedContext(props, true);
-  console.log('default widget', context.DisplayName, props, layout, context, widget);
+  console.log('default widget', bindedContext.content.DisplayName, props, layout, context, widget);
 
   return (
     // <div className="w3-col m9 w3-right">
@@ -17,7 +17,7 @@ export function GenericWidget(props) {
         <div className="w3-card w3-round w3-white">
         {ShowDebugInfo("default widget", context, layout, widget)}
           <div className="w3-container w3-padding">
-            <h1>{context.DisplayName}</h1>
+            <h1>{bindedContext.content.DisplayName}</h1>
             <table className="w3-table-all">
               <tbody>
                 <tr>
