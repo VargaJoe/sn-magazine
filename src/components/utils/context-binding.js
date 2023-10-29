@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRepository } from "@sensenet/hooks-react";
+import { useSnStore } from "../store/sn-store";
+
 
 const DATA = require('../../config.json');
 
@@ -13,7 +15,9 @@ export function BindedContext(props, withChildren) {
   
   console.log('bindedContext params', { props, withChildren });
   const widget = props.widget;
-  const context = props.data;
+  // const context = props.data;
+  const context = useSnStore((state) => state.context);
+
 
   const loadContents = useCallback(async () => {
     function getPreContextObj() {

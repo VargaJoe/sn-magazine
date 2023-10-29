@@ -2,6 +2,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useRepository } from '@sensenet/hooks-react';
 import { addComponent, addLayout } from './utils/add-component';
 import { useLocation } from 'react-router-dom';
+import { useSnStore } from "./store/sn-store";
+
 
 const DATA = require('../config.json');
 
@@ -9,7 +11,8 @@ export const PageWrapper = (props) => {
   const location = useLocation();
   const repo = useRepository();
   const [wrappercompo, setCompo] = useState([]);
-  const [context, setContext] = useState();
+  // const [context, setContext] = useState();
+  const { context, setContext } = useSnStore();
   const locationPath = location.pathname;
   const path = locationPath.split('/');
   console.log('%cpageWrapper', "font-size:16px;color:green");
@@ -69,7 +72,7 @@ export const PageWrapper = (props) => {
     };
 
     console.log('context type', context.Type);
-    if (context !== undefined && context.Type !== undefined && context.Type !== []) {
+    if (context !== undefined && context.Type !== undefined) {
       const query = pageQuery();
       const queryPath = `/Root/Content`;
       await repo.loadCollection({
@@ -88,7 +91,7 @@ export const PageWrapper = (props) => {
           const widgets = result.d.results.filter(pcnt => pcnt.ParentId === page.Id);
           const layout = page.PageTemplate === '' || page.PageTemplate === null ? "vanilla" : page.PageTemplate;
           console.log('selected page: ', result.d.results, page, widgets, layout );
-          const addedComponent = addComponent('layouts', 'page', layout, `page-${context.Id}`, context, page, widgets)
+          const addedComponent = addComponent('layouts', 'page', layout, `page-${context.Id}`, null, page, widgets)
           
           setCompo(addedComponent);
         } else {
@@ -118,7 +121,6 @@ export const PageWrapper = (props) => {
     }).then(result => {
       if (result?.d?.Type) {
         console.log('First level context:', result.d);
-        
         setContext(result.d);
       };
     })
@@ -132,7 +134,7 @@ export const PageWrapper = (props) => {
   }, [loadContent]);
 
   useEffect(() => {
-    if (context !== undefined && context !== []) {
+    if (context !== undefined && context.Type !== undefined) {
       loadPage();
     } else {
       console.warn('Skip page load useEffect');
