@@ -2,12 +2,14 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useRepository } from "@sensenet/hooks-react";
 import { addComponent } from '../utils/add-component';
 import ShowDebugInfo from "../utils/show-debuginfo"
+import { useSnStore } from "../store/sn-store";
 
 export function LeisureMangaTranslationContent(props) {
   const repo = useRepository();
   const [itemCollection, setCollection] = useState([]);
-  const layout = props.page;
-  let context = props.data;
+  // const layout = props.page;
+  // let context = props.data;
+  const {context, layout} = useSnStore((state) => state);
   const widget = props.widget;
 
   console.log('leisure manga translation content', props, context);

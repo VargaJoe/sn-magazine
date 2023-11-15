@@ -1,9 +1,11 @@
 import ShowDebugInfo from "../utils/show-debuginfo"
+import { useSnStore } from "../store/sn-store";
 
 export function GenericContent(props) {
   const componentName = 'generic content'
-  const layout = props.page;
-  let context = props.data;
+  // const layout = props.page;
+  // let context = props.data;
+  const {context, layout} = useSnStore((state) => state);
   const widget = props.widget;
   console.log(componentName, context.DisplayName, props, layout, context, widget);
 

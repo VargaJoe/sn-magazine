@@ -1,11 +1,13 @@
 import ShowDebugInfo from "../utils/show-debuginfo"
+import { useSnStore } from "../store/sn-store";
 
 export function Article(props) {
   const componentName = 'article'
   console.log(`%c${componentName}`, 'font-size:16px;color:green');
   console.log('article', props);
-  const layout = props.page;
-  let context = props.data;
+  // const layout = props.page;
+  // let context = props.data;
+  const {context, layout} = useSnStore((state) => state);
   const widget = props.widget;
 
   return (

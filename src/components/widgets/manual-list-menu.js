@@ -2,12 +2,14 @@ import React from 'react';
 import { Link } from "react-router-dom";
 import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
+import { useSnStore } from "../store/sn-store";
 
 export function MenuList(props) {
   console.log('%cmenu', 'font-size:16px;color:green');
   console.log('menu list', props);
-  const layout = props.page;
-  let context = props.data;
+  // const layout = props.page;
+  // let context = props.data;
+  const {context, layout} = useSnStore((state) => state);
   let widget = props.widget;  
   const bindedContext = BindedContext(props, true);
 
