@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import Moment from 'moment';
 import ShowDebugInfo from "../utils/show-debuginfo"
 import LazyImage from "../utils/lazyload-image";
+import { useSnStore } from "../store/sn-store";
 
 const DATA = require('../../config.json');
 
@@ -10,8 +11,9 @@ const DATA = require('../../config.json');
 export function CustomNewsItem(props) {
   console.log('gallery item');
   console.log(props);
-  const layout = props.page;
+  // const layout = props.page;
   const context = props.data;
+  const {layout} = useSnStore((state) => state);
   const widget = props.widget;
 
   // max words split by space, max sentences split by dot+space, choice should come from widget setting

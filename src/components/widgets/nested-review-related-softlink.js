@@ -1,10 +1,12 @@
 import ShowDebugInfo from "../utils/show-debuginfo"
+import { useSnStore } from "../store/sn-store";
 
 export function ReviewRelatedSoftLink(props) {
   console.log('folder component');
   console.log(props);
-  const layout = props.page;
+  // const layout = props.page;
   const context = props.data;
+  const {layout} = useSnStore((state) => state);
   const widget = props.widget;
 
   return (

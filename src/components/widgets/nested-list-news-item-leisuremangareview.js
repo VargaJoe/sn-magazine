@@ -2,13 +2,15 @@ import { Link } from "react-router-dom";
 import Moment from 'moment';
 import ShowDebugInfo from "../utils/show-debuginfo"
 import LazyImage from "../utils/lazyload-image";
+import { useSnStore } from "../store/sn-store";
 
 const DATA = require('../../config.json');
 
 export function NestedLeisureMangaReviewItem(props) {
   console.log('nestedLeisureMangaReviewItem', props);
-  const layout = props.page;
+  // const layout = props.page;
   const context = props.data;
+  const {layout} = useSnStore((state) => state);
   const widget = props.widget;
 
   const relativePath = context.Path.substr((process.env.REACT_APP_DATA_PATH || DATA.dataPath).length + 1);
