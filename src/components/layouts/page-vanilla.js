@@ -10,8 +10,8 @@ export const VanillaPageTemplate = (props) => {
   const {context, layout, widgets} = useSnStore((state) => state);
   console.log('%cvanilla layout', "font-size:16px;color:green", { props: props }, { context: context}, { layout: layout}, { widgets: widgets });
 
-  const sideboxes = addComponentsByZone('widgets', 'side', context, layout, widgets);
-  const components = addComponentsByZone('widgets', 'content', context, layout, widgets);
+  const sideboxes = addComponentsByZone('widgets', 'side', null, null, widgets);
+  const components = addComponentsByZone('widgets', 'content', null, null, widgets);
 
   console.log('vanilla layout sideboxes', sideboxes);
   console.log('vanilla layout components', components);

@@ -11,7 +11,7 @@ export const WidePageTemplate = (props) => {
   const {context, layout, widgets} = useSnStore((state) => state);
   console.log('%cwide layout', "font-size:16px;color:green", { props: props }, { context: context}, { layout: layout}, { widgets: widgets });
 
-  const components = addComponentsByZone('content', 'content', context, layout, widgets);
+  const components = addComponentsByZone('content', 'content', null, null, widgets);
   console.log(components);
 
   return (

@@ -102,7 +102,7 @@ export const ErrorLayout = (props) => {
                   </div>
                 </div>
               </div>
-             {addComponent('content', 'auto', 'missing', 1, context)}
+             {addComponent('content', 'auto', 'missing', 1, null)}
           </div>
           {/* End Middle Column */}
 
