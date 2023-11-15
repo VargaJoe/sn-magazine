@@ -3,32 +3,34 @@ import { useRepository } from "@sensenet/hooks-react";
 import { addComponent } from '../utils/add-component';
 import ShowDebugInfo from "../utils/show-debuginfo"
 import Moment from 'moment';
+import { useSnStore } from "../store/sn-store";
   
 export function NestedLeisureMangaTranslationItem(props) {
   const repo = useRepository();
   const [itemCollection, setCollection] = useState([]);
-  const layout = props.page;
+  // const layout = props.page;
   let context = props.data;
+  const {layout} = useSnStore((state) => state);
   const widget = props.widget;
   console.log('nestedLeisureMangaTranslationItem', props, context);
   
-  const loadContents = useCallback(async () => {
-    const result = await repo.loadCollection({
-      path: `/Root/Content/mangajanlo/manga`,
-      oDataOptions: {
-        query: `Translation:(${context.Id})`,
-        select: 'all'
-      },
-    });
-    if (result?.d?.results) {
-      console.log('manga with translation: ', result);
-      setCollection(result.d.results);
-    }
-  }, [context, repo]);
+  // const loadContents = useCallback(async () => {
+  //   const result = await repo.loadCollection({
+  //     path: `/Root/Content/mangajanlo/manga`,
+  //     oDataOptions: {
+  //       query: `Translation:(${context.Id})`,
+  //       select: 'all'
+  //     },
+  //   });
+  //   if (result?.d?.results) {
+  //     console.log('manga with translation: ', result);
+  //     setCollection(result.d.results);
+  //   }
+  // }, [context, repo]);
 
-  useEffect(() => {
-    loadContents();
-  }, [context, loadContents, repo]);
+  // useEffect(() => {
+  //   loadContents();
+  // }, [context, loadContents, repo]);
 
   return (
     // <div className="w3-col m9 w3-right">
