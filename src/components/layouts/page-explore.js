@@ -1,6 +1,6 @@
 import { Breadcrumb } from "../widgets/manual-list-breadcrumb";
 import { MenuList } from "../widgets/manual-list-menu";
-import { addComponentsByZone } from '../utils/add-component';
+import { ShowComponentsByZone } from '../utils/add-component';
 import { Link } from 'react-router-dom';
 import { useSnStore } from "../store/sn-store";
 
@@ -11,10 +11,14 @@ export const ExploreLayout = (props) => {
   const {context, layout, widgets} = useSnStore((state) => state);
   console.log('%cexplore layout', "font-size:16px;color:green", { props: props }, { context: context}, { layout: layout}, { widgets: widgets });
 
-  const sideboxes = addComponentsByZone('widgets', 'side', context, layout, widgets);
-  const components = addComponentsByZone('widgets', 'content', context, layout, widgets);
+  
+  //const sideboxes = ShowComponentsByZone('widgets', 'side', null, null, widgets);
+  // const components = ShowComponentsByZone('widgets', 'content', null, null, widgets);
+  const sideboxes = <ShowComponentsByZone type="widgets" zone="side" widgets={widgets} />
+  const components = <ShowComponentsByZone type="widgets" zone="content" widgets={widgets} />
+  
 
-  console.log('explore layout sideboxes', sideboxes);
+  // console.log('explore layout sideboxes', sideboxes);
   console.log('explore layout components', components);
 
   return (

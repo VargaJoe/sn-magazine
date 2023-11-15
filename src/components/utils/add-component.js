@@ -1,4 +1,6 @@
 import React, { lazy } from 'react';
+import { useSnStore } from "../store/sn-store";
+
 const DATA = require('../../config.json');
 
 const defaultComponent = 'default';
@@ -26,15 +28,28 @@ function importView(type, prefix, component) {
 
 export const addComponent = (type, prefix, component, id, context, page, widget) => {
   const View = importView(type, prefix, component);
-  // console.log('add component with uniqid: ', id);
+  // widgets can be top level or nested
+  // top level widgets usually get context from store
+  // nested widgets get context from parent widget
   return (
-      <View key={id} data={context} page={page} widget={widget} />
+      <View key={id} 
+      data={context} 
+      // page={page} 
+      widget={widget} />
   );
 };
 
-export const addComponentsByZone = (type, zone, context, page, widgets) => {
+export const addComponentsByZone = (type, zone, contextobs, page, widgets) => {
+  return ShowComponentsByZone(type, zone, contextobs, page, widgets);
+}
+
+// export const ShowComponentsByZone = (type, zone, contextobs, page, widgets) => {
+export const ShowComponentsByZone = ({ type, zone, contextobs, page, widgets }) => {
+  // if context is not present, use context from store, therefore it can not be a function 
+  const {context} = useSnStore((state) => state);
+
   if (!widgets || widgets.length === 0) {
-    console.log('add component by zone - widgets undefined: ', type, zone, context, page);
+    console.log('add component by zone - widgets undefined: ', {type: type}, {zone: zone}, {context: context}, {page: page});
     if (zone === null || zone === 'content') {
       return addComponent('content', 'auto', context.Type.toLowerCase(), `${type}-${zone}-err-${context.Id}`, null)
     } else {
