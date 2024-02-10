@@ -2,7 +2,7 @@
 import { addComponentsByZone } from '../utils/add-component';
 import { useSnStore } from "../store/sn-store";
 
-export const VanillaPageTemplate = (props) => {
+export const MirrorPageTemplate = (props) => {
   const {context, layout, widgets} = useSnStore((state) => state);
 
   console.log('%cmirror layout', "font-size:16px;color:green", { props: props }, { context: context}, { layout: layout}, { widgets: widgets });
@@ -149,4 +149,4 @@ export const VanillaPageTemplate = (props) => {
   );
 }
 
-export default VanillaPageTemplate;
+export default MirrorPageTemplate;
