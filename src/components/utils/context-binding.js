@@ -73,6 +73,7 @@ export function BindedContext(props, withChildren) {
       metadata: 'no'
     }
 
+    // WTF LOGIC IS THIS? contextObj vs widget?
     // when context is a smartfolder we must not use query as it would use InTree and smartfolder's own query would be busted
     if (contextObj.content.Type !== 'SmartFolder') {
       if (contextObj.level === undefined 
@@ -85,7 +86,10 @@ export function BindedContext(props, withChildren) {
         }
 
         // only first level children
-        options.query += `(${options.query} +InFolder:'${contextObj.contextPath}') Path:'${contextObj.contextPath}'`
+        options.query = `(${options.query} +InFolder:'${contextObj.contextPath}') Path:'${contextObj.contextPath}'`
+      } else if (contextObj.level === 'none') {
+        // get only current content
+        options.query = `+Path:'${contextObj.contextPath}'`
       } else if (contextObj.level === 'deep') {
         // get deep descendants
         options.query = widget.ContentQuery
