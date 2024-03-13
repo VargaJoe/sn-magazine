@@ -10,12 +10,11 @@ import { useSnStore } from "../store/sn-store";
 
 const DATA = require('../../config.json');
 
-export function CustomBookReviewView(props) {
+export function SimpleReviewWidget(props) {
+  console.log('%cSimpleReview', "font-size:16px;color:green", { props: props });
   const repo = useRepository();
   const [expContext, setExpContext] = useState([]);
   
-  console.log("contentcollection component");
-  console.log(props);
   // const layout = props.page;
   // let context = props.data;
   const {context, layout} = useSnStore((state) => state);
@@ -133,4 +132,4 @@ export function CustomBookReviewView(props) {
   );
 }
 
-export default CustomBookReviewView;
+export default SimpleReviewWidget;

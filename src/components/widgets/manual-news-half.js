@@ -6,9 +6,8 @@ import { useSnStore } from "../store/sn-store";
 
 // Todo: this component is flagged for deletion after next release
 
-export function HalfSizedNewsComponent(props) {
-  console.log('gallery component');
-  console.log(props);
+export function HalfSizedNewsWidget(props) {
+  console.log('%cHalfSizedNews', 'font-size:16px;color:green', { props: props });
   // const layout = props.page;
   // const context = props.data;
   const {context, layout} = useSnStore((state) => state);
@@ -34,4 +33,4 @@ export function HalfSizedNewsComponent(props) {
   );
 }
 
-export default HalfSizedNewsComponent
+export default HalfSizedNewsWidget;

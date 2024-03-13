@@ -5,8 +5,7 @@ import ShowDebugInfo from "../utils/show-debuginfo"
 import { useSnStore } from "../store/sn-store";
 
 export function LoginWidget(props) {
-  console.log('%clogin component', "font-size:16px;color:green");
-  console.log(props);
+  console.log('%cLogin', "font-size:16px;color:green", { props: props });
   // const layout = props.page;
   // const context = props.data;
   const widget = props.widget;

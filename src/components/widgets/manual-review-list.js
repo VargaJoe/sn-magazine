@@ -5,9 +5,8 @@ import BindedContext from "../utils/context-binding"
 import { useSnStore } from "../store/sn-store";
 
 // Todo: rename manual-list-review to be consistent
-export function ReviewListComponent(props) {
-  console.log('gallery component');
-  console.log(props);
+export function ReviewListWidget(props) {
+  console.log('%cReviewList', 'font-size:16px;color:green', { props: props });
   // const layout = props.page;
   // let context = props.data;
   const {context, layout} = useSnStore((state) => state);
@@ -35,4 +34,4 @@ export function ReviewListComponent(props) {
   );
 }
 
-export default ReviewListComponent
+export default ReviewListWidget;

@@ -6,6 +6,7 @@ import Moment from 'moment';
 import { useSnStore } from "../store/sn-store";
   
 export function NestedLeisureMangaTranslationItem(props) {
+  console.log('%cNestedLeisureMangaTranslationItem', "font-size:16px;color:green", { props: props });
   const repo = useRepository();
   const [itemCollection, setCollection] = useState([]);
   // const layout = props.page;

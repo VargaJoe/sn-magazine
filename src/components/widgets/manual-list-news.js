@@ -5,9 +5,8 @@ import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
 import { useSnStore } from "../store/sn-store";
 
-export function NewsListComponent(props) {
-  console.log('%cnewsList', "font-size:16px;color:green");
-  console.log('props', props);
+export function NewsListWidget(props) {
+  console.log('%cNewsList', "font-size:16px;color:green", { props: props });
   // const layout = props.page;
   // let context = props.data;
   const {context, layout} = useSnStore((state) => state);
@@ -41,4 +40,4 @@ export function NewsListComponent(props) {
   );
 }
 
-export default NewsListComponent
+export default NewsListWidget;

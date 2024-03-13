@@ -4,9 +4,8 @@ import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
 import { useSnStore } from "../store/sn-store";
 
-export function MenuList(props) {
-  console.log('%cmenu', 'font-size:16px;color:green');
-  console.log('menu list', props);
+export function MenuListWidget(props) {
+  console.log('%cMenuList', 'font-size:16px;color:green', { props: props });
   // const layout = props.page;
   // let context = props.data;
   const {context, layout} = useSnStore((state) => state);
@@ -43,4 +42,4 @@ export function MenuList(props) {
   );
 }
 
-export default MenuList;
+export default MenuListWidget;

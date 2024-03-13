@@ -1,9 +1,8 @@
 import ShowDebugInfo from "../utils/show-debuginfo"
 import { useSnStore } from "../store/sn-store";
 
-export function ReviewRelatedSoftLink(props) {
-  console.log('folder component');
-  console.log(props);
+export function NestedReviewRelatedSoftLink(props) {
+  console.log('%cNestedReviewRelatedSoftLink', 'font-size:16px;color:green', { props: props });
   // const layout = props.page;
   const context = props.data;
   const {layout} = useSnStore((state) => state);
@@ -33,4 +32,4 @@ export function ReviewRelatedSoftLink(props) {
   );
 }
 
-export default ReviewRelatedSoftLink
+export default NestedReviewRelatedSoftLink

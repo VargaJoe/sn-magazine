@@ -3,6 +3,7 @@ import BindedContext from "../utils/context-binding"
 import { useSnStore } from "../store/sn-store";
 
 export function GenericWidget(props) {
+  console.log('%cGeneric', 'font-size:16px;color:green', { props: props });
   // const layout = props.page;
   // let context = props.data;
   const {context, layout} = useSnStore((state) => state);

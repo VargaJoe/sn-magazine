@@ -1,5 +1,5 @@
-import { Breadcrumb } from "../widgets/manual-list-breadcrumb";
-import { MenuList } from "../widgets/manual-list-menu";
+import { BreadcrumbListWidget } from "../widgets/manual-list-breadcrumb";
+import { MenuListWidget } from "../widgets/manual-list-menu";
 import { ShowComponentsByZone } from '../utils/add-component';
 import { Link } from 'react-router-dom';
 import { useSnStore } from "../store/sn-store";
@@ -58,7 +58,7 @@ export const ExploreLayout = (props) => {
         <div className="w3-row">
           {/* Left Column */}
           <div className="w3-col m3">
-            <MenuList data={null} page={null} widget={{
+            <MenuListWidget data={null} page={null} widget={{
               ContextBinding: [ "currentcontext" ],
               ContentQuery: ".SORT:Name",
               ChildrenLevel: [ "child" ]
@@ -80,7 +80,7 @@ export const ExploreLayout = (props) => {
                 </div>
               </div>
             </div>
-            <Breadcrumb data={props.data} page={props.page} widget={{
+            <BreadcrumbListWidget data={props.data} page={props.page} widget={{
               ContextBinding: [ "currentcontext" ],
               ChildrenLevel: [ "child" ]
             }}/>

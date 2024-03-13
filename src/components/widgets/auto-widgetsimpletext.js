@@ -2,9 +2,7 @@ import ShowDebugInfo from "../utils/show-debuginfo"
 import { useSnStore } from "../store/sn-store";
 
 export function SimpletTextWidget(props) {
-  console.log('%csimpleTextWidget', "font-size:16px;color:green");
-  console.log('simpletext component');  
-  console.log(props);
+  console.log('%cSimpleText', "font-size:16px;color:green", { props: props });
   // const layout = props.page;
   // const context = props.data;
   const widget = props.widget;

@@ -1,9 +1,8 @@
 import ShowDebugInfo from "../utils/show-debuginfo"
 import { useSnStore } from "../store/sn-store";
 
-export function ReviewRelatedMangaTranslation(props) {
-  console.log('review related mangatranslation component');
-  console.log(props);
+export function NestedReviewRelatedMangaTranslation(props) {
+  console.log('%cNestedReviewRelatedMangaTranslation', 'font-size:16px;color:green', { props: props });
   // const layout = props.page;
   const context = props.data;
   const {layout} = useSnStore((state) => state);
@@ -49,4 +48,4 @@ export function ReviewRelatedMangaTranslation(props) {
   );
 }
 
-export default ReviewRelatedMangaTranslation
+export default NestedReviewRelatedMangaTranslation

@@ -8,9 +8,8 @@ const DATA = require('../../config.json');
 
 // Todo: this component is flagged for deletion after next release
 
-export function CustomNewsItem(props) {
-  console.log('gallery item');
-  console.log(props);
+export function NestedNewsItem(props) {
+  console.log('%cNestedNewsItem', "font-size:16px;color:green", { props: props });
   // const layout = props.page;
   const context = props.data;
   const {layout} = useSnStore((state) => state);
@@ -63,4 +62,4 @@ export function CustomNewsItem(props) {
   );
 }
 
-export default CustomNewsItem
+export default NestedNewsItem

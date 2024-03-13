@@ -7,10 +7,8 @@ import { useSnStore } from "../store/sn-store";
 const DATA = require('../../config.json');
 const defaultImage = require('../../images/logo.png');
 
-export function MenuWithLogo(props) {
-  console.log('%cmenuWithLogo', 'font-size:16px;color:green');
-  console.log('contentview sidemenu');
-  console.log(props);
+export function MenuWithLogoWidget(props) {
+  console.log('%cMenuWithLogo', 'font-size:16px;color:green', { props: props });
   // const layout = props.page;
   // let context = props.data;
   let widget = props.widget;  
@@ -79,4 +77,4 @@ export function MenuWithLogo(props) {
   );
 }
 
-export default MenuWithLogo;
+export default MenuWithLogoWidget;

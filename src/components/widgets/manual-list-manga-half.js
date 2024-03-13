@@ -4,10 +4,8 @@ import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
 import { useSnStore } from "../store/sn-store";
 
-export function HalfSizedMangaList(props) {
-  console.log('%chalfSizedMangaList', "font-size:16px;color:green");
-    
-  console.log('gallery component');
+export function HalfSizedMangaListWidget(props) {
+  console.log('%cHalfSizedMangaList', "font-size:16px;color:green", { props: props });
   // console.log(props);
   // const layout = props.page;
   // let context = props.data;
@@ -34,4 +32,4 @@ export function HalfSizedMangaList(props) {
   );
 }
 
-export default HalfSizedMangaList
+export default HalfSizedMangaListWidget;

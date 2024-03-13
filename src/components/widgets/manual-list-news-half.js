@@ -4,9 +4,8 @@ import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
 import { useSnStore } from "../store/sn-store";
 
-export function HalfSizedNewsList(props) {
-  console.log('%chalfSizedNewsList', "font-size:16px;color:green");
-  console.log('props', props);
+export function HalfSizedNewsListWidget(props) {
+  console.log('%cHalfSizedNewsList', "font-size:16px;color:green", { props: props });
   // const layout = props.page;
   // let context = props.data;
   const {context, layout} = useSnStore((state) => state);
@@ -33,4 +32,4 @@ export function HalfSizedNewsList(props) {
   );
 }
 
-export default HalfSizedNewsList
+export default HalfSizedNewsListWidget;

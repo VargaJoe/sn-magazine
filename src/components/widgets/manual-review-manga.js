@@ -11,11 +11,11 @@ import { useSnStore } from "../store/sn-store";
 const DATA = require('../../config.json');
 
 // Todo: rename manual-list-manga to be consistent
-export function CustomBookReviewView(props) {
+export function MangaReviewWidget(props) {
+  console.log('%cMangaReview', "font-size:16px;color:green", { props: props });
   const repo = useRepository();
   const [expContext, setExpContext] = useState([]);
   
-  console.log('%cmanual-review-manga', "font-size:16px;color:green", { props: props });
   // const layout = props.page;
   // let context = props.data;
   const {layout} = useSnStore((state) => state);
@@ -136,4 +136,4 @@ export function CustomBookReviewView(props) {
   );
 }
 
-export default CustomBookReviewView;
+export default MangaReviewWidget;

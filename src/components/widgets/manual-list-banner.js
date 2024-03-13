@@ -7,8 +7,7 @@ const DATA = require('../../config.json');
 const defaultImage = require('../../images/logo.png');
 
 export function BannerListWidget(props) {
-  console.log('%cbannerList', "font-size:16px;color:green");
-  // console.log(props);
+  console.log('%cBannerList', "font-size:16px;color:green", { props: props });
   // const layout = props.page;
   // let context = props.data;
   const {context, layout} = useSnStore((state) => state);

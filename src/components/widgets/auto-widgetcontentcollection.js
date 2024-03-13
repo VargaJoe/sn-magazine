@@ -4,9 +4,8 @@ import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
 import { useSnStore } from "../store/sn-store";
 
-export function ContentCollectionWidgetComponent(props) {
-  console.log('%ccontentcollection', 'font-size:16px;color:green');
-  console.log('contentcollection', props);
+export function ContentCollectionWidget(props) {
+  console.log('%cContentCollection', 'font-size:16px;color:green', { props: props });
   // const layout = props.page;
   // let context = props.data;
   const {context, layout} = useSnStore((state) => state);
@@ -41,4 +40,4 @@ export function ContentCollectionWidgetComponent(props) {
   );
 }
 
-export default ContentCollectionWidgetComponent
+export default ContentCollectionWidget

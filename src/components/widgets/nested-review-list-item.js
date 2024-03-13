@@ -6,9 +6,8 @@ import { useSnStore } from "../store/sn-store";
 
 const DATA = require('../../config.json');
 
-export function ReviewListItemComponent(props) {
-  console.log('gallery item');
-  console.log(props);
+export function NestedReviewListItemComponent(props) {
+  console.log('%NestedReviewListItemComponent', "font-size:16px;color:green", { props: props });
   // const layout = props.page;
   const context = props.data;  
   const {layout} = useSnStore((state) => state);
@@ -55,4 +54,4 @@ export function ReviewListItemComponent(props) {
   );
 }
 
-export default ReviewListItemComponent
+export default NestedReviewListItemComponent;

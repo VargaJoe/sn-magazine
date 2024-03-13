@@ -4,9 +4,8 @@ import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
 import { useSnStore } from "../store/sn-store";
 
-export function MangaList(props) {
-  console.log('gallery component');
-  console.log(props);
+export function MangaListWidget(props) {
+  console.log('%cMangaList', 'font-size:16px;color:green', { props: props });
   // const layout = props.page;
   // let context = props.data;
   const {context, layout} = useSnStore((state) => state);
@@ -34,4 +33,4 @@ export function MangaList(props) {
   );
 }
 
-export default MangaList
+export default MangaListWidget;
