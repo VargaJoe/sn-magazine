@@ -2,15 +2,16 @@ import React from 'react';
 import { Link } from "react-router-dom";
 import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
+import { useSnStore } from "../store/sn-store";
 
-export function MenuList(props) {
-  console.log('%cmenu', 'font-size:16px;color:green');
-  console.log('menu list', props);
-  const layout = props.page;
-  let context = props.data;
+export function MenuListWidget(props) {
+  console.log('%cMenuList', 'font-size:16px;color:green', { props: props });
+  // const layout = props.page;
+  // let context = props.data;
+  const {context, page, layout} = useSnStore((state) => state);
   let widget = props.widget;  
   const bindedContext = BindedContext(props, true);
-
+  
   const DATA = require('../../config.json');
   
   // if (itemCollection?.length === 0) {
@@ -18,7 +19,7 @@ export function MenuList(props) {
   // }
   return (
     <div className="w3-card w3-round w3-white w3-margin-bottom">
-      {ShowDebugInfo("side menu", context, layout, widget)}
+      {ShowDebugInfo("side menu", context, page, widget, layout)}
       <div className="w3-container">
         <h4 className="w3-center hidden">{widget.DisplayName}</h4>
         <hr className="no-margin"/>
@@ -41,4 +42,4 @@ export function MenuList(props) {
   );
 }
 
-export default MenuList;
+export default MenuListWidget;

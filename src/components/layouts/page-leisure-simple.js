@@ -1,21 +1,22 @@
 import { addComponentsByZone } from '../utils/add-component';
 import { Helmet } from 'react-helmet-async';
+import { useSnStore } from "../store/sn-store";
 
 const DATA = require('../../config.json');
 const defaultImage = require('../../images/logo.png');
 
 export const LeisureSimpleLayout = (props) => {
-  const context = props.data;
-  const layout = props.page;
-  const widgets = props.widget;
-  console.log('%cleisureSimpleLayout', "font-size:16px;color:green");
-  console.log('leisure-simple layout: ', props, context, layout, widgets );
+  // const context = props.data;
+  // const layout = props.page;
+  // const widgets = props.widget;
+  const {context, layout, widgets} = useSnStore((state) => state);
+  console.log('%cleisure-simple layout', "font-size:16px;color:green", { props: props }, { context: context}, { layout: layout}, { widgets: widgets });
   
-  const sideboxes = addComponentsByZone('widgets', 'side', context, layout, widgets);
+  const sideboxes = addComponentsByZone('widgets', 'side', null, null, widgets);
   console.log('sideboxes');
   console.log(sideboxes);
 
-  const components = addComponentsByZone('widgets', 'content', context, layout, widgets);
+  const components = addComponentsByZone('widgets', 'content', null, null, widgets);
   console.log('components');
   console.log(components);
 

@@ -2,12 +2,13 @@ import React from 'react';
 import { Link } from "react-router-dom";
 import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
+import { useSnStore } from "../store/sn-store";
 
-export function Breadcrumb(props) {
-  console.log('%cbreadcrumb', 'font-size:16px;color:green');
-  console.log('breadcrumb', props);
-  const layout = props.page;
-  let context = props.data;
+export function BreadcrumbListWidget(props) {
+  console.log('%cBreadcrumbList', 'font-size:16px;color:green', { props: props });
+  // const layout = props.page;
+  // let context = props.data;
+  const {context, page, layout} = useSnStore((state) => state);
   let widget = props.widget;  
   const bindedContext = BindedContext(props, true);
 
@@ -44,7 +45,7 @@ export function Breadcrumb(props) {
     <div className="w3-row-padding w3-margin-bottom">
       <div className="w3-col m12">
         <div className="w3-card w3-round w3-white">
-          {ShowDebugInfo("side menu", context, layout, widget)}
+          {ShowDebugInfo("side menu", context, page, widget, layout)}
           <div className="w3-container w3-padding">
             <h4 className="w3-center hidden">{widget.DisplayName}</h4>
             <hr className="no-margin"/>
@@ -62,4 +63,4 @@ export function Breadcrumb(props) {
   );
 }
 
-export default Breadcrumb;
+export default BreadcrumbListWidget;

@@ -2,23 +2,29 @@ import { Link } from "react-router-dom";
 import Moment from 'moment';
 import ShowDebugInfo from "../utils/show-debuginfo"
 import LazyImage from "../utils/lazyload-image";
+import { useSnStore } from "../store/sn-store";
 
 const DATA = require('../../config.json');
 
-export function ReviewListItemComponent(props) {
-  console.log('gallery item');
-  console.log(props);
-  const layout = props.page;
-  const context = props.data;
+export function NestedReviewListItemComponent(props) {
+  console.log('%NestedReviewListItemComponent', "font-size:16px;color:green", { props: props });
+  // const layout = props.page;
+  const context = props.data;  
+  const {page, layout} = useSnStore((state) => state);
   const widget = props.widget;
 
   const relativePath = context.Path.substr((process.env.REACT_APP_DATA_PATH || DATA.dataPath).length + 1);
+
+  if ( context === undefined || context === null) {
+    return (<div>loading</div>)
+  }
+
   return (
     // <div className="w3-col m9">
       <div className="w3-row-padding w3-margin-bottom w3-left gallery-item">
         <div className="w3-col">
           <div className="w3-card w3-round w3-white">
-          {ShowDebugInfo("gallery item", context, layout, widget)}
+          {ShowDebugInfo("gallery item", context, page, widget, layout)}
             <div className="w3-container w3-padding">
               {/* <h1>{props.data.DisplayName}</h1> */}
               <div className="context-info">
@@ -26,7 +32,7 @@ export function ReviewListItemComponent(props) {
                   {/* <svg width="200px" height="200px" > */}
                     {/* <img src={DATA.apiUrl + context.Path + '/cover.jpg'} alt={context.DisplayName} className="w3-hover-opacity w3-col"/> */}
                     {/* <img src={DATA.apiUrl + DATA.dataPath + '/(structure)/Site/sample.png'} alt={context.DisplayName} className="w3-hover-opacity w3-col"/> */}
-                      <LazyImage src={(process.env.REACT_APP_API_URL || DATA.apiUrl) + context.Image.Url} alt={context.DisplayName} className="w3-hover-opacity w3-col"/>
+                      <LazyImage src={(process.env.REACT_APP_API_URL || DATA.apiUrl) + context.Image?.Url} alt={context.DisplayName} className="w3-hover-opacity w3-col"/>
                   {/* </svg> */}
                     <div className="w3-container w3-white list-box-title">
                         <p>
@@ -48,4 +54,4 @@ export function ReviewListItemComponent(props) {
   );
 }
 
-export default ReviewListItemComponent
+export default NestedReviewListItemComponent;

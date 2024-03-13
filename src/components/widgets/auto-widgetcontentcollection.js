@@ -2,12 +2,13 @@ import React from 'react';
 import { addComponent } from '../utils/add-component';
 import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
+import { useSnStore } from "../store/sn-store";
 
-export function ContentCollectionWidgetComponent(props) {
-  console.log('%ccontentcollection', 'font-size:16px;color:green');
-  console.log('contentcollection', props);
-  const layout = props.page;
-  let context = props.data;
+export function ContentCollectionWidget(props) {
+  console.log('%cContentCollection', 'font-size:16px;color:green', { props: props });
+  // const layout = props.page;
+  // let context = props.data;
+  const {context, page, layout} = useSnStore((state) => state);
   const widget = props.widget;
   const bindedContext = BindedContext(props, true);
   console.log('widget', widget)
@@ -19,7 +20,7 @@ export function ContentCollectionWidgetComponent(props) {
       <div className="w3-row-padding w3-margin-bottom">
         <div className="w3-col m12">
           <div className="w3-card w3-round w3-white">
-            {ShowDebugInfo("content collection widget", context, layout, widget)}
+            {ShowDebugInfo("content collection widget", context, page, widget, layout)}
             <div className="w3-container w3-padding">
             <h2>{widgetTitle}</h2>
               <div className="context-info">
@@ -39,4 +40,4 @@ export function ContentCollectionWidgetComponent(props) {
   );
 }
 
-export default ContentCollectionWidgetComponent
+export default ContentCollectionWidget

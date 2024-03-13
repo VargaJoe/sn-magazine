@@ -2,16 +2,17 @@ import { Link } from "react-router-dom";
 import Moment from 'moment';
 import ShowDebugInfo from "../utils/show-debuginfo"
 import LazyImage from "../utils/lazyload-image";
+import { useSnStore } from "../store/sn-store";
 
 const DATA = require('../../config.json');
 
 // Todo: this component is flagged for deletion after next release
 
-export function CustomNewsItem(props) {
-  console.log('gallery item');
-  console.log(props);
-  const layout = props.page;
+export function NestedNewsItem(props) {
+  console.log('%cNestedNewsItem', "font-size:16px;color:green", { props: props });
+  // const layout = props.page;
   const context = props.data;
+  const {page, layout} = useSnStore((state) => state);
   const widget = props.widget;
 
   // max words split by space, max sentences split by dot+space, choice should come from widget setting
@@ -40,7 +41,7 @@ export function CustomNewsItem(props) {
       <div className="w3-row-padding w3-margin-bottom w3-left w3-block m1 news-item">
         <div className="w3-col">
           <div className="w3-card w3-round w3-white">
-          {ShowDebugInfo("news item", context, layout, widget)}
+          {ShowDebugInfo("news item", context, page, widget, layout)}
             <div className="w3-container w3-padding">
               <div className="w3-padding-16">
                 <Link key={`news-item-${context.Id}`} to={'/' + relativePath} className="no-score">
@@ -61,4 +62,4 @@ export function CustomNewsItem(props) {
   );
 }
 
-export default CustomNewsItem
+export default NestedNewsItem
