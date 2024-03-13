@@ -30,6 +30,12 @@
   align-items: stretch;
 }
 
+@media screen and (max-width: 1024px) {
+  .layout-container {
+    flex-direction: column;
+  }
+}
+
 .layout-middle {
   display: flex;
   flex-wrap: wrap;
