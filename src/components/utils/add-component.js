@@ -65,7 +65,7 @@ export const ShowComponentsByZone = (type, zone, contextobs, page, widgets) => {
       const prefix = (isAuto) ? "auto" : "manual";
       console.log('add component by zone - widget: ', type, zone, context, page, child, compoType);
       // return addComponent(type, prefix, compoType.toLowerCase(), `${type}-${zone}-${context?.Id}-${child.Id}`, null, null, child);
-      return addComponent(type, prefix, compoType.toLowerCase(), `${type}-${zone}-0-${child.Id}`, null, null, child);
+      return addComponent(type, prefix, compoType.toLowerCase(), `${type}-${zone}-0`, null, null, child);
     })
   );
 };
