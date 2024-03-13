@@ -1,15 +1,17 @@
 // import { SideMenu } from "../side-menu";
 import { addComponentsByZone } from '../utils/add-component';
+import { useSnStore } from "../store/sn-store";
 
 export const DoublePageTemplate = (props) => {
-  const context = props.data;
-  const layout = props.page;
-  const widgets = props.widget;
-  console.log('double layout: ', props, context, layout, widgets);
+  // const context = props.data;
+  // const layout = props.page;
+  // const widgets = props.widget;
+  const {context, layout, widgets} = useSnStore((state) => state);
+  console.log('%cdouble layout', "font-size:16px;color:green", { props: props }, { context: context}, { layout: layout}, { widgets: widgets });
 
-  const leftsideboxes = addComponentsByZone('widgets', 'side', context, layout, widgets);
-  const components = addComponentsByZone('widgets', 'content', context, layout, widgets);
-  const rightsideboxes = addComponentsByZone('widgets', 'right', context, layout, widgets);
+  const leftsideboxes = addComponentsByZone('widgets', 'side', null, null, widgets);
+  const components = addComponentsByZone('widgets', 'content', null, null, widgets);
+  const rightsideboxes = addComponentsByZone('widgets', 'right', null, null, widgets);
 
   console.log(components);
 

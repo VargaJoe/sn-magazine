@@ -1,6 +1,7 @@
 import React from 'react';
 import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
+import { useSnStore } from "../store/sn-store";
 
 const DATA = require('../../config.json');
 const defaultImage = require('../../images/logo.png');
@@ -8,8 +9,9 @@ const defaultImage = require('../../images/logo.png');
 export function TestWidget(props) {
   console.log('test list widget');
   console.log(props);
-  const layout = props.page;
+  // const layout = props.page;
   // let context = props.data;
+  const {layout} = useSnStore((state) => state);
   const widget = props.widget;
   
   // binded context could be result back with all widget variables contet, children, widget, layout

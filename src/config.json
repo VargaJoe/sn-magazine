@@ -1,5 +1,7 @@
 {
-	"apiUrl" : 				"https://joe.sensenet.cloud",
+	"apiUrl" : 				"https://eddie.sensenet.cloud",
+	"authUrl" : 			"https://eddie-is.sensenet.cloud",
+	"clientId": 			"AWahlJ7aLQPuDUAC",
 	"dataPath" :			"/Root/Content/SampleWorkspace",
 	"pagecontainerPath": 	"/Root/Content/(layout)",
 	"layoutType": 			"Layout",
