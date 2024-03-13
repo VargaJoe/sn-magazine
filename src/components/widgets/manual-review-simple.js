@@ -106,7 +106,7 @@ export function SimpleReviewWidget(props) {
     <div className="w3-row-padding w3-margin-bottom">
       <div className="w3-col m12">
         <div className="w3-card w3-round w3-white">
-        {ShowDebugInfo("book review widget", bindedcontext, page, widget, layout)}
+        {ShowDebugInfo("book review widget", bindedContext, page, widget, layout)}
           <div className="w3-container w3-padding article-full">
             <h1>
               {bindedContext.content.DisplayName} 

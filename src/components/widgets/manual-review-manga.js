@@ -107,7 +107,7 @@ export function MangaReviewWidget(props) {
     <div className="w3-row-padding w3-margin-bottom">
       <div className="w3-col m12">
         <div className="w3-card w3-round w3-white">
-        {ShowDebugInfo("manga review widget", bindedcontext, page, widget, layout)}
+        {ShowDebugInfo("manga review widget", bindedContext, page, widget, layout)}
           <div className="w3-container w3-padding article-full">
             <h1>
               {bindedContext.content.DisplayName} 
