@@ -10,7 +10,7 @@ export function BannerListWidget(props) {
   console.log('%cBannerList', "font-size:16px;color:green", { props: props });
   // const layout = props.page;
   // let context = props.data;
-  const {context, layout} = useSnStore((state) => state);
+  const {context, page, layout} = useSnStore((state) => state);
   let widget = props.widget;
   const bindedContext = BindedContext(props, true);
   
@@ -29,7 +29,7 @@ export function BannerListWidget(props) {
 
   return (
     <div className="w3-card w3-round w3-white w3-margin-bottom">
-      {ShowDebugInfo("side menu with logo", context, layout, widget)}
+      {ShowDebugInfo("banner list", context, page, widget, layout)}
       <div className="w3-container">
         <div className="side-menu-uppercase">
           {bindedContext.children?.map((child) => {

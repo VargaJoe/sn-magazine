@@ -9,14 +9,14 @@ export function LoginWidget(props) {
   // const layout = props.page;
   // const context = props.data;
   const widget = props.widget;
-  const {context, layout} = useSnStore((state) => state);
+  const {context, page, layout} = useSnStore((state) => state);
 
   const { oidcUser, login, logout } = useOidcAuthentication();
   const button = oidcUser ? <button onClick={logout}>Logout</button> : <button onClick={login}>Login</button>;
 
   return (
     <div className="w3-card w3-round w3-white w3-margin-bottom">
-    {ShowDebugInfo("side menu with logo", context, layout, widget)}
+    {ShowDebugInfo("login", context, page, widget, layout)}
     <div className="w3-container">
       <div className="side-menu-uppercase">
         <p>

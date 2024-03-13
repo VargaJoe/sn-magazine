@@ -9,7 +9,7 @@ export function ReviewListWidget(props) {
   console.log('%cReviewList', 'font-size:16px;color:green', { props: props });
   // const layout = props.page;
   // let context = props.data;
-  const {context, layout} = useSnStore((state) => state);
+  const {context, page, layout} = useSnStore((state) => state);
   const widget = props.widget;
   const bindedContext = BindedContext(props, true);
 
@@ -18,7 +18,7 @@ export function ReviewListWidget(props) {
       <div className="w3-row-padding w3-margin-bottom">
         <div className="w3-col m12">
           <div className="w3-card w3-round w3-white">
-            {ShowDebugInfo("gallery widget", context, layout, widget)}
+            {ShowDebugInfo("gallery widget", context, page, widget, layout)}
             <div className="w3-container w3-padding">
             <h1>{context.DisplayName}</h1>
               <div className="review-cards">

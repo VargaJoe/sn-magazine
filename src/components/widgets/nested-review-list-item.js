@@ -10,7 +10,7 @@ export function NestedReviewListItemComponent(props) {
   console.log('%NestedReviewListItemComponent', "font-size:16px;color:green", { props: props });
   // const layout = props.page;
   const context = props.data;  
-  const {layout} = useSnStore((state) => state);
+  const {page, layout} = useSnStore((state) => state);
   const widget = props.widget;
 
   const relativePath = context.Path.substr((process.env.REACT_APP_DATA_PATH || DATA.dataPath).length + 1);
@@ -24,7 +24,7 @@ export function NestedReviewListItemComponent(props) {
       <div className="w3-row-padding w3-margin-bottom w3-left gallery-item">
         <div className="w3-col">
           <div className="w3-card w3-round w3-white">
-          {ShowDebugInfo("gallery item", context, layout, widget)}
+          {ShowDebugInfo("gallery item", context, page, widget, layout)}
             <div className="w3-container w3-padding">
               {/* <h1>{props.data.DisplayName}</h1> */}
               <div className="context-info">

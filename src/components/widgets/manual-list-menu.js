@@ -8,10 +8,10 @@ export function MenuListWidget(props) {
   console.log('%cMenuList', 'font-size:16px;color:green', { props: props });
   // const layout = props.page;
   // let context = props.data;
-  const {context, layout} = useSnStore((state) => state);
+  const {context, page, layout} = useSnStore((state) => state);
   let widget = props.widget;  
   const bindedContext = BindedContext(props, true);
-
+  
   const DATA = require('../../config.json');
   
   // if (itemCollection?.length === 0) {
@@ -19,7 +19,7 @@ export function MenuListWidget(props) {
   // }
   return (
     <div className="w3-card w3-round w3-white w3-margin-bottom">
-      {ShowDebugInfo("side menu", context, layout, widget)}
+      {ShowDebugInfo("side menu", context, page, widget, layout)}
       <div className="w3-container">
         <h4 className="w3-center hidden">{widget.DisplayName}</h4>
         <hr className="no-margin"/>

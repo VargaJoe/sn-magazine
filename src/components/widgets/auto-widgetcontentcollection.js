@@ -8,7 +8,7 @@ export function ContentCollectionWidget(props) {
   console.log('%cContentCollection', 'font-size:16px;color:green', { props: props });
   // const layout = props.page;
   // let context = props.data;
-  const {context, layout} = useSnStore((state) => state);
+  const {context, page, layout} = useSnStore((state) => state);
   const widget = props.widget;
   const bindedContext = BindedContext(props, true);
   console.log('widget', widget)
@@ -20,7 +20,7 @@ export function ContentCollectionWidget(props) {
       <div className="w3-row-padding w3-margin-bottom">
         <div className="w3-col m12">
           <div className="w3-card w3-round w3-white">
-            {ShowDebugInfo("content collection widget", context, layout, widget)}
+            {ShowDebugInfo("content collection widget", context, page, widget, layout)}
             <div className="w3-container w3-padding">
             <h2>{widgetTitle}</h2>
               <div className="context-info">

@@ -11,7 +11,7 @@ export function NestedLeisureMangaTranslationItem(props) {
   const [itemCollection, setCollection] = useState([]);
   // const layout = props.page;
   let context = props.data;
-  const {layout} = useSnStore((state) => state);
+  const {page, layout} = useSnStore((state) => state);
   const widget = props.widget;
   console.log('nestedLeisureMangaTranslationItem', props, context);
   
@@ -38,7 +38,7 @@ export function NestedLeisureMangaTranslationItem(props) {
     <div className="w3-row-padding w3-margin-bottom w3-left w3-block">
       <div className="w3-col">
         <div className="w3-card w3-round w3-white">
-        {ShowDebugInfo("leisure manga translation news item", context, layout, widget)}
+        {ShowDebugInfo("leisure manga translation news item", context, page, widget, layout)}
           <div className="w3-container w3-padding">
             <div className="w3-padding-16 w3-clear">
                 {/* <Link key={`news-item-${context.Id}`} to={'/' + relativePath} className="no-score"> */}

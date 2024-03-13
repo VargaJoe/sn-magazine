@@ -9,7 +9,7 @@ export function NewsListWidget(props) {
   console.log('%cNewsList', "font-size:16px;color:green", { props: props });
   // const layout = props.page;
   // let context = props.data;
-  const {context, layout} = useSnStore((state) => state);
+  const {context, page, layout} = useSnStore((state) => state);
   let widget = props.widget;
   
   // binded context could be result back with all widget variables contet, children, widget, layout
@@ -20,7 +20,7 @@ export function NewsListWidget(props) {
     // <div className="w3-col m12 w3-right">
         <div className="w3-margin-bottom w3-col m12 news-padding">
           <div className="w3-card w3-round w3-white">
-          {ShowDebugInfo("news widget", context, layout, widget)}
+          {ShowDebugInfo("news widget", context, page, widget, layout)}
             <div className="w3-container w3-padding component-news-half">
             <h3>{bindedContext?.content?.DisplayName}</h3>
               <div className="news-cards">

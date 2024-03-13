@@ -13,7 +13,7 @@ const MemoList = (props) => {
 
   // const layout = props.page;
   // let context = bindedContext.content;
-  const {context, layout} = useSnStore((state) => state);
+  const {context, page, layout} = useSnStore((state) => state);
   const widget = props.widget;
   const contextPath = context.Path;
   console.log(componentName, context.DisplayName, props, layout, context, widget);
@@ -52,7 +52,7 @@ const MemoList = (props) => {
         <div className="w3-row-padding">
           <div className="w3-col m12">
             <div className="w3-card w3-round w3-white w3-margin-bottom">
-              {ShowDebugInfo(componentName, context, layout, widget)}
+              {ShowDebugInfo(componentName, context, page, widget, layout)}
             </div>
 
             <div className="w3-card w3-round w3-white">

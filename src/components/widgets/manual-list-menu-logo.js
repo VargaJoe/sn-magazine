@@ -12,7 +12,7 @@ export function MenuWithLogoWidget(props) {
   // const layout = props.page;
   // let context = props.data;
   let widget = props.widget;  
-  const {context, layout} = useSnStore((state) => state);
+  const {context, page, layout} = useSnStore((state) => state);
   const bindedContext = BindedContext(props, true);
   
   let logoPath = process.env.REACT_APP_LOGO_PATH || DATA.siteLogo;
@@ -44,7 +44,7 @@ export function MenuWithLogoWidget(props) {
   // }
   return (
     <div className="w3-card w3-round w3-white w3-margin-bottom">
-      {ShowDebugInfo("side menu with logo", context, layout, widget)}
+      {ShowDebugInfo("menu with logo", context, page, widget, layout)}
       <div className="w3-container">
       <h4 className="w3-center hidden">{widget.DisplayName}</h4>
       <Link to={'/'}>

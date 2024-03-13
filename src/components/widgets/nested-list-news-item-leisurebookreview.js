@@ -10,7 +10,7 @@ export function NestedLeisureBookReviewItem(props) {
   console.log('%cNestedLeisureBookReviewItem', "font-size:16px;color:green", { props: props })
   // const layout = props.page;
   const context = props.data;
-  const {layout} = useSnStore((state) => state);
+  const {page, layout} = useSnStore((state) => state);
   const widget = props.widget;
 
   const relativePath = context.Path.substr((process.env.REACT_APP_DATA_PATH || DATA.dataPath).length + 1);
@@ -39,7 +39,7 @@ export function NestedLeisureBookReviewItem(props) {
       <div className="w3-row-padding w3-margin-bottom w3-left w3-block m1 news-item">
         <div className="w3-col">
           <div className="w3-card w3-round w3-white">
-          {ShowDebugInfo("leisure manga review news item", context, layout, widget)}
+          {ShowDebugInfo("leisure manga review news item", context, page, widget, layout)}
             <div className="w3-container w3-padding">
               <div className="w3-padding-16">
                 <Link key={`news-item-${context.Id}`} to={'/' + relativePath} className="no-score">

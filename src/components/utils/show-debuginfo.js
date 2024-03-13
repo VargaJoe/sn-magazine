@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
 
-const ShowDebugInfo = (title, context, currentPage, widget, bindedContext) => {
+const ShowDebugInfo = (title, context, currentPage, widget, layout) => {
   const [showDebug, setDebug] = useState(false);
   const handleToggle = () => {
     setDebug(!showDebug);
@@ -76,7 +76,7 @@ const ShowDebugInfo = (title, context, currentPage, widget, bindedContext) => {
     }
   }
 
-  function showPageInfo(currentPage) {
+  function showPageInfo(currentPage, layout) {
     if (currentPage !== undefined) {
       return (
         <ul>
@@ -88,6 +88,9 @@ const ShowDebugInfo = (title, context, currentPage, widget, bindedContext) => {
           </li>
           <li>
             Page Path: <span>{currentPage?.Path}</span>
+          </li>
+          <li>
+            Layout: <span>{layout}</span>
           </li>
           <li>
             <hr />
@@ -148,7 +151,7 @@ const ShowDebugInfo = (title, context, currentPage, widget, bindedContext) => {
         <hr/>
         {showContextInfo(context)}
         {showWorkspaceInfo(context)}
-        {showPageInfo(currentPage)}
+        {showPageInfo(currentPage, layout)}
         {showWidgetInfo(widget)}
       </div>
     </div>

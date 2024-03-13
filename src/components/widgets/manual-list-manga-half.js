@@ -9,7 +9,7 @@ export function HalfSizedMangaListWidget(props) {
   // console.log(props);
   // const layout = props.page;
   // let context = props.data;
-  const {context, layout} = useSnStore((state) => state);
+  const {context, page, layout} = useSnStore((state) => state);
   let widget = props.widget;
   const bindedContext = BindedContext(props, true);
 
@@ -17,7 +17,7 @@ export function HalfSizedMangaListWidget(props) {
     // <div className="w3-col m9 w3-right">
         <div className="w3-margin-bottom w3-col m6 news-padding">
           <div className="w3-card w3-round w3-white">
-            {ShowDebugInfo("half size news widget", context, layout, widget)}
+            {ShowDebugInfo("half size news widget", context, page, widget, layout)}
             <div className="w3-container w3-padding component-news-half">
             <h3>{bindedContext?.content?.DisplayName}</h3>
               <div className="news-cards">
