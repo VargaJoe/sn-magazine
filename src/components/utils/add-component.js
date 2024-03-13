@@ -1,4 +1,6 @@
 import React, { lazy } from 'react';
+import { useSnStore } from "../store/sn-store";
+
 const DATA = require('../../config.json');
 
 const defaultComponent = 'default';
@@ -26,17 +28,30 @@ function importView(type, prefix, component) {
 
 export const addComponent = (type, prefix, component, id, context, page, widget) => {
   const View = importView(type, prefix, component);
-  // console.log('add component with uniqid: ', id);
+  // widgets can be top level or nested
+  // top level widgets usually get context from store
+  // nested widgets get context from parent widget
   return (
-      <View key={id} data={context} page={page} widget={widget} />
+      <View key={id} 
+      data={context} 
+      // page={page} 
+      widget={widget} />
   );
 };
 
-export const addComponentsByZone = (type, zone, context, page, widgets) => {
-  if (widgets === undefined) {
-    console.log('add component by zone - widgets undefined: ', type, zone, context, page);
+export const addComponentsByZone = (type, zone, contextobs, page, widgets) => {
+  return ShowComponentsByZone(type, zone, contextobs, page, widgets);
+}
+
+export const ShowComponentsByZone = (type, zone, contextobs, page, widgets) => {
+// export const ShowComponentsByZone = ({ type, zone, contextobs, page, widgets }) => {
+  // if context is not present, use context from store, therefore it can not be a function 
+  const {context} = useSnStore((state) => state);
+
+  if (!widgets || widgets.length === 0) {
+    console.log('add component by zone - widgets undefined: ', {type: type}, {zone: zone}, {context: context}, {page: page});
     if (zone === null || zone === 'content') {
-      return addComponent('content', 'auto', context.Type.toLowerCase(), `${type}-${zone}-err-${context.Id}`, context)
+      return addComponent('content', 'auto', context.Type.toLowerCase(), `${type}-${zone}-err-${context.Id}`, null)
     } else {
       return null;
     }
@@ -49,20 +64,25 @@ export const addComponentsByZone = (type, zone, context, page, widgets) => {
       const compoType = isAuto ? child.Type : child.ClientComponent;
       const prefix = (isAuto) ? "auto" : "manual";
       console.log('add component by zone - widget: ', type, zone, context, page, child, compoType);
-      return addComponent(type, prefix, compoType.toLowerCase(), `${type}-${zone}-${context.Id}-${child.Id}`, context, page, child);
+      // return addComponent(type, prefix, compoType.toLowerCase(), `${type}-${zone}-${context?.Id}-${child.Id}`, null, null, child);
+      return addComponent(type, prefix, compoType.toLowerCase(), `${type}-${zone}-0-${child.Id}`, null, null, child);
     })
   );
 };
 
-export const addLayout = (context) => {
-  if (DATA.autoLayout[context.Type] !== undefined) {
-    return addComponent('layouts', 'page', DATA.autoLayout[context.Type], `page-${context.Id}`, context);
-  } else if (context.IsFolder && DATA.autoLayout.isFolder !== undefined) {
-    return addComponent('layouts', 'page', DATA.autoLayout.isFolder, `page-${context.Id}`, context);
-  } else if (!context.IsFolder && DATA.autoLayout.notFolder !== undefined) {
-    return addComponent('layouts', 'page', DATA.autoLayout.notFolder, `page-${context.Id}`, context);
-  } else {
-    return addComponent('layouts', 'page', "explore", `page-${context.Id}`, context);
+export const addLayout = (contextAsWidget, setLayout) => {
+  let layout = 'explore';
+
+  if (DATA.autoLayout[contextAsWidget.Type] !== undefined) {
+    layout = DATA.autoLayout[contextAsWidget.Type];
+  } else if (contextAsWidget.IsFolder && DATA.autoLayout.isFolder !== undefined) {
+    layout = DATA.autoLayout.isFolder;
+  } else if (!contextAsWidget.IsFolder && DATA.autoLayout.notFolder !== undefined) {
+    layout = DATA.autoLayout.notFolder;
   }
+
+  console.log(`add ${layout} layout`, { type: contextAsWidget.Type }, { isFolder: contextAsWidget.IsFolder }, { setting: layout });
+  setLayout(layout);
+  return addComponent('layouts', 'page', layout, `page-0`, contextAsWidget);
 };
 

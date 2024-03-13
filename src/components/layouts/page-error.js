@@ -1,13 +1,10 @@
-import { addComponentsByZone } from '../utils/add-component';
 import { addComponent } from '../utils/add-component';
+import { useSnStore } from "../store/sn-store";
 
 export const ErrorLayout = (props) => {
-  console.log('pagetemplate: wide');
-  console.log(props);
-  const context = props.context;
-  const layout = props.layout;
-  const widgets = props.widget;
-
+  // const context = props.context;
+  const {context, layout, widgets} = useSnStore((state) => state);
+  console.log('%error layout', "font-size:16px;color:green", { props: props }, { context: context}, { layout: layout}, { widgets: widgets });
   
   return (
     <div className="App w3-theme-l5">
@@ -100,12 +97,12 @@ export const ErrorLayout = (props) => {
                 <div className="w3-col m12">
                   <div className="w3-card w3-round w3-white">
                     <div className="w3-container w3-padding">
-                      <b>WIDE</b>
+                      <b>ERROR</b>
                     </div>
                   </div>
                 </div>
               </div>
-             {addComponent('content', 'auto', 'missing', 1, context)}
+             {addComponent('content', 'auto', 'missing', 1, null)}
           </div>
           {/* End Middle Column */}
 

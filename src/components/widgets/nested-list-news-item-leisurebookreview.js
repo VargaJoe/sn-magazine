@@ -2,13 +2,15 @@ import { Link } from "react-router-dom";
 import Moment from 'moment';
 import ShowDebugInfo from "../utils/show-debuginfo"
 import LazyImage from "../utils/lazyload-image";
+import { useSnStore } from "../store/sn-store";
 
 const DATA = require('../../config.json');
 
 export function NestedLeisureBookReviewItem(props) {
-  console.log('nestedLeisureBookReviewItem', props);
-  const layout = props.page;
+  console.log('%cNestedLeisureBookReviewItem', "font-size:16px;color:green", { props: props })
+  // const layout = props.page;
   const context = props.data;
+  const {page, layout} = useSnStore((state) => state);
   const widget = props.widget;
 
   const relativePath = context.Path.substr((process.env.REACT_APP_DATA_PATH || DATA.dataPath).length + 1);
@@ -19,7 +21,7 @@ export function NestedLeisureBookReviewItem(props) {
     }
 
     return (
-      <div className="w3-left w3-padding">
+      <div className="news-image w3-left w3-padding">
          {/* {LazyImage((process.env.REACT_APP_API_URL || DATA.apiUrl) + context.Image.Url, context.DisplayName, "w3-hover-opacity")} */}
         <LazyImage src={(process.env.REACT_APP_API_URL || DATA.apiUrl) + context.Image.Url} alt={context.DisplayName} className="w3-hover-opacity"/>
       </div>
@@ -37,7 +39,7 @@ export function NestedLeisureBookReviewItem(props) {
       <div className="w3-row-padding w3-margin-bottom w3-left w3-block m1 news-item">
         <div className="w3-col">
           <div className="w3-card w3-round w3-white">
-          {ShowDebugInfo("leisure manga review news item", context, layout, widget)}
+          {ShowDebugInfo("leisure manga review news item", context, page, widget, layout)}
             <div className="w3-container w3-padding">
               <div className="w3-padding-16">
                 <Link key={`news-item-${context.Id}`} to={'/' + relativePath} className="no-score">

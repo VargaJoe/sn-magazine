@@ -1,15 +1,16 @@
 import React from 'react';
 import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
+import { useSnStore } from "../store/sn-store";
 
 const DATA = require('../../config.json');
 const defaultImage = require('../../images/logo.png');
 
 export function BannerListWidget(props) {
-  console.groupCollapsed('%cbannerList', "font-size:16px;color:green");
-  console.log(props);
-  const layout = props.page;
-  let context = props.data;
+  console.log('%cBannerList', "font-size:16px;color:green", { props: props });
+  // const layout = props.page;
+  // let context = props.data;
+  const {context, page, layout} = useSnStore((state) => state);
   let widget = props.widget;
   const bindedContext = BindedContext(props, true);
   
@@ -28,7 +29,7 @@ export function BannerListWidget(props) {
 
   return (
     <div className="w3-card w3-round w3-white w3-margin-bottom">
-      {ShowDebugInfo("side menu with logo", context, layout, widget)}
+      {ShowDebugInfo("banner list", context, page, widget, layout)}
       <div className="w3-container">
         <div className="side-menu-uppercase">
           {bindedContext.children?.map((child) => {
@@ -42,7 +43,6 @@ export function BannerListWidget(props) {
           })}
         </div>
       </div>
-      {console.groupEnd()}
     </div>
   );
 }

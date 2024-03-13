@@ -1,4 +1,4 @@
-import { addComponentsByZone } from '../utils/add-component';
+import { addComponentsByZone, addComponent } from '../utils/add-component';
 import { Helmet } from 'react-helmet-async';
 import { useSnStore } from "../store/sn-store";
 
@@ -10,7 +10,7 @@ export const LeisureSimpleLayout = (props) => {
   // const layout = props.page;
   // const widgets = props.widget;
   const {context, layout, widgets} = useSnStore((state) => state);
-  console.log('%cleisure-simple layout', "font-size:16px;color:green", { props: props }, { context: context}, { layout: layout}, { widgets: widgets });
+  console.log('%cleisuer-simple-login layout', "font-size:16px;color:green", { props: props }, { context: context}, { layout: layout}, { widgets: widgets });
   
   const sideboxes = addComponentsByZone('widgets', 'side', null, null, widgets);
   console.log('sideboxes');
@@ -40,16 +40,17 @@ export const LeisureSimpleLayout = (props) => {
       {/* Page Container */}
       <div className="w3-container w3-content w3-content-custom pagetemplate-custom">
         {/* The Grid */}
-        <div className="w3-row layout-container">
+        <div className="w3-row">
           {/* Left Column */}
           <div className="w3-col m2">
             {sideboxes}
+            {addComponent('widgets', 'auto', 'widgetlogin', 1, null)}
           </div>
           
           {/* End Left Column */}
 
           {/* Middle Column */}
-          <div className="w3-col m9 layout-middle">
+          <div className="w3-col m9">
             <div className="w3-row-padding w3-margin-bottom pagetemplate-sign">
               <div className="w3-col m12">
                 <div className="w3-card w3-round w3-white">
