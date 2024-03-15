@@ -199,6 +199,12 @@ p {
   /* text-overflow: ellipsis; */
 }
 
+@media screen and (max-width: 1024px) {
+  .related-card .embed iframe {
+    width: 300px;
+  }
+}
+
 .related-link-icon {
   padding-right: 5px;
 }
