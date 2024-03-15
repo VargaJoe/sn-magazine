@@ -193,6 +193,10 @@ p {
   padding-right: 40px;
 }
 
+.related-contents {
+  width: 100%;
+}
+
 .related-link-meta {
   white-space: normal;
   overflow: hidden;
