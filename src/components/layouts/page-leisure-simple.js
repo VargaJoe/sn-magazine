@@ -1,21 +1,22 @@
 import { addComponentsByZone } from '../utils/add-component';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
+import { useSnStore } from "../store/sn-store";
 
 const DATA = require('../../config.json');
 const defaultImage = require('../../images/logo.png');
 
 export const LeisureSimpleLayout = (props) => {
-  const context = props.data;
-  const layout = props.page;
-  const widgets = props.widget;
-  console.groupCollapsed('%cleisureSimpleLayout', "font-size:16px;color:green");
-  console.log('leisure-simple layout: ', props, context, layout, widgets );
+  // const context = props.data;
+  // const layout = props.page;
+  // const widgets = props.widget;
+  const {context, layout, widgets} = useSnStore((state) => state);
+  console.log('%cleisure-simple layout', "font-size:16px;color:green", { props: props }, { context: context}, { layout: layout}, { widgets: widgets });
   
-  const sideboxes = addComponentsByZone('widgets', 'side', context, layout, widgets);
+  const sideboxes = addComponentsByZone('widgets', 'side', null, null, widgets);
   console.log('sideboxes');
   console.log(sideboxes);
 
-  const components = addComponentsByZone('widgets', 'content', context, layout, widgets);
+  const components = addComponentsByZone('widgets', 'content', null, null, widgets);
   console.log('components');
   console.log(components);
 
@@ -35,12 +36,11 @@ export const LeisureSimpleLayout = (props) => {
 					<title>{pageTitle}</title>
 					<link rel="canonical" href={`${apiUrl}/${context.Path}/`} />
 				</Helmet>
-
       
       {/* Page Container */}
       <div className="w3-container w3-content w3-content-custom pagetemplate-custom">
         {/* The Grid */}
-        <div className="w3-row">
+        <div className="w3-row layout-container">
           {/* Left Column */}
           <div className="w3-col m2">
             {sideboxes}
@@ -49,7 +49,7 @@ export const LeisureSimpleLayout = (props) => {
           {/* End Left Column */}
 
           {/* Middle Column */}
-          <div className="w3-col m9">
+          <div className="w3-col m9 layout-middle">
             <div className="w3-row-padding w3-margin-bottom pagetemplate-sign">
               <div className="w3-col m12">
                 <div className="w3-card w3-round w3-white">
@@ -83,7 +83,6 @@ export const LeisureSimpleLayout = (props) => {
           Powered by <a href="https://sensenet.com" target="_blank" rel="noreferrer">sensenet</a>, <a href="https://reactjs.org/" target="_blank" rel="noreferrer">react</a> and <a href="https://www.w3schools.com/w3css/default.asp" target="_blank" rel="noreferrer">w3.css</a>
         </p>
       </footer>
-      {console.groupEnd()}
       {/* End Footer */}
     </div>
   );

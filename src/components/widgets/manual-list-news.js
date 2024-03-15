@@ -3,12 +3,13 @@ import { addComponent } from '../utils/add-component';
 import LazyLoad from 'react-lazyload';
 import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
+import { useSnStore } from "../store/sn-store";
 
-export function NewsListComponent(props) {
-  console.groupCollapsed('%cnewsList', "font-size:16px;color:green");
-  console.log('props', props);
-  const layout = props.page;
-  let context = props.data;
+export function NewsListWidget(props) {
+  console.log('%cNewsList', "font-size:16px;color:green", { props: props });
+  // const layout = props.page;
+  // let context = props.data;
+  const {context, page, layout} = useSnStore((state) => state);
   let widget = props.widget;
   
   // binded context could be result back with all widget variables contet, children, widget, layout
@@ -19,10 +20,10 @@ export function NewsListComponent(props) {
     // <div className="w3-col m12 w3-right">
         <div className="w3-margin-bottom w3-col m12 news-padding">
           <div className="w3-card w3-round w3-white">
-          {ShowDebugInfo("news widget", context, layout, widget)}
+          {ShowDebugInfo("news widget", context, page, widget, layout)}
             <div className="w3-container w3-padding component-news-half">
             <h3>{bindedContext?.content?.DisplayName}</h3>
-              <div>
+              <div className="news-cards">
                 {bindedContext.children?.map((child) => {
                   return (
                     <LazyLoad key={`news-list-${child.Id}`} className="lazy-load-news-item">
@@ -33,10 +34,10 @@ export function NewsListComponent(props) {
               </div>
             </div>
           </div>
-          {console.groupEnd()}
+          {}
         </div>
     // </div>
   );
 }
 
-export default NewsListComponent
+export default NewsListWidget;

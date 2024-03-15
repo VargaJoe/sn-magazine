@@ -2,12 +2,13 @@ import React from 'react';
 import { addComponent } from '../utils/add-component';
 import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
+import { useSnStore } from "../store/sn-store";
 
-export function MangaList(props) {
-  console.log('gallery component');
-  console.log(props);
-  const layout = props.page;
-  let context = props.data;
+export function MangaListWidget(props) {
+  console.log('%cmangaList', 'font-size:16px;color:green', { props: props });
+  // const layout = props.page;
+  // let context = props.data;
+  const {context, page, layout} = useSnStore((state) => state);
   const widget = props.widget;
   const bindedContext = BindedContext(props, true);
 
@@ -16,10 +17,10 @@ export function MangaList(props) {
       <div className="w3-row-padding w3-margin-bottom">
         <div className="w3-col m12">
           <div className="w3-card w3-round w3-white">
-            {ShowDebugInfo("gallery widget", context, layout, widget)}
+            {ShowDebugInfo("gallery widget", context, page, widget, layout)}
             <div className="w3-container w3-padding">
             <h1>{bindedContext.content.DisplayName}</h1>
-              <div>
+            <div class="review-cards">
                 {bindedContext.children?.map((child) => { 
                   return addComponent('widgets', 'nested','list-manga-item', `${widget.Id}-${context.Id}-${child.Id}`, child, layout, child); 
                 })}
@@ -32,4 +33,4 @@ export function MangaList(props) {
   );
 }
 
-export default MangaList
+export default MangaListWidget;

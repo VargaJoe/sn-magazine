@@ -1,10 +1,11 @@
 import ShowDebugInfo from "../utils/show-debuginfo"
+import { useSnStore } from "../store/sn-store";
 
-export function ReviewRelatedMangaTranslation(props) {
-  console.log('review related mangatranslation component');
-  console.log(props);
-  const layout = props.page;
+export function NestedReviewRelatedMangaTranslation(props) {
+  console.log('%cNestedReviewRelatedMangaTranslation', 'font-size:16px;color:green', { props: props });
+  // const layout = props.page;
   const context = props.data;
+  const {page, layout} = useSnStore((state) => state);
   const widget = props.widget;
 
   const direction = () => {
@@ -28,12 +29,12 @@ export function ReviewRelatedMangaTranslation(props) {
       <div className="w3-row-padding w3-margin-bottom">
         <div className="w3-col m12">
           <div className="w3-card w3-round w3-white">
-          {ShowDebugInfo("review related softlink", context, layout, widget)}
+          {ShowDebugInfo("review related softlink", context, page, widget, layout)}
             <div className="w3-container w3-padding">
               <a key={`news-item-${context.Id}`} href={context.Url} target="_blank" rel="noreferrer" className="no-score">
                 <div className="w3-left w3-padding related-link-meta">
                   <div className="w3-large"><i className="fa fa-download fa-fw related-link-icon"></i>{context.DisplayName}</div>
-                  <div>{context.Description}</div>
+                  <div dangerouslySetInnerHTML={{ __html: context.Description }}/>
                   <div className="small">olvasási irány: {direction()}<i className={`fa ${directionIcon()} fa-fw read-direction-icon`}></i></div>
                   {/* <div className="small hidden">{context.Author}</div>
                   <div>{Moment(context.PublishDate).format('yyyy.MM.DD')}</div> */}
@@ -47,4 +48,4 @@ export function ReviewRelatedMangaTranslation(props) {
   );
 }
 
-export default ReviewRelatedMangaTranslation
+export default NestedReviewRelatedMangaTranslation

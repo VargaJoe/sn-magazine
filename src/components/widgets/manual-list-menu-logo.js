@@ -2,17 +2,17 @@ import React from 'react';
 import { Link } from "react-router-dom";
 import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
+import { useSnStore } from "../store/sn-store";
 
 const DATA = require('../../config.json');
 const defaultImage = require('../../images/logo.png');
 
-export function MenuWithLogo(props) {
-  console.groupCollapsed('%cmenuWithLogo', 'font-size:16px;color:green');
-  console.log('contentview sidemenu');
-  console.log(props);
-  const layout = props.page;
-  let context = props.data;
+export function MenuWithLogoWidget(props) {
+  console.log('%cMenuWithLogo', 'font-size:16px;color:green', { props: props });
+  // const layout = props.page;
+  // let context = props.data;
   let widget = props.widget;  
+  const {context, page, layout} = useSnStore((state) => state);
   const bindedContext = BindedContext(props, true);
   
   let logoPath = process.env.REACT_APP_LOGO_PATH || DATA.siteLogo;
@@ -33,7 +33,7 @@ export function MenuWithLogo(props) {
     } else if (item.Url !== "") {
         return (
           <a key={`sidemenu-icon-${item.Id}`} href={item.Url} target="_blank" rel="noreferrer" className="no-score">
-            <i className={`fa ${item.IconName} fa-fw w3-margin-right w3-text-theme`}></i>
+           <i className={`fa ${item.IconName} fa-fw w3-margin-right w3-text-theme`}></i>
           </a>
         )
     }    
@@ -44,7 +44,7 @@ export function MenuWithLogo(props) {
   // }
   return (
     <div className="w3-card w3-round w3-white w3-margin-bottom">
-      {ShowDebugInfo("side menu with logo", context, layout, widget)}
+      {ShowDebugInfo("menu with logo", context, page, widget, layout)}
       <div className="w3-container">
       <h4 className="w3-center hidden">{widget.DisplayName}</h4>
       <Link to={'/'}>
@@ -56,25 +56,25 @@ export function MenuWithLogo(props) {
         {bindedContext.children?.filter(item => item.DisplayZone?.includes("menuitem")).map((child) => {
           console.log(child.Name);
           return (
-          <p key={`sidemenu-${child.Id}`}>
+          <div className="sidemenu-link" key={`sidemenu-${child.Id}`}>
             {/* <i className="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i>  */}
             <Link key={`sidemenu-link-${child.Id}`} to={'/' + child.Name} className="side-menu-link" title={'index: '+child.Index}>
               {child.DisplayName}
             </Link>
-          </p>
+          </div>
         )}
         )}
       </div>
       <hr className="no-margin"/>
-        <p>
+        <div className="sidemenu-icons-wrapper">
           {bindedContext.children?.filter(item => item.DisplayZone?.includes("menuicon")).map((child) => {
             return iconItem(child);
           })}
-        </p>
+        </div>
       </div>
-      {console.groupEnd()}
+      {}
     </div>
   );
 }
 
-export default MenuWithLogo;
+export default MenuWithLogoWidget;
