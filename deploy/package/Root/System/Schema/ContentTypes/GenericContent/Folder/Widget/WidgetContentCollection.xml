@@ -1,8 +1,8 @@
-<ContentType name="WidgetContentCollection" parentType="Widget" handler="SenseNet.ContentRepository.Folder" xmlns="http://schemas.sensenet.com/SenseNet/ContentRepository/ContentTypeDefinition">
+﻿<ContentType name="WidgetContentCollection" parentType="Widget" handler="SenseNet.ContentRepository.Folder" xmlns="http://schemas.sensenet.com/SenseNet/ContentRepository/ContentTypeDefinition">
 	<DisplayName>WidgetContentCollection</DisplayName>
-	<Description></Description>
+	<Description/>
 	<Icon>WebContent</Icon>
-	<AllowedChildTypes></AllowedChildTypes>
+	<AllowedChildTypes/>
 	<Fields>
 		<Field name="Title" type="ShortText">
 			<DisplayName>Title</DisplayName>
@@ -10,7 +10,7 @@
 		</Field>
 		<Field name="ChildrenLevel" type="Choice">
 			<DisplayName>Children Level</DisplayName>
-			<Description></Description>
+			<Description/>
 			<Configuration>
 				<AllowMultiple>false</AllowMultiple>
 				<AllowExtraValue>false</AllowExtraValue>
@@ -23,10 +23,10 @@
 				<Compulsory>false</Compulsory>
 				<DefaultValue>Child</DefaultValue>
 			</Configuration>
-		</Field>		
+		</Field>
 		<Field name="ContextBinding" type="Choice">
 			<DisplayName>Context binding</DisplayName>
-			<Description></Description>
+			<Description/>
 			<Configuration>
 				<AllowMultiple>false</AllowMultiple>
 				<AllowExtraValue>false</AllowExtraValue>
@@ -37,7 +37,7 @@
 				</Options>
 				<ReadOnly>false</ReadOnly>
 				<Compulsory>false</Compulsory>
-				<DefaultValue></DefaultValue>
+				<DefaultValue/>
 			</Configuration>
 		</Field>
 		<Field name="CustomRoot" type="Reference">
@@ -78,6 +78,5 @@
 				<TextType>RichText</TextType>
 			</Configuration>
 		</Field>
-
 	</Fields>
 </ContentType>

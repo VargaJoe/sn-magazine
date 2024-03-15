@@ -40,23 +40,34 @@ export function NestedLeisureMangaTranslationItem(props) {
         <div className="w3-card w3-round w3-white">
         {ShowDebugInfo("leisure manga translation news item", context, page, widget, layout)}
           <div className="w3-container w3-padding">
-            <div className="w3-padding-16 w3-clear">
+            <div className="w3-clear news-container">
+                {itemCollection.slice(0,1).map((child) => 
+                            addComponent('widgets', 'nested','review-list-image', `${context.Id}-${child.Id}`, child, layout, child)
+                          )}
                 {/* <Link key={`news-item-${context.Id}`} to={'/' + relativePath} className="no-score"> */}
+                <div className="w3-left">
+                  <a key={`news-item-${context.Id}`} href={context.Url} target="_blank" rel="noreferrer" className="no-score">
+                    <div className="w3-left w3-padding news-meta">
+                      <div className="w3-large">
+                        <i className="fa fa-download fa-fw related-link-icon"></i>
+                        {context.DisplayName}
+                      </div>
+                    </div>
+                    </a>
+                </div>
+                
+                {/* </Link> */}
+              </div>                
+              <div className="w3-left">
                 <a key={`news-item-${context.Id}`} href={context.Url} target="_blank" rel="noreferrer" className="no-score">
                     <div className="w3-left w3-padding news-meta">
-                      <div className="w3-large"><i className="fa fa-download fa-fw related-link-icon"></i>{context.DisplayName}</div>
                       <div className="small" dangerouslySetInnerHTML={{ __html: context.Lead }}></div>
                       <div dangerouslySetInnerHTML={{ __html: context.Description }}/>
                       <div className="small hidden">{context.Author}</div>
                       <div>{Moment(context.PublishDate).format('yyyy.MM.DD')}</div>
                     </div>
-                </a>
-                {/* </Link> */}
-              </div>
-                <div className="w3-clear w3-margin-bottom">{(itemCollection.length>0)?"Kapcsolódó bejegyzések":""}</div>
-                {itemCollection.map((child) => 
-                    addComponent('widgets', 'nested','review-list-item', `${context.Id}-${child.Id}`, child, layout, child)
-                  )}
+                  </a>
+                </div>
           </div>
         </div>
       </div>

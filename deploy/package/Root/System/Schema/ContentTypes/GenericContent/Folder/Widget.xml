@@ -1,0 +1,15 @@
+﻿<ContentType name="Widget" parentType="Folder" handler="SenseNet.ContentRepository.Folder" xmlns="http://schemas.sensenet.com/SenseNet/ContentRepository/ContentTypeDefinition">
+	<DisplayName>Widget</DisplayName>
+	<Description/>
+	<Icon>Folder</Icon>
+	<AllowedChildTypes>Folder,File</AllowedChildTypes>
+	<Fields>
+		<Field name="Hidden" type="Boolean">
+			<Configuration>
+				<VisibleBrowse>Show</VisibleBrowse>
+				<VisibleEdit>Show</VisibleEdit>
+				<VisibleNew>Show</VisibleNew>
+			</Configuration>
+		</Field>
+	</Fields>
+</ContentType>

@@ -90,7 +90,7 @@ export function SimpleReviewWidget(props) {
 
     if (expContext?.RelatedContent?.length > 0) {      
       return (
-        <div>
+        <div className="related-contents">
           <div className="w3-padding">
           <h4>Kapcsolódó linkek</h4>
           </div>
@@ -121,9 +121,7 @@ export function SimpleReviewWidget(props) {
               <div dangerouslySetInnerHTML={{ __html: bindedContext.content.Body }}/>
               <div className="small">{bindedContext.content.Author} ({bindedContext.content.Publisher}, {Moment(bindedContext.content.PublishDate).format('yyyy.MM.DD')})</div>
             </div>
-            <div>
-              {relatedContents(expContext)}
-            </div>
+            {relatedContents(expContext)}
           </div>
         </div>
       </div>

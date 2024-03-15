@@ -91,9 +91,9 @@ export function MangaReviewWidget(props) {
       })
 
       return (
-        <div>
+        <div className="related-contents">
           <div className="w3-padding">
-          <h4>{title}</h4>
+            <h4>{title}</h4>
           </div>
           {renderLinks}
         </div>
