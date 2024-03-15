@@ -1,0 +1,12 @@
+{
+  "ContentType": "ContentType",
+  "ContentName": "Layout",
+  "Fields": {
+    "HandlerName": "SenseNet.ContentRepository.Folder",
+    "ParentTypeName": "Folder",
+    "Binary": {
+      "Attachment": "Layout.xml"
+    },
+    "IsSystemType": false
+  }
+}
