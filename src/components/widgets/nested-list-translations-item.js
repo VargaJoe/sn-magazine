@@ -7,37 +7,16 @@ import { useSnStore } from "../store/sn-store";
   
 export function NestedLeisureMangaTranslationItem(props) {
   const repo = useRepository();
-  // const [itemCollection, setCollection] = useState([]);
-  let context = props.data;
-  let itemCollection = props.related;
+  let { context, itemCollection } = props.data;
   const {page, layout} = useSnStore((state) => state);
   const widget = props.widget;
-  //console.log('nestedLeisureMangaTranslationItem', props, context);
+  console.log('%cNestedLeisureMangaTranslationItem',  "font-size:16px;color:green", {props: props});
   
-  // const loadContents = useCallback(async () => {
-  //   const result = await repo.loadCollection({
-  //     path: `/Root/Content/mangajanlo/manga`,
-  //     oDataOptions: {
-  //       query: `Translation:(${context.Id})`,
-  //       select: 'all'
-  //     },
-  //   });
-  //   if (result?.d?.results) {
-  //     //console.log('manga with translation: ', result);
-  //     setCollection(result.d.results);
-  //   }
-  // }, [context, repo]);
-
-  // useEffect(() => {
-  //   loadContents();
-  // }, [context, loadContents, repo]);
-
   return (
-    // <div className="w3-col m9 w3-right">
     <div className="w3-row-padding w3-margin-bottom w3-left w3-block">
       <div className="w3-col">
         <div className="w3-card w3-round w3-white">
-        {ShowDebugInfo("leisure manga translation news item", context, layout, widget)}
+        {ShowDebugInfo("leisure manga translation news item", context, page, widget, layout)}
           <div className="w3-container w3-padding">
             <div className="w3-padding-16 w3-clear">
                 {/* <Link key={`news-item-${context.Id}`} to={'/' + relativePath} className="no-score"> */}
@@ -60,7 +39,6 @@ export function NestedLeisureMangaTranslationItem(props) {
         </div>
       </div>
     </div>
-    // </div>
   );
 }
 
