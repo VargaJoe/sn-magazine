@@ -4,6 +4,10 @@
 	<Icon>Folder</Icon>
 	<AllowedChildTypes>Folder,File</AllowedChildTypes>
 	<Fields>
+		<Field name="CacheKey" type="ShortText">
+			<DisplayName>CacheKey</DisplayName>
+			<Description>Cache Key</Description>
+		</Field>
 		<Field name="Hidden" type="Boolean">
 			<Configuration>
 				<VisibleBrowse>Show</VisibleBrowse>
