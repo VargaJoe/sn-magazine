@@ -63,9 +63,9 @@ export const ShowComponentsByZone = (type, zone, contextobs, page, widgets) => {
       const isAuto = (child.ClientComponent === undefined || child.ClientComponent === null || child.ClientComponent === '');
       const compoType = isAuto ? child.Type : child.ClientComponent;
       const prefix = (isAuto) ? "auto" : "manual";
-      console.log('add component by zone - widget: ', type, zone, context, page, child, compoType);
-      // return addComponent(type, prefix, compoType.toLowerCase(), `${type}-${zone}-${context?.Id}-${child.Id}`, null, null, child);
-      return addComponent(type, prefix, compoType.toLowerCase(), `${type}-${zone}-0`, null, null, child);
+      const compoId = (!child?.CacheKey) ? `${type}-${zone}-${child?.Name}` : `${type}-${zone}-${child?.CacheKey}`;
+      console.log('add component by zone - widget: ', { type: type}, {zone: zone}, {context: context}, {page: page}, {child: child}, {compoType: compoType}, {compoId:compoId});
+      return addComponent(type, prefix, compoType.toLowerCase(), `${compoId}`, null, null, child);
     })
   );
 };
