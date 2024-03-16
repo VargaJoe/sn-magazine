@@ -122,12 +122,8 @@ export function MangaReviewWidget(props) {
               <div dangerouslySetInnerHTML={{ __html: bindedContext.content.Body }}/>
               <div className="small">{bindedContext.content.Author} ({bindedContext.content.Publisher}, {Moment(bindedContext.content.PublishDate).format('yyyy.MM.DD')})</div>
             </div>
-            <div>
-              {relatedContents(expContext?.Translation, "Fordítások")}
-            </div>
-            <div>
-              {relatedContents(expContext?.RelatedContent, "Kapcsolódó linkek")}
-            </div>
+            {relatedContents(expContext?.Translation, "Fordítások")}
+            {relatedContents(expContext?.RelatedContent, "Kapcsolódó linkek")}
           </div>
         </div>
       </div>
