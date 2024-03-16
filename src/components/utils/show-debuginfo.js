@@ -22,23 +22,23 @@ const ShowDebugInfo = (title, context, currentPage, widget, layout) => {
       return (
         <ul>
         <li>
-            Content Name: <span>{context.Name}</span>
+            Content Name: <span>{context?.Name}</span>
           </li>
           <li>
-            Content Type: <span>{context.Type}</span>
+            Content Type: <span>{context?.Type}</span>
           </li>
           <li>
-            Content Path: <span>{context.Path}</span>
+            Content Path: <span>{context?.Path}</span>
           </li>
           <li>
             Content Lifespan:{" "}
-            <span>{context.EnableLifespan ? "true" : "false"}</span>
+            <span>{context?.EnableLifespan ? "true" : "false"}</span>
           </li>
           <li>
-            Content ValidFrom: <span>{context.ValidFrom}</span>
+            Content ValidFrom: <span>{context?.ValidFrom}</span>
           </li>
           <li>
-            Content ValidTill: <span>{context.ValidTill}</span>
+            Content ValidTill: <span>{context?.ValidTill}</span>
           </li>
           <li>
             <hr />
@@ -55,17 +55,17 @@ const ShowDebugInfo = (title, context, currentPage, widget, layout) => {
           <li>
             Current Workspace Name:{" "}
             <span>
-              {context.Type === "Workspace"
-                ? context.Name
-                : context.Workspace.Name}
+              {context?.Type === "Workspace"
+                ? context?.Name
+                : context?.Workspace?.Name}
             </span>
           </li>
           <li>
             Current Workspace Path:{" "}
             <span>
-              {context.Type === "Workspace"
-                ? context.Path
-                : context.Workspace.Path}
+              {context?.Type === "Workspace"
+                ? context?.Path
+                : context?.Workspace?.Path}
             </span>
           </li>
           <li>

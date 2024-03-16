@@ -7,7 +7,7 @@ import { useSnStore } from "../store/sn-store";
 const DATA = require('../../config.json');
 
 export function NestedReviewListItemComponent(props) {
-  console.log('%NestedReviewListItemComponent', "font-size:16px;color:green", { props: props });
+  console.log('%cNestedReviewListItemComponent', "font-size:16px;color:green", { props: props });
   // const layout = props.page;
   const context = props.data;  
   const {page, layout} = useSnStore((state) => state);
