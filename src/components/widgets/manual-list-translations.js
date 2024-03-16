@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from "react";
 import { addComponent } from '../utils/add-component';
+import { useRepository } from "@sensenet/hooks-react";
 import LazyLoad from 'react-lazyload';
 import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
 
 export function NewsListComponent(props) {
-  console.groupCollapsed('%cnewsList', "font-size:16px;color:green");
-  console.log('props', props);
+  //console.log('props', props);
+  const repo = useRepository();
+  const [itemCollection, setCollection] = useState([]);
   const layout = props.page;
   let context = props.data;
   let widget = props.widget;
@@ -15,6 +17,28 @@ export function NewsListComponent(props) {
   // binded context withChildren should be set on widget content, not manual boolean variable
   const bindedContext = BindedContext(props, true);
  
+ const loadContents = useCallback(async () => {
+    const ids = bindedContext.children.map(child => child.Id).join(' ');
+    const result = await repo.loadCollection({
+      path: `/Root/Content/mangajanlo/manga`,
+      oDataOptions: {
+        query: `Translation:(${ids})`,
+        select: 'all'
+      },
+    });
+    if (result?.d?.results) {
+      //console.log('mangas with translation: ', result);
+      setCollection(result.d.results);
+    }
+  }, [context, repo]);
+
+  useEffect(() => {
+    if (bindedContext.children?.count > 0) {
+      loadContents();
+    }
+  }, [bindedContext.children?.count, context, loadContents, repo]);
+
+
   return (
     // <div className="w3-col m12 w3-right">
         <div className="w3-margin-bottom w3-col m12 news-padding">
@@ -25,15 +49,14 @@ export function NewsListComponent(props) {
               <div>
                 {bindedContext.children?.map((child) => {
                   return (
-                    <LazyLoad key={`news-list-${child.Id}`} className="lazy-load-news-item">
-                      {addComponent('widgets', 'nested', `list-translations-item`, `${widget.Id}-${context.Id}-${child.Id}`, child, props.page, child)}
+                    <LazyLoad key={`news-list-${child?.Id}`} className="lazy-load-news-item">
+                      {addComponent('widgets', 'nested', `list-translations-item`, `${widget?.Id}-${context?.Id}-${child?.Id}`, child, props?.page, child)}
                     </LazyLoad>
                   )
                 })}
               </div>
             </div>
           </div>
-          {console.groupEnd()}
         </div>
     // </div>
   );
