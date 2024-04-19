@@ -79,7 +79,7 @@ p {
   }
 /* } */
 
-.gallery-item div:not(.gallery-item):not(.lazyload-wrapper) {
+.gallery-item div:not(.gallery-item):not(.lazyload-wrapper):not(.debug-info) {
   height: 100%;
 }
 
@@ -187,11 +187,13 @@ p {
 }
 
 .debug-info-button {
-  position: relative;
+  position: sticky;
+  z-index: 9998; 
 }
 
 .debug-info-details {
-  /* position: relative; */
+  position: sticky;
+  z-index: 9999; 
   background-color:white;
   border: 1px;
   border-color: black;
