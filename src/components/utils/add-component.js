@@ -26,14 +26,14 @@ function importView(type, prefix, component) {
   }
 };
 
-export const addComponent = (type, prefix, component, id, context, page, widget) => {
+export const addComponent = (type, prefix, component, id, data, page, widget) => {
   const View = importView(type, prefix, component);
   // widgets can be top level or nested
   // top level widgets usually get context from store
   // nested widgets get context from parent widget
   return (
       <View key={id} 
-      data={context} 
+      data={data} 
       // page={page} 
       widget={widget} />
   );
@@ -83,6 +83,6 @@ export const addLayout = (contextAsWidget, setLayout) => {
 
   console.log(`add ${layout} layout`, { type: contextAsWidget.Type }, { isFolder: contextAsWidget.IsFolder }, { setting: layout });
   setLayout(layout);
-  return addComponent('layouts', 'page', layout, `page-0`, contextAsWidget);
+  return addComponent('layouts', 'page', layout, `page-${layout}`, contextAsWidget);
 };
 
