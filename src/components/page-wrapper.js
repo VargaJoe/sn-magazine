@@ -173,11 +173,6 @@ export const PageWrapper = (props) => {
   if (context === undefined || context === null || wrappercompo === undefined || wrappercompo === null)
     return null;
 
-  const LoadingComponent = () => {
-    console.log('Component is loading...');
-    return <div>Loading...</div>;
-  };
-
   if (context === undefined || wrappercompo === undefined || wrappercompo === null)
   return null;
 
