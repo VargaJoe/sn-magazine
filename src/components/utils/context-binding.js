@@ -9,7 +9,7 @@ export function BindedContext(props, withChildren) {
   const context = useSnStore((state) => state.context);
   
   // if context defined explicitly via props, use it, otherwise use context from store
-  const expContext = props.data || context;
+  const expContext = props.data || props.data?.context || context;
   const widget = props.widget;
   const [bndContext, setContext] = useState({
                                       contextPath: context.Path,
@@ -30,10 +30,9 @@ export function BindedContext(props, withChildren) {
             children: [],
             reload: (withChildren) ? true : false,
             level: (widget?.ChildrenLevel !== undefined) ? widget.ChildrenLevel[0] : null
-
       }
 
-      if (widget !== undefined) {
+      if (widget !== undefined && widget.ContextBinding !== undefined) {
         switch (widget.ContextBinding[0]) {
           case "customroot":
             if (widget.CustomRoot !== undefined) {
@@ -51,6 +50,9 @@ export function BindedContext(props, withChildren) {
               resultObj.contextPath = process.env.REACT_APP_DATA_PATH || DATA.dataPath
               resultObj.content = context.Workspace
             }
+            break;
+          case "CurrentReference":
+            // ? 
             break;
           default:
             //no problem

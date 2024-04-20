@@ -5,9 +5,6 @@ import { Link } from 'react-router-dom';
 import { useSnStore } from "../store/sn-store";
 
 export const WidePageTemplate = (props) => {
-  // const context = props.data;
-  // const layout = props.page;
-  // const widgets = props.widget;
   const {context, layout, widgets} = useSnStore((state) => state);
   console.log('%cwide layout', "font-size:16px;color:green", { props: props }, { context: context}, { layout: layout}, { widgets: widgets });
 
@@ -36,13 +33,6 @@ export const WidePageTemplate = (props) => {
           >
             <i className="fa fa-globe"></i>
           </a>
-          {/* <a
-            href="/"
-            className="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white"
-            title="Account Settings"
-          >
-            <i className="fa fa-user"></i>
-          </a> */}
           <a
             href="mailto:info@sensenet.com"
             className="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white"
@@ -50,26 +40,6 @@ export const WidePageTemplate = (props) => {
           >
             <i className="fa fa-envelope"></i>
           </a>
-          {/* <div className="w3-dropdown-hover w3-hide-small">
-            <button
-              className="w3-button w3-padding-large"
-              title="Notifications"
-            >
-              <i className="fa fa-bell"></i>
-              <span className="w3-badge w3-right w3-small w3-green">3</span>
-            </button>
-            <div className="w3-dropdown-content w3-card-4 w3-bar-block w3-dropdown-content-custom">
-              <a href="/" className="w3-bar-item w3-button">
-                One new friend request
-              </a>
-              <a href="/" className="w3-bar-item w3-button">
-                John Doe posted on your wall
-              </a>
-              <a href="/" className="w3-bar-item w3-button">
-                Jane likes your post
-              </a>
-            </div>
-          </div> */}
           <a
             href="/"
             className="w3-bar-item w3-button w3-hide-small w3-right w3-padding-large w3-hover-white"
@@ -88,10 +58,6 @@ export const WidePageTemplate = (props) => {
         id="navDemo"
         className="w3-bar-block w3-theme-d2 w3-hide w3-hide-large w3-hide-medium w3-large"
       >
-        {/* <a href="#" className="w3-bar-item w3-button w3-padding-large">Link 1</a>
-  <a href="#" className="w3-bar-item w3-button w3-padding-large">Link 2</a>
-  <a href="#" className="w3-bar-item w3-button w3-padding-large">Link 3</a>
-  <a href="#" className="w3-bar-item w3-button w3-padding-large">My Profile</a> */}
       </div>
       
       {/* Page Container */}

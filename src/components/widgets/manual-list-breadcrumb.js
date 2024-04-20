@@ -45,7 +45,7 @@ export function BreadcrumbListWidget(props) {
     <div className="w3-row-padding w3-margin-bottom">
       <div className="w3-col m12">
         <div className="w3-card w3-round w3-white">
-          {ShowDebugInfo("side menu", context, page, widget, layout)}
+          {ShowDebugInfo("breadcrumb list", context, page, widget, layout)}
           <div className="w3-container w3-padding">
             <h4 className="w3-center hidden">{widget.DisplayName}</h4>
             <hr className="no-margin"/>

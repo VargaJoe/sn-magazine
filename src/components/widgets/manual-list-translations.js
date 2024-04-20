@@ -7,7 +7,6 @@ import BindedContext from "../utils/context-binding"
 import { useSnStore } from "../store/sn-store";
 
 export function TranslationListWidget(props) {
-  //console.log('props', props);
   const repo = useRepository();
   const [itemCollection, setCollection] = useState([]);
   const {context, page, layout} = useSnStore((state) => state);

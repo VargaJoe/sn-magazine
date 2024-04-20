@@ -21,8 +21,10 @@ export function ThirdSizedNewsList(props) {
             <div className="w3-container w3-padding component-news-half">
             <h3>{bindedContext?.content?.DisplayName}</h3>
               <div>
-                {bindedContext?.children?.map((child) => { 
-                  return addComponent('widgets', 'nested',`list-news-item-${child.Type.toLowerCase()}`, `${widget.Id}-${context.Id}-${child.Id}`, child, props.page, child); 
+                {bindedContext?.children?.map((child) => {
+                  // const itemType = child.Type.toLowerCase() === 'leisuremangatranslation' ? 'list-news-item-leisuremangatranslation' : `list-news-item`;
+                  const itemType = `list-news-item`;
+                  return addComponent('widgets', 'nested', itemType, `${widget.Id}-${context.Id}-${child.Id}`, child, props.page, child); 
                 })}
               </div>
             </div>

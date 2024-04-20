@@ -89,14 +89,17 @@ export const PageWrapper = (props) => {
       }).then(result => {
         if (result?.d?.results && result?.d?.results.length > 0) {
           const page = result.d.results.filter(pcnt => pcnt.Type === layoutContentType).sort((a, b) => a.Depth < b.Depth ? 1 : -1)[0];
-          const widgets = result.d.results.filter(pcnt => pcnt.ParentId === page.Id);
-          const layout = page.PageTemplate === '' || page.PageTemplate === null ? "vanilla" : page.PageTemplate;
+          const widgets = page?result.d.results?.filter(pcnt => pcnt.ParentId === page.Id):undefined;
+          // const layout = !page || page.PageTemplate === '' || page.PageTemplate === null ? "vanilla" : page.PageTemplate;
 
           setPage(page);
           setWidgets(widgets);
-          setLayout(layout);
-          console.log('selected page: ', { results: result.d.results }, { page: page.Name, meta: page}, { widgets: widgets }, { layput: layout } );
-          const addedComponent = addComponent('layouts', 'page', layout, `page-${layout}`, null, null, null)
+          // setLayout(layout);
+          console.log('selected page: ', { results: result.d.results }, { page: page?.Name, meta: page}, { widgets: widgets }, { layout: page?.PageTemplate } );
+          const addedComponent =  !page || page.PageTemplate === '' || page.PageTemplate === null ? 
+            addLayout(context, setLayout) :
+            addComponent('layouts', 'page', page.PageTemplate, `page-${page.PageTemplate}`, null, null, null);
+          // const addedComponent =  addComponent('layouts', 'page', page.PageTemplate, `page-${page.PageTemplate}`, null, null, null);
           
           if (wrappercompo.key !== addedComponent.key) {
             console.log('set page load useEffect then', { wrappercompo: wrappercompo }, { addedComponent: addedComponent });
@@ -147,25 +150,35 @@ export const PageWrapper = (props) => {
       };
     })
     .catch(error => {
+      console.error('error on loading content: ', error);
       setCompo(addComponent('layouts', 'page', 'error', 1));
     });
   }, [locationPath, repo, setContext]);
 
   useEffect(() => {
-    loadContent();
-  }, [loadContent]);
+    if (locationPath !== null && locationPath !== undefined) {
+      loadContent();
+    }
+  }, [loadContent, locationPath, repo]);
 
   useEffect(() => {
-    if (context !== undefined) {
+    if (context != null && context !== undefined) {
+      console.log('Load page useEffect:', context);
       loadPage();
     } else {
       console.warn('Skip page load useEffect');
     }
   }, [context, loadPage, repo]);
 
+  if (context === undefined || context === null || wrappercompo === undefined || wrappercompo === null)
+    return null;
+
+  if (context === undefined || wrappercompo === undefined || wrappercompo === null)
+  return null;
+
   return ( 
-    <React.Suspense fallback='Loading views...'>
-        {wrappercompo}
+    <React.Suspense>
+      {wrappercompo}
     </React.Suspense>
   )
 };
