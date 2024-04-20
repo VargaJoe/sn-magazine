@@ -150,23 +150,27 @@ export const PageWrapper = (props) => {
       };
     })
     .catch(error => {
+      console.error('error on loading content: ', error);
       setCompo(addComponent('layouts', 'page', 'error', 1));
     });
   }, [locationPath, repo, setContext]);
 
   useEffect(() => {
-    loadContent();
-  }, [loadContent]);
+    if (locationPath !== null && locationPath !== undefined) {
+      loadContent();
+    }
+  }, [loadContent, locationPath, repo]);
 
   useEffect(() => {
-    if (context !== undefined) {
+    if (context != null && context !== undefined) {
+      console.log('Load page useEffect:', context);
       loadPage();
     } else {
       console.warn('Skip page load useEffect');
     }
   }, [context, loadPage, repo]);
 
-  if (context === undefined || wrappercompo === undefined || wrappercompo === null)
+  if (context === undefined || context === null || wrappercompo === undefined || wrappercompo === null)
     return null;
 
   const LoadingComponent = () => {
