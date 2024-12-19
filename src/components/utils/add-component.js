@@ -14,8 +14,11 @@ function importView(type, prefix, component) {
         prefix: prefix,
         component: component,
         view: lazy(() =>
-        import(`../${type}/${prefix}-${component}`).catch(() =>
-        import(`../${type}/auto-${defaultComponent}`)
+        import(`../${type}/${prefix}-${component}`)
+        .catch(() => {
+          console.log(`import failed: ${type}/${prefix}-${component}`);
+          return import(`../${type}/auto-${defaultComponent}`)
+        }
       ))}
       lazyComponents.push(lazyView);
       console.log('new component added: ', lazyView.component);
