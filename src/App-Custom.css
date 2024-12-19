@@ -1,8 +1,21 @@
+/* start of main third */
+@media (min-width: 601px) and (max-width: 1024px) {
+  .w3-col.m1,
+  .w3-col.m2,
+  .w3-col.m3,
+  .w3-col.m4,
+  .w3-col.m9,
+  .w3-col.m12,
+  .w3-third {
+      width: 100%;
+  }
+}
+/* end of main third */
+
 p {
   margin-top: 0;
   margin-bottom: 5px;
 }
-
 
 .pagetemplate-custom {
   max-width: 1800px;
@@ -253,3 +266,4 @@ p {
   margin: 15px 0;
 }
 /* end of sidemenu */
+

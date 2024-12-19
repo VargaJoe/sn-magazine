@@ -1,5 +1,14 @@
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
 .App {
+  height: 100%;
+  margin: 0;
   text-align: center;
+  display: flex;
+  flex-direction: column;
 }
 
 .App-logo {
@@ -37,11 +46,10 @@
   }
 }
 
-
-
 .w3-content-custom {
   max-width:1400px;
-  margin-top:80px
+  margin-top:80px;
+  flex: 1;
 }
 
 .w3-dropdown-content-custom {
