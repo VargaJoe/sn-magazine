@@ -166,7 +166,7 @@ export const PageWrapper = (props) => {
       console.log('Load page useEffect:', context);
       loadPage();
     } else {
-      console.warn('Skip page load useEffect');
+      console.log('Skip page load useEffect');
     }
   }, [context, loadPage, repo]);
 
