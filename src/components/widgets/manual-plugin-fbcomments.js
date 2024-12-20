@@ -29,7 +29,7 @@ export function FacebookCommentsWidget(props) {
       }
       const script = document.createElement('script');
       script.id = 'facebook-jssdk';
-      script.src = `https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v21.0&appId=${appId}`;
+      script.src = `https://connect.facebook.net/hu_HU/sdk.js#xfbml=1&version=v21.0&appId=${appId}`;
       script.async = true;
       script.defer = true;
       script.crossOrigin = 'anonymous';
