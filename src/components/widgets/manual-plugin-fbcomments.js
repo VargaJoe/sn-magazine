@@ -24,7 +24,7 @@ export function FacebookCommentsWidget(props) {
   
   useEffect(() => {
     const loadFacebookSDK = () => {
-      if (document.getElementById('facebook-jssdk')) {
+      if (document.getElementById('facebook-jssdk') || !appId) {
         return;
       }
       const script = document.createElement('script');
@@ -44,7 +44,6 @@ export function FacebookCommentsWidget(props) {
   }, [appId]);
 
   return (
-    
       <div className="w3-col m12" style={{ width: '97%' }} >
         {ShowDebugInfo("facebook comment", context, page, widget, layout)}
         <div className="w3-card w3-round w3-white">
@@ -54,7 +53,6 @@ export function FacebookCommentsWidget(props) {
           </div>
         </div>
       </div>
-    
   );
 }
 
