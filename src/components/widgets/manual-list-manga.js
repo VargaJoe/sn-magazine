@@ -19,8 +19,8 @@ export function MangaListWidget(props) {
           <div className="w3-card w3-round w3-white">
             {ShowDebugInfo("gallery widget", context, page, widget, layout)}
             <div className="w3-container w3-padding">
-            <h1>{bindedContext.content.DisplayName}</h1>
-            <div class="review-cards">
+              <h1>{bindedContext.content.DisplayName}</h1>
+              <div class="review-cards">
                 {bindedContext.children?.map((child) => { 
                   return addComponent('widgets', 'nested','list-manga-item', `${widget.Id}-${context.Id}-${child.Id}`, child, layout, child); 
                 })}

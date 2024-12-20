@@ -44,15 +44,19 @@ export function FacebookCommentsWidget(props) {
   }, [appId]);
 
   return (
-      <div className="w3-col m12" style={{ width: '97%' }} >
-        {ShowDebugInfo("facebook comment", context, page, widget, layout)}
+    <div className="w3-row-padding w3-margin-bottom full-width">
+      <div className="w3-col m12">
         <div className="w3-card w3-round w3-white">
-          <div className="fb-comment w3-container w3-padding article-full">
-            <h3>Hozzászólások a "{pageUrl}" oldalhoz.</h3>
-            <div className="fb-comments" data-href={pageUrl} data-width="100%" data-numposts="5" data-order-by="reverse_time" data-lazy></div>
+          {ShowDebugInfo("facebook comment", context, page, widget, layout)}
+          <div className="w3-container w3-padding">
+            <div className="fb-comments w3-container w3-padding">
+              <h3>Hozzászólások</h3>
+              <div className="fb-comments" data-href={pageUrl} data-width="100%" data-numposts="5" data-order-by="reverse_time" data-lazy></div>
+            </div>
           </div>
         </div>
       </div>
+    </div>
   );
 }
 
