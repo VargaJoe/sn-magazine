@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect } from 'react';
 import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
 import { useSnStore } from "../store/sn-store";
@@ -11,8 +11,6 @@ export function FacebookCommentsWidget(props) {
   const {context, page, layout} = useSnStore((state) => state);
   let widget = props.widget;  
   const bindedContext = BindedContext(props, true);
-  const fbCommentsRef = useRef(null);
-  const [width, setWidth] = useState('');
 
   const appId = process.env.REACT_APP_FB_APPID || DATA.facebookappid;
   const siteHost = process.env.REACT_APP_SITE_HOST || DATA.siteHost;
@@ -36,25 +34,20 @@ export function FacebookCommentsWidget(props) {
     };
 
     loadFacebookSDK();
-    if (fbCommentsRef.current) {
-      setWidth(fbCommentsRef.current.offsetWidth - 40);
-    }
-  }, [appId]);
-
-  useEffect(() => {
+    
     if (window.FB && window.FB.XFBML && typeof window.FB.XFBML.parse === 'function') {
       window.FB.XFBML.parse();
     }
-  });
-  
+  }, [appId]);
+
   return (
     
-      <div className="w3-col m12" style={{ width: '97%' }} ref={fbCommentsRef}>
+      <div className="w3-col m12" style={{ width: '97%' }} >
         {ShowDebugInfo("facebook comment", context, page, widget, layout)}
         <div className="w3-card w3-round w3-white">
           <div className="fb-comment w3-container w3-padding article-full">
             <h3>Hozzászólások a "{pageUrl}" oldalhoz.</h3>
-            <div className="fb-comments" data-href={pageUrl} data-width={width} data-numposts="5"></div>
+            <div className="fb-comments" data-href={pageUrl} data-width="100%" data-numposts="5"></div>
           </div>
         </div>
       </div>
