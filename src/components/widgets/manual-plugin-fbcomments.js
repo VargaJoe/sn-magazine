@@ -4,6 +4,9 @@ import BindedContext from "../utils/context-binding"
 import { useSnStore } from "../store/sn-store";
 const DATA = require('../../config.json');
 
+// Facebook Comments Plugin
+// https://developers.facebook.com/docs/plugins/comments
+
 export function FacebookCommentsWidget(props) {
   console.log('%cFbComments', "font-size:16px;color:green", { props: props });
   // const layout = props.page;
@@ -47,7 +50,7 @@ export function FacebookCommentsWidget(props) {
         <div className="w3-card w3-round w3-white">
           <div className="fb-comment w3-container w3-padding article-full">
             <h3>Hozzászólások a "{pageUrl}" oldalhoz.</h3>
-            <div className="fb-comments" data-href={pageUrl} data-width="100%" data-numposts="5"></div>
+            <div className="fb-comments" data-href={pageUrl} data-width="100%" data-numposts="5" data-order-by="reverse_time" data-lazy></div>
           </div>
         </div>
       </div>
