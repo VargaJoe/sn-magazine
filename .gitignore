@@ -27,3 +27,6 @@ src/configuration?*.js
 # deploy
 deploy/logs
 deploy/tools
+
+# modules cleanup
+node_modulesx
