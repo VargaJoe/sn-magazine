@@ -110,7 +110,8 @@ p {
 
 .component-news-half,
 .widget-simpletext,
-.article-full {
+.article-full,
+.fb-comments {
   text-align: left;
   height: 100%;
   display: flex;
