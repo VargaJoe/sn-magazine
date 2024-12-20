@@ -42,15 +42,20 @@ export const LeisureSimpleLayout = (props) => {
   return (
     <div className="App w3-theme-l5">
         <Helmet>
+          <meta property="og:image" content={logoUrl} />
           <title>{pageTitle}</title>
+          <link rel="canonical" href={pageUrl} />
           <meta name="language" content="hu" />
           <meta name="description" content={description} />         
-          <link rel="canonical" href={pageUrl} />
           <meta property="fb:app_id" content={appId} />
           <meta property="og:url" content={pageUrl} />
           <meta property="og:title" content={pageTitle} />
-          <meta property="og:description" content={description} />
-          <meta property="og:image" content={logoUrl} />
+          <meta property="og:description" content={description} />          
+
+          <meta charset="utf-8" />
+          <meta name="description" content="Web site created using create-react-app" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <meta name="theme-color" content="#000000" />
 				</Helmet>
       
       {/* Page Container */}
