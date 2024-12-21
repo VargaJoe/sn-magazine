@@ -12,9 +12,9 @@ export function BindedContext(props, withChildren) {
   const expContext = props.data || props.data?.context || context;
   const widget = props.widget;
   const [bndContext, setContext] = useState({
-                                      contextPath: context.Path,
+                                      contextPath: null,
                                       // content: props.data,
-                                      content: context,
+                                      content: null,
                                       children: []
                                     });
   
@@ -34,8 +34,12 @@ export function BindedContext(props, withChildren) {
 
       if (widget !== undefined && widget.ContextBinding !== undefined) {
         switch (widget.ContextBinding[0]) {
+          case "currentcontext":
+            resultObj.contextPath = context.Path
+            resultObj.content = context
+            break;
           case "customroot":
-            if (widget.CustomRoot !== undefined) {
+            if (widget.CustomRoot) {
               resultObj.contextPath = widget.CustomRoot.Path
               resultObj.content = widget.CustomRoot
             } else {
@@ -43,7 +47,7 @@ export function BindedContext(props, withChildren) {
             }
             break;
           case "currentsite":
-            if (context.Workspace !== null && context.Workspace !== undefined) {
+            if (context.Workspace) {
               resultObj.contextPath = context.Workspace?.Path
               resultObj.content = context.Workspace
             } else {
@@ -58,7 +62,7 @@ export function BindedContext(props, withChildren) {
             //no problem
         }
     
-        if (widget.RelativePath !== null && widget.RelativePath !== undefined) {
+        if (widget.RelativePath) {
           resultObj.contextPath += widget.RelativePath
           resultObj.reload = true
         }
