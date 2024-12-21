@@ -1,9 +1,9 @@
 {
-	"apiUrl" : 				"https://eddie.sensenet.cloud",
-	"authUrl" : 			"https://eddie-is.sensenet.cloud",
-	"clientId": 			"AWahlJ7aLQPuDUAC",
-	"siteHost" :			"https://your-example.com",
-	"dataPath" :			"/Root/Content/SampleWorkspace",
+	"apiUrl" : 				"https://plastice.sensenet.cloud",
+	"authUrl" : 			"https://plastice-is.sensenet.cloud",
+	"clientId": 			"4oIeVFx92mCl6Nhc",
+	"siteHost" :			"https://fotelvandor.hu",
+	"dataPath" :			"/Root/Content/fotelvandor",
 	"pagecontainerPath": 	"/Root/Content/(layout)",
 	"layoutType": 			"Layout",
 	"widgetType": 			"Widget",
@@ -16,5 +16,6 @@
 		"notFolder" : 		"wide"
 		
 	},
-	"facebookappid": 		"1234567890"
+	"facebookappid-test": 		"4114709995461621",
+	"facebookappid": 		"1970434386774420"
 } 

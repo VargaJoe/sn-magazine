@@ -1,14 +1,7 @@
-import { addComponentsByZone, addComponent } from '../utils/add-component';
-import { Helmet } from 'react-helmet-async';
+import { addComponentsByZone } from '../utils/add-component';
 import { useSnStore } from "../store/sn-store";
 
-const DATA = require('../../config.json');
-const defaultImage = require('../../images/logo.png');
-
 export const LeisureSimpleLayout = (props) => {
-  // const context = props.data;
-  // const layout = props.page;
-  // const widgets = props.widget;
   const {context, layout, widgets} = useSnStore((state) => state);
   console.log('%cleisure-simple layout', "font-size:16px;color:green", { props: props }, { context: context}, { layout: layout}, { widgets: widgets });
   
@@ -20,44 +13,8 @@ export const LeisureSimpleLayout = (props) => {
   console.log('components');
   console.log(components);
 
-  // TODO: get og:image dynamically
-  const apiUrl = process.env.REACT_APP_API_URL || DATA.apiUrl;
-  let logoPath = process.env.REACT_APP_LOGO_PATH || DATA.siteLogo;
-  let logoUrl = apiUrl + logoPath;
-		if (logoPath === undefined || logoUrl === apiUrl) {
-			logoUrl = defaultImage;
-		}
-
-  const appId = process.env.REACT_APP_FB_APPID || DATA.facebookappid;
-  const siteHost = process.env.REACT_APP_SITE_HOST || DATA.siteHost;
-  const dataPath = process.env.REACT_APP_DATA_PATH || DATA.dataPath;
-  // const pagePath = window.location.pathname; // url path
-  const pagePath = context.Path.replace(dataPath, ''); // widget context content path
-  const pageUrl = siteHost + pagePath;    
-  const pageTitle = (context.Id === context.Workspace.Id) ? `${context.DisplayName}` : `${context.Workspace.DisplayName} - ${context.DisplayName}`;
-
-  // TODO: get description to context dynamically
-  const description = "book movie tvseries manga anime games reviews hungarian"
-
   return (
     <div className="App w3-theme-l5">
-        <Helmet>
-          <meta property="og:image" content={logoUrl} />
-          <title>{pageTitle}</title>
-          <link rel="canonical" href={pageUrl} />
-          <meta name="language" content="hu" />
-          <meta name="description" content={description} />         
-          <meta property="fb:app_id" content={appId} />
-          <meta property="og:url" content={pageUrl} />
-          <meta property="og:title" content={pageTitle} />
-          <meta property="og:description" content={description} />          
-
-          <meta charset="utf-8" />
-          <meta name="description" content="Web site created using create-react-app" />
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <meta name="theme-color" content="#000000" />
-				</Helmet>
-      
       {/* Page Container */}
       <div className="w3-container w3-content w3-content-custom pagetemplate-custom">
         {/* The Grid */}
