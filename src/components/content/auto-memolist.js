@@ -8,7 +8,7 @@ import { useSnStore } from "../store/sn-store";
 const MemoList = (props) => {
   const componentName = 'memolist'
   const repo = useRepository();
-  // const contextPath = bindedContext.content.Path;
+  // const contextPath = bindedContext.content?.Path;
   const [articles, setArts] = useState([]);
 
   // const layout = props.page;
@@ -57,17 +57,17 @@ const MemoList = (props) => {
 
             <div className="w3-card w3-round w3-white">
               <div className="w3-container w3-padding">
-                <h1>{bindedContext.content.DisplayName}</h1>
+                <h1>{bindedContext.content?.DisplayName}</h1>
                 <div className="context-info">
                   {context.Description}
                 </div>
                 {articles?.map((child) => (
-                  <div key={`content-memo-${counter++}-${bindedContext.content.Id}-${child.Id}`}>
+                  <div key={`content-memo-${counter++}-${bindedContext.content?.Id}-${child.Id}`}>
                     {/* <i className="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i>  */}
                     {/* {art.DisplayName} */}
                     {/* {loadCompo(art)} */}
                     {/* TODO: for this logic the global store fails !!!!!!!!!!! need new PARTIAL component type with explicit context */}
-                    {addComponent('content', 'auto', child.Type.toLowerCase(), `${counter++}-${bindedContext.content.Id}-${child.Id}`, child, props.page)}
+                    {addComponent('content', 'auto', child.Type.toLowerCase(), `${counter++}-${bindedContext.content?.Id}-${child.Id}`, child, props.page)}
                   </div>
                 ))}
 

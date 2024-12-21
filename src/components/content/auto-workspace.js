@@ -18,9 +18,9 @@ export function Workspace(props) {
         <div className="w3-card w3-round w3-white">
         {ShowDebugInfo(componentName, context, page, widget, layout)}
           <div className="w3-container w3-padding">
-            <h1>{bindedContext.content.DisplayName}</h1>
+            <h1>{bindedContext.content?.DisplayName}</h1>
             <div className="context-info">
-              <div dangerouslySetInnerHTML={{ __html: bindedContext.content.Description }}/>
+              <div dangerouslySetInnerHTML={{ __html: bindedContext.content?.Description }}/>
             </div>
           </div>
         </div>

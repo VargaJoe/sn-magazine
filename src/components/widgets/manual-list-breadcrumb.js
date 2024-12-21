@@ -14,11 +14,11 @@ export function BreadcrumbListWidget(props) {
 
   const DATA = require('../../config.json');
   const illegalBreadcrumbs = (process.env.REACT_APP_DATA_PATH || DATA.dataPath).split('/').filter(element => element);
-  const breadcrumbs = bindedContext.content.Path.split('/').filter(element => element);
+  const breadcrumbs = bindedContext.content?.Path.split('/').filter(element => element);
   
   function showBreadcrumbItem (item, index, useLink) { 
     if (useLink) {
-      const pathToCrumbItem = bindedContext.content.Path.substr((process.env.REACT_APP_DATA_PATH || DATA.dataPath).length).split('/', index).join("/")
+      const pathToCrumbItem = bindedContext.content?.Path.substr((process.env.REACT_APP_DATA_PATH || DATA.dataPath).length).split('/', index).join("/")
       console.log(index, pathToCrumbItem)
       return (
         <span key={`sidemenu-${item}`}>
