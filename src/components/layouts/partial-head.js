@@ -35,6 +35,9 @@ const CommonHelmet = ({ context }) => {
       <meta property="og:title" content={pageTitle} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={logoUrl} />
+      {/* TODO: get og:image width and height dynamically */}
+      <meta property="og:image:width" content="460" />
+      <meta property="og:image:height" content="154" />
       <meta charset="utf-8" />
       <meta name="description" content="Web site created using create-react-app" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
