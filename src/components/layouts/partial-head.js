@@ -31,6 +31,8 @@ const CommonHelmet = ({ context }) => {
       {/* TODO: get og:image width and height dynamically */}
       <meta property="og:image:width" content="460" />
       <meta property="og:image:height" content="154" />
+      <meta property="og:image:type" content="image/png" />
+      <meta property="og:image:alt" content="OG image for site" />
 
       <title>{pageTitle}</title>
       <meta name="language" content="hu" />
