@@ -51,6 +51,7 @@ export function FacebookCommentsWidget(props) {
           <div className="w3-container w3-padding">
             <div className="fb-comments w3-container w3-padding">
               <h3>Hozzászólások</h3>
+              <small>{pageUrl}</small>
               <div className="fb-comments" data-href={pageUrl} data-width="100%" data-numposts="5" data-order-by="reverse_time" data-lazy></div>
             </div>
           </div>

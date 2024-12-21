@@ -3,7 +3,7 @@ import { useRepository } from '@sensenet/hooks-react';
 import { addComponent, addLayout } from './utils/add-component';
 import { useLocation } from 'react-router-dom';
 import { useSnStore } from "./store/sn-store";
-
+import CommonHelmet from './layouts/partial-head';
 
 const DATA = require('../config.json');
 
@@ -178,6 +178,9 @@ export const PageWrapper = (props) => {
 
   return ( 
     <React.Suspense>
+      <CommonHelmet
+        context={context}
+      />
       {wrappercompo}
     </React.Suspense>
   )

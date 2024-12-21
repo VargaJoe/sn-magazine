@@ -8,6 +8,7 @@
 	"layoutType": 			"Layout",
 	"widgetType": 			"Widget",
 	"siteLogo": 			"/(structure)/Site/logo.png",
+	"ogimage": 				"/(structure)/Site/ogimage.png",
 	"autoLayout": {
 		"default": 			"wide",
 		"folder" :			"explore",
