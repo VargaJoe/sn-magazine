@@ -19,7 +19,7 @@ export function FacebookCommentsWidget(props) {
   const siteHost = process.env.REACT_APP_SITE_HOST || DATA.siteHost;
   const dataPath = process.env.REACT_APP_DATA_PATH || DATA.dataPath;
   // const pagePath = context.Path.replace(dataPath, ''); // url context content path
-  const pagePath = bindedContext.contextPath.replace(dataPath, ''); // widget context content path
+  const pagePath = bindedContext.contextPath?.replace(dataPath, ''); // widget context content path
   const pageUrl = siteHost + pagePath;
   
   useEffect(() => {
