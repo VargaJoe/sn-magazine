@@ -41,7 +41,8 @@ const CommonHelmet = ({ context }) => {
       <meta property="fb:app_id" content={appId} />
       <meta property="og:url" content={pageUrl} />
       <meta property="og:title" content={pageTitle} />
-      <meta property="og:description" content={description} />      
+      <meta property="og:description" content={description} />
+      <meta property="og:type" content="article" />
       <meta charset="utf-8" />
       <meta name="description" content="Web site created using create-react-app" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
