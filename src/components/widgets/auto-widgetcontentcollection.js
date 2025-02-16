@@ -12,7 +12,7 @@ export function ContentCollectionWidget(props) {
   const widget = props.widget;
   const bindedContext = BindedContext(props, true);
   console.log('widget', widget)
-  const widgetTitle = (bindedContext.widget !== null && bindedContext.widget?.Title !== undefined && bindedContext.widget?.Title !== '') ? bindedContext.widget?.Title : bindedContext.content.DisplayName
+  const widgetTitle = (bindedContext.widget !== null && bindedContext.widget?.Title !== undefined && bindedContext.widget?.Title !== '') ? bindedContext.widget?.Title : bindedContext.content?.DisplayName
   
   let counter = 0;
   return (
@@ -24,7 +24,7 @@ export function ContentCollectionWidget(props) {
             <div className="w3-container w3-padding">
             <h2>{widgetTitle}</h2>
               <div className="context-info">
-                {bindedContext.content.Description}  
+                {bindedContext.content?.Description}  
                 <div>
                   {bindedContext.children?.map((child) => { 
                     return addComponent('content', 'auto', child.Type.toLowerCase(), `${counter++}-${context.Id}-${child.Id}`, child, props.page, child); 

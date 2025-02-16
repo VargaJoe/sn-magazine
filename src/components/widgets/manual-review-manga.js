@@ -33,7 +33,7 @@ export function MangaReviewWidget(props) {
 
   //todo: maybe should load only related content, context already in?
   const loadContent = useCallback(async () => {
-    const contextPathWorkaround = bindedContext.content.Path?.replace("(", "%28").replace(")", "%29");
+    const contextPathWorkaround = bindedContext.content?.Path?.replace("(", "%28").replace(")", "%29");
     await repo.load({
       idOrPath: `${contextPathWorkaround}`,
       oDataOptions: {
@@ -57,14 +57,14 @@ export function MangaReviewWidget(props) {
   }, [bindedContext, loadContent, repo]);
 
   function newsImage () { 
-    if (bindedContext.content.Image?.Url === "") {
+    if (bindedContext.content?.Image?.Url === "") {
       return "";
     }
 
     return (
       <div className="w3-left w3-padding article-cover-outer">
         <div className="w3-col article-cover-inner">
-          <img src={(process.env.REACT_APP_API_URL || DATA.apiUrl) + bindedContext.content.Image?.Url} alt={bindedContext.content.DisplayName} className="w3-hover-opacity"/>
+          <img src={(process.env.REACT_APP_API_URL || DATA.apiUrl) + bindedContext.content?.Image?.Url} alt={bindedContext.content?.DisplayName} className="w3-hover-opacity"/>
         </div>
       </div>
     );   
@@ -83,7 +83,7 @@ export function MangaReviewWidget(props) {
           "widgets",
           "nested",
           `review-related-${child.Type.toLowerCase()}`,
-          `${widget.Id}-${bindedContext.content.Id}-${child.Id}`,
+          `${widget.Id}-${bindedContext.content?.Id}-${child.Id}`,
           child,
           props.page,
           widget
@@ -110,17 +110,17 @@ export function MangaReviewWidget(props) {
         {ShowDebugInfo("manga review widget", bindedContext, page, widget, layout)}
           <div className="w3-container w3-padding article-full">
             <h1>
-              {bindedContext.content.DisplayName} 
+              {bindedContext.content?.DisplayName} 
             </h1>
             <h2>
               {bindedContext.Subtitle} 
             </h2>
             {newsImage()}
             <div className="w3-container w3-padding-large w3-bottombar">
-              <div className="w3-margin-top italic" dangerouslySetInnerHTML={{ __html: bindedContext.content.Description }}/>
-              <div className="italic" dangerouslySetInnerHTML={{ __html: bindedContext.content.Lead }}/>
-              <div dangerouslySetInnerHTML={{ __html: bindedContext.content.Body }}/>
-              <div className="small">{bindedContext.content.Author} ({bindedContext.content.Publisher}, {Moment(bindedContext.content.PublishDate).format('yyyy.MM.DD')})</div>
+              <div className="w3-margin-top italic" dangerouslySetInnerHTML={{ __html: bindedContext.content?.Description }}/>
+              <div className="italic" dangerouslySetInnerHTML={{ __html: bindedContext.content?.Lead }}/>
+              <div dangerouslySetInnerHTML={{ __html: bindedContext.content?.Body }}/>
+              <div className="small">{bindedContext.content?.Author} ({bindedContext.content?.Publisher}, {Moment(bindedContext.content?.PublishDate).format('yyyy.MM.DD')})</div>
             </div>
             {relatedContents(expContext?.Translation, "Fordítások")}
             {relatedContents(expContext?.RelatedContent, "Kapcsolódó linkek")}
