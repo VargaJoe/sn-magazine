@@ -114,7 +114,7 @@ export function SimpleReviewWidget(props) {
               {bindedContext.content?.DisplayName} 
             </h1>
             <h2>
-              {bindedContext.Subtitle} 
+              {bindedContext.content?.Subtitle} 
             </h2>
             {newsImage()}
             <div className="w3-container w3-padding-large w3-bottombar">

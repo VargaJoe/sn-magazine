@@ -41,7 +41,7 @@ export function NestedLeisureArticleItem(props) {
                     {newsImage()}
                     <div className="w3-left w3-padding news-meta">
                       <div className="title w3-large">{context.DisplayName}</div>
-                      <div className="small" dangerouslySetInnerHTML={{ __html: context.Lead }}></div>
+                      <div className="small" dangerouslySetInnerHTML={{ __html: context.Subtitle || context.Lead }}></div>
                       <div className="small hidden">{context.Author}</div>
                       <div>{Moment(context.PublishDate).format('yyyy.MM.DD')}</div>
                     </div>
