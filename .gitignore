@@ -30,3 +30,5 @@ deploy/tools
 
 # modules cleanup
 node_modulesx
+.github/*.md
+.vscode/*
