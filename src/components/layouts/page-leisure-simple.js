@@ -1,8 +1,37 @@
+import React, { useRef, useEffect } from 'react';
 import { addComponentsByZone } from '../utils/add-component';
 import { useSnStore } from "../store/sn-store";
 
 export const LeisureSimpleLayout = (props) => {
   const {context, layout, widgets} = useSnStore((state) => state);
+
+  // Deep comparison debug
+  const prevRef = useRef({ props: null, context: null, layout: null, widgets: null });
+  useEffect(() => {
+    const prev = prevRef.current;
+    const deepChanged =
+      JSON.stringify(prev.props) !== JSON.stringify(props) ||
+      JSON.stringify(prev.context) !== JSON.stringify(context) ||
+      JSON.stringify(prev.layout) !== JSON.stringify(layout) ||
+      JSON.stringify(prev.widgets) !== JSON.stringify(widgets);
+    if (deepChanged) {
+      console.log('%c[LeisureSimpleLayout] Deep change detected', 'color:purple;font-weight:bold', {
+        prevProps: prev.props, currProps: props,
+        prevContext: prev.context, currContext: context,
+        prevLayout: prev.layout, currLayout: layout,
+        prevWidgets: prev.widgets, currWidgets: widgets
+      });
+    } else {
+      console.log('%c[LeisureSimpleLayout] No deep change', 'color:purple', {
+        prevProps: prev.props, currProps: props,
+        prevContext: prev.context, currContext: context,
+        prevLayout: prev.layout, currLayout: layout,
+        prevWidgets: prev.widgets, currWidgets: widgets
+      });
+    }
+    prevRef.current = { props, context, layout, widgets };
+  });
+
   console.log('%cleisure-simple layout', "font-size:16px;color:green", { props: props }, { context: context}, { layout: layout}, { widgets: widgets });
   
   const sideboxes = addComponentsByZone('widgets', 'side', null, null, widgets);

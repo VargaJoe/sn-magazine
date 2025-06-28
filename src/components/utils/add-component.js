@@ -107,9 +107,9 @@ export const ShowComponentsByZone = (type, zone, contextobs, page, widgets) => {
       const isAuto = (child.ClientComponent === undefined || child.ClientComponent === null || child.ClientComponent === '');
       const compoType = isAuto ? child.Type : child.ClientComponent;
       const prefix = (isAuto) ? "auto" : "manual";
-      const compoId = (!child?.CacheKey) ? `${type}-${zone}-${child?.Name}` : `${type}-${zone}-${child?.CacheKey}`;
-      console.log('add component by zone - widget: ', { type: type}, {zone: zone}, {context: context}, {page: page}, {child: child}, {compoType: compoType}, {compoId:compoId});
-      return addComponent(type, prefix, compoType.toLowerCase(), `${compoId}`, null, null, child);
+      const componentId = getComponentKey(child);
+      console.log('[ShowComponentsByZone] type:', type, 'zone:', zone, 'component:', compoType, 'componentId:', componentId, 'child:', child);
+      return addComponent(type, prefix, compoType.toLowerCase(), componentId, null, null, child);
     })
   );
 };
@@ -125,10 +125,41 @@ export const addLayout = (contextAsWidget, setLayout) => {
     layout = DATA.autoLayout.notFolder;
   }
 
-  console.log(`add ${layout} layout`, { type: contextAsWidget.Type }, { isFolder: contextAsWidget.IsFolder }, { setting: layout });
+  const componentId = getComponentKey(contextAsWidget);
+  console.log('[addLayout] layout:', layout, 'componentId:', componentId, 'contextAsWidget:', contextAsWidget);
   setLayout(layout);
   return addComponent('layouts', 'page', layout, `page-${layout}`, contextAsWidget);
 };
+
+/**
+ * Generates a stable, unique key for a component based on its identity and relevant settings.
+ * @param {object} component - The component object
+ * @returns {string} - The unique key
+ */
+function getComponentKey(component) {
+  if (!component) return '';
+  // Use path or id as base identity
+  const base = 'wg'; // component.Name || component.Path || component.Id || '';
+  // Only include relevant properties for settings
+  const relevant = {
+    //ClientComponent: component.ClientComponent,
+    ContentQuery: component.ContentQuery,
+    PortletZone: component.PortletZone,
+    CacheKey: component.CacheKey,
+    Title: component.Title,
+    //ContextBinding: component.ContextBinding,
+    // Add more fields if needed
+  };
+  // Stable stringify: sort keys
+  const stableStringify = (obj) => {
+    return JSON.stringify(Object.keys(obj).sort().reduce((acc, key) => {
+      acc[key] = obj[key];
+      return acc;
+    }, {}));
+  };
+  // return `${base}:${stableStringify(relevant)}`;
+  return `${base}:${stableStringify(relevant)}`;
+}
 
 // --- End Dynamic Component Resolution ---
 export { importView };

@@ -23,6 +23,7 @@
   - [x] Add developer documentation for dynamic resolution (inline and usage)
   - [x] Add clear cache button to debug info in dev mode
   - [x] Persist debug info visibility using localStorage and URL param
+  - [ ] Add detailed debug logging to PageWrapper to track remounts, instance identity, layout key, and layout node path/id across navigations (in progress)
 
 ## Planned or Future Stories
 - **Story 02: State Management Optimization** ([docs/stories/story02-state-management.md](docs/stories/story02-state-management.md))
