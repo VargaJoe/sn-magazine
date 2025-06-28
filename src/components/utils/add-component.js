@@ -9,39 +9,53 @@ const defaultComponent = 'default';
 let lazyComponents = [];
 
 /**
+ * Clears the in-memory cache of lazy-loaded components.
+ * Useful for HMR or manual cache invalidation during development.
+ */
+export function clearLazyComponentCache() {
+  lazyComponents = [];
+  if (process.env.NODE_ENV === 'development') {
+    console.info('lazyComponents cache cleared');
+  }
+}
+
+/**
  * Dynamically imports a React component based on type, prefix, and component name.
  * Uses a simple cache to avoid repeated imports.
- * Falls back to the default component if import fails.
+ * Falls back to the default component or a custom fallback if import fails.
  * @param {string} type - The folder (e.g. 'layouts', 'widgets', 'content')
  * @param {string} prefix - The component prefix (e.g. 'auto', 'manual', 'page')
  * @param {string} component - The component name (without prefix)
+ * @param {string} [fallback] - Optional custom fallback component name
  * @returns {React.LazyExoticComponent}
  */
-function importView(type, prefix, component) {
+function importView(type, prefix, component, fallback) {
   if (!type || !prefix || !component) {
-    console.error('importView: Missing type, prefix, or component', { type, prefix, component });
-    return lazy(() => import(`../${type}/auto-${defaultComponent}`));
+    const msg = `importView: Missing type, prefix, or component: type=${type}, prefix=${prefix}, component=${component}`;
+    console.error(msg);
+    return lazy(() => import(`../${type}/auto-${fallback || defaultComponent}`));
   }
   // Check cache first
-  let lazyView = lazyComponents.find(ptmplt => ptmplt.type === type && ptmplt.prefix === prefix && ptmplt.component === component);
+  let lazyView = lazyComponents.find(ptmplt => ptmplt.type === type && ptmplt.prefix === prefix && ptmplt.component === component && ptmplt.fallback === fallback);
   if (!lazyView) {
     lazyView = {
       type,
       prefix,
       component,
+      fallback,
       view: lazy(() =>
         import(`../${type}/${prefix}-${component}`)
           .catch((err) => {
-            console.warn(`importView: Failed to import ../${type}/${prefix}-${component}, falling back to auto-${defaultComponent}`, err);
-            return import(`../${type}/auto-${defaultComponent}`);
+            const msg = `importView: Failed to import ../${type}/${prefix}-${component}, falling back to auto-${fallback || defaultComponent}`;
+            console.warn(msg, err);
+            return import(`../${type}/auto-${fallback || defaultComponent}`);
           })
       )
     };
     lazyComponents.push(lazyView);
-    console.log('importView: new component added to cache:', lazyView);
-  } else {
-    // Already cached
-    // console.log('importView: using cached component:', lazyView);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('importView: new component added to cache:', lazyView);
+    }
   }
   return lazyView.view;
 }
@@ -57,15 +71,15 @@ function importView(type, prefix, component) {
  * @param {object} widget
  * @returns {JSX.Element}
  */
-export const addComponent = (type, prefix, component, id, data, page, widget) => {
-  const View = importView(type, prefix, component);
+export const addComponent = (type, prefix, component, id, data, page, widget, fallback) => {
+  const View = importView(type, prefix, component, fallback);
   // widgets can be top level or nested
   // top level widgets usually get context from store
   // nested widgets get context from parent widget
   return (
-    <View key={id} 
-      data={data} 
-      // page={page} 
+    <View key={id}
+      data={data}
+      // page={page}
       widget={widget} />
   );
 };

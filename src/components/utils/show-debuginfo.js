@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
+import { clearLazyComponentCache } from './add-component';
 
 const ShowDebugInfo = (title, context, currentPage, widget, layout) => {
   const [showDebug, setDebug] = useState(false);
@@ -139,6 +140,15 @@ const ShowDebugInfo = (title, context, currentPage, widget, layout) => {
         <button title="show" onClick={handleToggle}>
           show
         </button>
+        {process.env.NODE_ENV === 'development' && (
+          <button
+            title="Clear dynamic component cache"
+            style={{ marginLeft: 8 }}
+            onClick={clearLazyComponentCache}
+          >
+            clear cache
+          </button>
+        )}
       </div>
       <div
         className={`debug-info-details w3-left  ${showDebug ? "" : "hidden"}`}
