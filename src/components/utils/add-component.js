@@ -131,4 +131,6 @@ export const addLayout = (contextAsWidget, setLayout) => {
 };
 
 // --- End Dynamic Component Resolution ---
+// Export for testing only
+export { importView };
 
