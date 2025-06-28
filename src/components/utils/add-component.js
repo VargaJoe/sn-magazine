@@ -3,39 +3,67 @@ import { useSnStore } from "../store/sn-store";
 
 const DATA = require('../../config.json');
 
+// --- Dynamic Component Resolution ---
+// This array acts as a simple in-memory cache for lazy-loaded components.
 const defaultComponent = 'default';
 let lazyComponents = [];
-function importView(type, prefix, component) {
-  if (lazyComponents !== null && lazyComponents !== undefined) {
-    let lazyView = lazyComponents.filter(ptmplt => ptmplt.type === type && ptmplt.prefix === prefix && ptmplt.component === component)[0];
-    if (lazyView === undefined) {
-      lazyView = {
-        type: type,
-        prefix: prefix,
-        component: component,
-        view: lazy(() =>
-        import(`../${type}/${prefix}-${component}`)
-        .catch(() => {
-          console.log(`import failed: ${type}/${prefix}-${component}`);
-          return import(`../${type}/auto-${defaultComponent}`)
-        }
-      ))}
-      lazyComponents.push(lazyView);
-      console.log('new component added: ', lazyView.component);
-    } else {
-      console.log('already loaded component: ', lazyView.component);
-    };
-    return lazyView.view;
-  }
-};
 
+/**
+ * Dynamically imports a React component based on type, prefix, and component name.
+ * Uses a simple cache to avoid repeated imports.
+ * Falls back to the default component if import fails.
+ * @param {string} type - The folder (e.g. 'layouts', 'widgets', 'content')
+ * @param {string} prefix - The component prefix (e.g. 'auto', 'manual', 'page')
+ * @param {string} component - The component name (without prefix)
+ * @returns {React.LazyExoticComponent}
+ */
+function importView(type, prefix, component) {
+  if (!type || !prefix || !component) {
+    console.error('importView: Missing type, prefix, or component', { type, prefix, component });
+    return lazy(() => import(`../${type}/auto-${defaultComponent}`));
+  }
+  // Check cache first
+  let lazyView = lazyComponents.find(ptmplt => ptmplt.type === type && ptmplt.prefix === prefix && ptmplt.component === component);
+  if (!lazyView) {
+    lazyView = {
+      type,
+      prefix,
+      component,
+      view: lazy(() =>
+        import(`../${type}/${prefix}-${component}`)
+          .catch((err) => {
+            console.warn(`importView: Failed to import ../${type}/${prefix}-${component}, falling back to auto-${defaultComponent}`, err);
+            return import(`../${type}/auto-${defaultComponent}`);
+          })
+      )
+    };
+    lazyComponents.push(lazyView);
+    console.log('importView: new component added to cache:', lazyView);
+  } else {
+    // Already cached
+    // console.log('importView: using cached component:', lazyView);
+  }
+  return lazyView.view;
+}
+
+/**
+ * Adds a dynamically resolved component to the render tree.
+ * @param {string} type
+ * @param {string} prefix
+ * @param {string} component
+ * @param {string|number} id
+ * @param {object} data
+ * @param {object} page
+ * @param {object} widget
+ * @returns {JSX.Element}
+ */
 export const addComponent = (type, prefix, component, id, data, page, widget) => {
   const View = importView(type, prefix, component);
   // widgets can be top level or nested
   // top level widgets usually get context from store
   // nested widgets get context from parent widget
   return (
-      <View key={id} 
+    <View key={id} 
       data={data} 
       // page={page} 
       widget={widget} />
@@ -47,7 +75,6 @@ export const addComponentsByZone = (type, zone, contextobs, page, widgets) => {
 }
 
 export const ShowComponentsByZone = (type, zone, contextobs, page, widgets) => {
-// export const ShowComponentsByZone = ({ type, zone, contextobs, page, widgets }) => {
   // if context is not present, use context from store, therefore it can not be a function 
   const {context} = useSnStore((state) => state);
 
@@ -88,4 +115,6 @@ export const addLayout = (contextAsWidget, setLayout) => {
   setLayout(layout);
   return addComponent('layouts', 'page', layout, `page-${layout}`, contextAsWidget);
 };
+
+// --- End Dynamic Component Resolution ---
 
