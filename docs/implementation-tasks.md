@@ -8,7 +8,12 @@
 - Layout and widget resolution is highly dynamic, based on repository content and config.
 
 ## Completed Stories
-- **Story 01: Optimize Dynamic Component Resolution** ([docs/stories/story01-dynamic-component-resolution.md](docs/stories/story01-dynamic-component-resolution.md))
+- **Story 001: Initial Dynamic Layout and Widget System** ([docs/stories/story001-initial-dynamic-layout.md](docs/stories/story001-initial-dynamic-layout.md))
+- **Story 002: Global Store and Debug Info Consolidation** ([docs/stories/story002-global-store-debug.md](docs/stories/story002-global-store-debug.md))
+- **Story 003: Authentication and Client Auth** ([docs/stories/story003-auth-client.md](docs/stories/story003-auth-client.md))
+- **Story 004: Facebook Comments Widget and Social Features** ([docs/stories/story004-facebook-comments.md](docs/stories/story004-facebook-comments.md))
+- **Story 005: Layout and Card Visual Improvements** ([docs/stories/story005-layout-card-visuals.md](docs/stories/story005-layout-card-visuals.md))
+- **Story 006: Optimize Dynamic Component Resolution** ([docs/stories/story006-dynamic-component-resolution.md](docs/stories/story006-dynamic-component-resolution.md))
   - [x] Centralized layout and widget resolution logic
   - [x] Added robust error handling and fallback for missing components
   - [x] Implemented caching for resolved components to avoid repeated dynamic imports
@@ -30,27 +35,27 @@
   - [x] All changes documented in implementation-tasks.md for traceability.
 
 ## In Progress Stories
-- **Story 02: State Management Optimization** ([docs/stories/story02-state-management.md](docs/stories/story02-state-management.md))
+- **Story 007: State Management Optimization** ([docs/stories/story007-state-management.md](docs/stories/story007-state-management.md))
   - [ ] Review zustand store structure for unnecessary re-renders
   - [ ] Split store if state becomes too coupled or large
   - [ ] Add documentation for store usage and best practices
-- **Story 03: API Integration Refactor** ([docs/stories/story03-api-integration.md](docs/stories/story03-api-integration.md))
+- **Story 008: API Integration Refactor** ([docs/stories/story008-api-integration.md](docs/stories/story008-api-integration.md))
   - [ ] Abstract sensenet API calls into a dedicated service layer
   - [ ] Add retry logic and user feedback for failed requests
   - [ ] Document API integration points and usage
-- **Story 04: Component Modularity and Type Safety** ([docs/stories/story04-component-modularity.md](docs/stories/story04-component-modularity.md))
+- **Story 009: Component Modularity and Type Safety** ([docs/stories/story009-component-modularity.md](docs/stories/story009-component-modularity.md))
   - [ ] Review all widget/layout/content components for self-containment
   - [ ] Add prop-types or TypeScript for type safety
   - [ ] Refactor components to reduce prop drilling and improve maintainability
-- **Story 05: Performance Optimization** ([docs/stories/story05-performance.md](docs/stories/story05-performance.md))
+- **Story 010: Performance Optimization** ([docs/stories/story010-performance.md](docs/stories/story010-performance.md))
   - [ ] Profile and optimize rendering of large content/widget trees
   - [ ] Use React Suspense and lazy loading efficiently
   - [ ] Optimize dynamic imports and caching
-- **Story 06: Test Coverage and Quality** ([docs/stories/story06-testing.md](docs/stories/story06-testing.md))
+- **Story 011: Test Coverage and Quality** ([docs/stories/story011-testing.md](docs/stories/story011-testing.md))
   - [ ] Add unit tests for dynamic resolution logic
   - [ ] Add integration tests for API and component interactions
   - [ ] Review and improve test coverage for critical modules
-- **Story 07: Documentation Improvements** ([docs/stories/story07-documentation.md](docs/stories/story07-documentation.md))
+- **Story 012: Documentation Improvements** ([docs/stories/story012-documentation.md](docs/stories/story012-documentation.md))
   - [ ] Add inline code documentation and comments for dynamic logic
   - [ ] Document custom hooks and utility functions
   - [ ] Improve README and developer onboarding docs
