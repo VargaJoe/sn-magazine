@@ -131,9 +131,5 @@ export const addLayout = (contextAsWidget, setLayout) => {
 };
 
 // --- End Dynamic Component Resolution ---
-// Export for testing only in development or test mode
-if (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'test') {
-  // eslint-disable-next-line
-  module.exports.importView = importView;
-}
+export { importView };
 

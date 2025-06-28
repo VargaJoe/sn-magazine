@@ -15,7 +15,7 @@
   - [x] Centralize layout and widget resolution logic
   - [x] Add robust error handling and fallback for missing components
   - [x] Implement caching for resolved components to avoid repeated dynamic imports
-  - [ ] Document the resolution logic for maintainability
+  - [x] Document the resolution logic for maintainability (see docs/dynamic-component-resolution.md)
   - [x] Implement cache invalidation for lazyComponents (for HMR/dev)
   - [x] Add unit tests for importView and addComponent
   - [x] Improve error reporting with more context
