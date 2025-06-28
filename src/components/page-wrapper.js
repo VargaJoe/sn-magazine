@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useRepository } from '@sensenet/hooks-react';
 import { addComponent, addLayout } from './utils/add-component';
 import { useLocation } from 'react-router-dom';
@@ -14,8 +14,61 @@ export const PageWrapper = (props) => {
   // const [context, setContext] = useState();
   const { context, setContext, setLayout, setPage, setWidgets } = useSnStore();
   const locationPath = location.pathname;
-  // const path = locationPath.split('/');
-  console.log('%cpageWrapper', "font-size:16px;color:green");
+  // --- Debug instance identity ---
+  const instanceId = useRef(Math.random().toString(36).substr(2, 8));
+  const renderCount = useRef(0);
+  renderCount.current += 1;
+  // --- End debug instance identity ---
+
+  // --- Debug: track previous context and page for shallow equality ---
+  const prevContextRef = useRef();
+  const prevPageRef = useRef();
+  const [debugPage, setDebugPage] = useState(); // local page state for debug
+
+  // Shallow equality check helper
+  function shallowEqual(objA, objB) {
+    if (objA === objB) return true;
+    if (!objA || !objB) return false;
+    const keysA = Object.keys(objA);
+    const keysB = Object.keys(objB);
+    if (keysA.length !== keysB.length) return false;
+    for (let key of keysA) {
+      if (objA[key] !== objB[key]) return false;
+    }
+    return true;
+  }
+
+  // Patch setPage to also update local debug state
+  const setPageDebug = (p) => {
+    setPage(p);
+    setDebugPage(p);
+  };
+
+  useEffect(() => {
+    // Log on every render and navigation
+    const contextChanged = !shallowEqual(context, prevContextRef.current);
+    const pageChanged = !shallowEqual(debugPage, prevPageRef.current);
+    console.log('%c[PageWrapper] Render', 'color:orange;font-weight:bold', {
+      instanceId: instanceId.current,
+      renderCount: renderCount.current,
+      locationPath,
+      contextType: context?.Type,
+      contextId: context?.Id,
+      contextPath: context?.Path,
+      contextChanged,
+      prevContext: prevContextRef.current,
+      currentContext: context,
+      pageChanged,
+      prevPage: prevPageRef.current,
+      currentPage: debugPage,
+      wrappercompoKey: wrappercompo?.key,
+      wrappercompoType: wrappercompo?.type,
+      wrappercompoName: wrappercompo?.props?.name,
+      wrappercompoProps: wrappercompo?.props,
+    });
+    prevContextRef.current = context;
+    prevPageRef.current = debugPage;
+  });
 
   const layoutContentType = process.env.REACT_APP_LAYOUT_TYPE || DATA.layoutType || "Layout";
   const widgetContentType = process.env.REACT_APP_WIDGET_TYPE || DATA.widgetType || "Widget";
@@ -92,7 +145,7 @@ export const PageWrapper = (props) => {
           const widgets = page?result.d.results?.filter(pcnt => pcnt.ParentId === page.Id):undefined;
           // const layout = !page || page.PageTemplate === '' || page.PageTemplate === null ? "vanilla" : page.PageTemplate;
 
-          setPage(page);
+          setPageDebug(page);
           setWidgets(widgets);
           // setLayout(layout);
           console.log('selected page: ', { results: result.d.results }, { page: page?.Name, meta: page}, { widgets: widgets }, { layout: page?.PageTemplate } );
@@ -156,17 +209,34 @@ export const PageWrapper = (props) => {
   }, [locationPath, repo, setContext]);
 
   useEffect(() => {
+    // Log on every render and navigation
+    console.log('%c[PageWrapper] Render', 'color:orange;font-weight:bold', {
+      instanceId: instanceId.current,
+      renderCount: renderCount.current,
+      locationPath,
+      contextType: context?.Type,
+      contextId: context?.Id,
+      contextPath: context?.Path,
+      wrappercompoKey: wrappercompo?.key,
+      wrappercompoType: wrappercompo?.type,
+      wrappercompoName: wrappercompo?.props?.name,
+      wrappercompoProps: wrappercompo?.props,
+    });
+  });
+
+  useEffect(() => {
     if (locationPath !== null && locationPath !== undefined) {
+      console.log('%c[PageWrapper] useEffect: locationPath changed', 'color:orange', { instanceId: instanceId.current, locationPath });
       loadContent();
     }
   }, [loadContent, locationPath, repo]);
 
   useEffect(() => {
     if (context != null && context !== undefined) {
-      console.log('Load page useEffect:', context);
+      console.log('%c[PageWrapper] useEffect: context changed', 'color:orange', { instanceId: instanceId.current, context });
       loadPage();
     } else {
-      console.log('Skip page load useEffect');
+      console.log('%c[PageWrapper] useEffect: context is null/undefined', 'color:orange', { instanceId: instanceId.current });
     }
   }, [context, loadPage, repo]);
 
@@ -181,6 +251,19 @@ export const PageWrapper = (props) => {
       <CommonHelmet
         context={context}
       />
+      {/* Debug info for layout node and wrappercompo */}
+      <div style={{display:'none'}} data-debug-pagewrapper={JSON.stringify({
+        instanceId: instanceId.current,
+        renderCount: renderCount.current,
+        locationPath,
+        contextType: context?.Type,
+        contextId: context?.Id,
+        contextPath: context?.Path,
+        wrappercompoKey: wrappercompo?.key,
+        wrappercompoType: wrappercompo?.type,
+        wrappercompoName: wrappercompo?.props?.name,
+        wrappercompoProps: wrappercompo?.props,
+      })} />
       {wrappercompo}
     </React.Suspense>
   )

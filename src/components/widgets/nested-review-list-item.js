@@ -3,6 +3,7 @@ import Moment from 'moment';
 import ShowDebugInfo from "../utils/show-debuginfo"
 import LazyImage from "../utils/lazyload-image";
 import { useSnStore } from "../store/sn-store";
+import React, { useRef, useEffect } from 'react';
 
 const DATA = require('../../config.json');
 
@@ -14,6 +15,30 @@ export function NestedReviewListItemComponent(props) {
   const widget = props.widget;
 
   const relativePath = context.Path.substr((process.env.REACT_APP_DATA_PATH || DATA.dataPath).length + 1);
+
+  // Deep comparison debug
+  const prevRef = useRef({ props: null, page: null, layout: null });
+  useEffect(() => {
+    const prev = prevRef.current;
+    const deepChanged =
+      JSON.stringify(prev.props) !== JSON.stringify(props) ||
+      JSON.stringify(prev.page) !== JSON.stringify(page) ||
+      JSON.stringify(prev.layout) !== JSON.stringify(layout);
+    if (deepChanged) {
+      console.log('%c[NestedReviewListItemComponent] Deep change detected', 'color:orange;font-weight:bold', {
+        prevProps: prev.props, currProps: props,
+        prevPage: prev.page, currPage: page,
+        prevLayout: prev.layout, currLayout: layout
+      });
+    } else {
+      console.log('%c[NestedReviewListItemComponent] No deep change', 'color:orange', {
+        prevProps: prev.props, currProps: props,
+        prevPage: prev.page, currPage: page,
+        prevLayout: prev.layout, currLayout: layout
+      });
+    }
+    prevRef.current = { props, page, layout };
+  });
 
   if ( context === undefined || context === null) {
     return (<div>loading</div>)
