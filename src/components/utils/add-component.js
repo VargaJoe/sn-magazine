@@ -139,15 +139,15 @@ export const addLayout = (contextAsWidget, setLayout) => {
 function getComponentKey(component) {
   if (!component) return '';
   // Use path or id as base identity
-  const base = 'wg'; // component.Name || component.Path || component.Id || '';
+  const base = component.Name || component.Path || component.Id || '';
   // Only include relevant properties for settings
   const relevant = {
-    //ClientComponent: component.ClientComponent,
+    ClientComponent: component.ClientComponent,
     ContentQuery: component.ContentQuery,
     PortletZone: component.PortletZone,
     CacheKey: component.CacheKey,
     Title: component.Title,
-    //ContextBinding: component.ContextBinding,
+    ContextBinding: component.ContextBinding,
     // Add more fields if needed
   };
   // Stable stringify: sort keys

@@ -49,10 +49,9 @@ export const LeisureSimpleLayout = (props) => {
         {/* The Grid */}
         <div className="w3-row layout-container">
           {/* Left Column */}
-          <div className="w3-col m2">
+          <div className="w3-col m2 layout-left">
             {sideboxes}
           </div>
-          
           {/* End Left Column */}
 
           {/* Middle Column */}
