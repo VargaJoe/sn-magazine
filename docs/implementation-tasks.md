@@ -48,6 +48,9 @@
   - [x] All Story 007 tasks complete. State management optimization is finalized and ready for PR/merge.
 
 ## In Progress Stories
+--no stories are in progress--
+
+## Planned Stories
 - **Story 008: API Integration Refactor** ([docs/stories/story008-api-integration.md](docs/stories/story008-api-integration.md))
   - [ ] Abstract sensenet API calls into a dedicated service layer
   - [ ] Add retry logic and user feedback for failed requests
@@ -55,7 +58,6 @@
 - **Story 009: Component Modularity and Type Safety** ([docs/stories/story009-component-modularity.md](docs/stories/story009-component-modularity.md))
   - [ ] Review all widget/layout/content components for self-containment
   - [ ] Add prop-types or TypeScript for type safety
-  - [ ] Refactor components to reduce prop drilling and improve maintainability
 - **Story 010: Performance Optimization** ([docs/stories/story010-performance.md](docs/stories/story010-performance.md))
   - [ ] Profile and optimize rendering of large content/widget trees
   - [ ] Use React Suspense and lazy loading efficiently
@@ -75,6 +77,17 @@
   - [ ] Evaluate and implement CacheKey usage for memoization/caching.
   - [ ] Document all field mappings and best practices in docs/field-mapping.md.
   - [ ] Update implementation-tasks.md and README.md with new best practices.
+- **Story 014: Repository Restructure and Monorepo Migration** ([docs/stories/story014-repository-restructure-monorepo.md](docs/stories/story014-repository-restructure-monorepo.md))
+  - [ ] Merge all feature and site branches back to master for a clean starting point.
+  - [ ] Retain the current production branch for uninterrupted live deployments.
+  - [ ] Refactor master to contain only generic builder code (no site-specific widgets, layouts, or configs).
+  - [ ] Set up a monorepo structure (e.g., using Yarn Workspaces or Lerna) with at least two packages:
+      - `core-builder` (generic builder)
+      - `site-project` (site-specific code, can be duplicated for each site)
+  - [ ] Move site-specific code into its own package(s) within the monorepo.
+  - [ ] Update documentation to reflect the new structure and workflow.
+  - [ ] Test that both core and site packages build and run correctly.
+  - [ ] Plan for future separation into independent repositories if needed.
 
 ## Next Steps
 - [ ] Add more detailed analysis of each module (layouts, widgets, content, utils)
