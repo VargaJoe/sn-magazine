@@ -39,9 +39,8 @@ export function MenuWithLogoWidget(props) {
     prevRef.current = { props, context, page, widget: props.widget, layout };
   });
   console.log('%cMenuWithLogo', 'font-size:16px;color:green', { props: props });
-  // const layout = props.page;
-  // let context = props.data;
-  let widget = props.widget;  
+
+  let widget = props.widget;  // still passed as prop for config
   const bindedContext = BindedContext(props, true);
   
   let logoPath = process.env.REACT_APP_LOGO_PATH || DATA.siteLogo;

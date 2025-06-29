@@ -61,6 +61,13 @@
   - [ ] Add inline code documentation and comments for dynamic logic
   - [ ] Document custom hooks and utility functions
   - [ ] Improve README and developer onboarding docs
+- **Story 013: sensenet Content Type Field Mapping and Refactor Plan** ([docs/stories/story013-field-mapping-refactor.md](docs/stories/story013-field-mapping-refactor.md))
+  - [ ] Audit all layouts and widgets for sensenet field usage.
+  - [ ] Refactor to support dynamic meta fields (MetaTitle, MetaDescription, MetaRobots).
+  - [ ] Refactor to support dynamic PageTemplate selection.
+  - [ ] Evaluate and implement CacheKey usage for memoization/caching.
+  - [ ] Document all field mappings and best practices in docs/field-mapping.md.
+  - [ ] Update implementation-tasks.md and README.md with new best practices.
 
 ## Next Steps
 - [ ] Add more detailed analysis of each module (layouts, widgets, content, utils)
