@@ -9,7 +9,6 @@ const DATA = require('../../config.json');
 
 export function NestedMangaItem(props) {
   console.log('%cNestedMangaItem', "font-size:16px;color:green", { props: props });
-  // const layout = props.page;
   const context = props.data;
   const {page, layout} = useSnStore((state) => state);
   const widget = props.widget;
@@ -44,7 +43,7 @@ export function NestedMangaItem(props) {
       });
     }
     prevRef.current = { props, page, layout };
-  });
+  }, [props, page, layout]);
 
   return (
     // <div className="w3-col m9">

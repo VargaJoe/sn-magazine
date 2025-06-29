@@ -36,9 +36,11 @@
 
 ## In Progress Stories
 - **Story 007: State Management Optimization** ([docs/stories/story007-state-management.md](docs/stories/story007-state-management.md))
-  - [ ] Review zustand store structure for unnecessary re-renders
-  - [ ] Split store if state becomes too coupled or large
-  - [ ] Add documentation for store usage and best practices
+  - [x] Created feature branch 'feature/state-management-optimization' from 'develop/review-site' to proceed with state management optimization.
+  - [x] Audit all widget/component usages of useSnStore and props to identify redundant props.
+  - [x] Refactor widgets/components to remove redundant props (page/layout) in favor of zustand.
+  - [ ] Consider moving more widget/context state to zustand if it improves maintainability, but avoid over-globalizing state.
+  - [ ] Document best practices for store usage and component design.
 - **Story 008: API Integration Refactor** ([docs/stories/story008-api-integration.md](docs/stories/story008-api-integration.md))
   - [ ] Abstract sensenet API calls into a dedicated service layer
   - [ ] Add retry logic and user feedback for failed requests
