@@ -9,7 +9,6 @@ const DATA = require('../../config.json');
 
 export function NestedReviewListItemComponent(props) {
   console.log('%cNestedReviewListItemComponent', "font-size:16px;color:green", { props: props });
-  // const layout = props.page;
   const context = props.data;  
   const {page, layout} = useSnStore((state) => state);
   const widget = props.widget;
@@ -38,7 +37,7 @@ export function NestedReviewListItemComponent(props) {
       });
     }
     prevRef.current = { props, page, layout };
-  });
+  }, [props, page, layout]);
 
   if ( context === undefined || context === null) {
     return (<div>loading</div>)

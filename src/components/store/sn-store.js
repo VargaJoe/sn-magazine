@@ -7,7 +7,7 @@ export const useSnStore = create()((set) => ({
   // page sn content
   page: null,
   setPage: (page) => set(() => ({ page: page })),
-  // widget sn contents
+  // widgets sn contents
   widgets: null,
   setWidgets: (widgets) => set(() => ({ widgets: widgets })),  
   // layout sn content

@@ -1,12 +1,10 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { useRepository } from "@sensenet/hooks-react";
+import React from "react";
 import { addComponent } from '../utils/add-component';
 import ShowDebugInfo from "../utils/show-debuginfo"
 import Moment from 'moment';
 import { useSnStore } from "../store/sn-store";
   
 export function NestedLeisureMangaTranslationItem(props) {
-  const repo = useRepository();
   let { context, itemCollection } = props.data;
   const {page, layout} = useSnStore((state) => state);
   const widget = props.widget;

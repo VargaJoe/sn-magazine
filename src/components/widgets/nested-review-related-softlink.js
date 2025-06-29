@@ -3,7 +3,6 @@ import { useSnStore } from "../store/sn-store";
 
 export function NestedReviewRelatedSoftLink(props) {
   console.log('%cNestedReviewRelatedSoftLink', 'font-size:16px;color:green', { props: props });
-  // const layout = props.page;
   const context = props.data;
   const {page, layout} = useSnStore((state) => state);
   const widget = props.widget;
@@ -18,8 +17,6 @@ export function NestedReviewRelatedSoftLink(props) {
               <div className="w3-left w3-padding related-link-meta">
                 <div className="w3-large"><i className="fa fa-link fa-fw related-link-icon"></i>{context.DisplayName}</div>
                 <div className="small" dangerouslySetInnerHTML={{ __html: context.Description }}/>
-                {/* <div className="small hidden">{context.Author}</div>
-                <div>{Moment(context.PublishDate).format('yyyy.MM.DD')}</div> */}
               </div>
             </a>
             <div className="embed small w3-clear w3-center" dangerouslySetInnerHTML={{ __html: context.Embed }}/>

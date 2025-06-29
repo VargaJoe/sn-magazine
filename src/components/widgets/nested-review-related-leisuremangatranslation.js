@@ -3,7 +3,6 @@ import { useSnStore } from "../store/sn-store";
 
 export function NestedReviewRelatedMangaTranslation(props) {
   console.log('%cNestedReviewRelatedMangaTranslation', 'font-size:16px;color:green', { props: props });
-  // const layout = props.page;
   const context = props.data;
   const {page, layout} = useSnStore((state) => state);
   const widget = props.widget;
@@ -25,7 +24,6 @@ export function NestedReviewRelatedMangaTranslation(props) {
   }
     
   return (
-    // <div className="w3-col m9">
       <div className="w3-row-padding w3-margin-bottom">
         <div className="w3-col m12">
           <div className="w3-card w3-round w3-white">
@@ -36,15 +34,12 @@ export function NestedReviewRelatedMangaTranslation(props) {
                   <div className="w3-large"><i className="fa fa-download fa-fw related-link-icon"></i>{context.DisplayName}</div>
                   <div dangerouslySetInnerHTML={{ __html: context.Description }}/>
                   <div className="small">olvasási irány: {direction()}<i className={`fa ${directionIcon()} fa-fw read-direction-icon`}></i></div>
-                  {/* <div className="small hidden">{context.Author}</div>
-                  <div>{Moment(context.PublishDate).format('yyyy.MM.DD')}</div> */}
                 </div>
               </a>
             </div>
           </div>
         </div>
       </div>
-    // </div>
   );
 }
 
