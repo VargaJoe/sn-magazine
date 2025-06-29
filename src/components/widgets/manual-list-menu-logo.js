@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Link } from "react-router-dom";
 import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
@@ -8,11 +8,40 @@ const DATA = require('../../config.json');
 const defaultImage = require('../../images/logo.png');
 
 export function MenuWithLogoWidget(props) {
+  // Deep comparison debug
+  const {context, page, layout} = useSnStore((state) => state);
+  const prevRef = useRef({ props: null, context: null, page: null, widget: null, layout: null });
+  useEffect(() => {
+    const prev = prevRef.current;
+    const deepChanged =
+      JSON.stringify(prev.props) !== JSON.stringify(props) ||
+      JSON.stringify(prev.context) !== JSON.stringify(context) ||
+      JSON.stringify(prev.page) !== JSON.stringify(page) ||
+      JSON.stringify(prev.widget) !== JSON.stringify(props.widget) ||
+      JSON.stringify(prev.layout) !== JSON.stringify(layout);
+    if (deepChanged) {
+      console.log('%c[MenuWithLogoWidget] Deep change detected', 'color:purple;font-weight:bold', {
+        prevProps: prev.props, currProps: props,
+        prevContext: prev.context, currContext: context,
+        prevPage: prev.page, currPage: page,
+        prevWidget: prev.widget, currWidget: props.widget,
+        prevLayout: prev.layout, currLayout: layout
+      });
+    } else {
+      console.log('%c[MenuWithLogoWidget] No deep change', 'color:purple', {
+        prevProps: prev.props, currProps: props,
+        prevContext: prev.context, currContext: context,
+        prevPage: prev.page, currPage: page,
+        prevWidget: prev.widget, currWidget: props.widget,
+        prevLayout: prev.layout, currLayout: layout
+      });
+    }
+    prevRef.current = { props, context, page, widget: props.widget, layout };
+  });
   console.log('%cMenuWithLogo', 'font-size:16px;color:green', { props: props });
   // const layout = props.page;
   // let context = props.data;
   let widget = props.widget;  
-  const {context, page, layout} = useSnStore((state) => state);
   const bindedContext = BindedContext(props, true);
   
   let logoPath = process.env.REACT_APP_LOGO_PATH || DATA.siteLogo;

@@ -3,6 +3,7 @@ import Moment from 'moment';
 import ShowDebugInfo from "../utils/show-debuginfo"
 import LazyImage from "../utils/lazyload-image";
 import { useSnStore } from "../store/sn-store";
+import React, { useRef, useEffect } from 'react';
 
 const DATA = require('../../config.json');
 
@@ -20,6 +21,30 @@ export function NestedMangaItem(props) {
       return <i className="fa fa-language fa-fw translation-"></i>;
     } 
   }
+
+  // Deep comparison debug
+  const prevRef = useRef({ props: null, page: null, layout: null });
+  useEffect(() => {
+    const prev = prevRef.current;
+    const deepChanged =
+      JSON.stringify(prev.props) !== JSON.stringify(props) ||
+      JSON.stringify(prev.page) !== JSON.stringify(page) ||
+      JSON.stringify(prev.layout) !== JSON.stringify(layout);
+    if (deepChanged) {
+      console.log('%c[NestedMangaItem] Deep change detected', 'color:teal;font-weight:bold', {
+        prevProps: prev.props, currProps: props,
+        prevPage: prev.page, currPage: page,
+        prevLayout: prev.layout, currLayout: layout
+      });
+    } else {
+      console.log('%c[NestedMangaItem] No deep change', 'color:teal', {
+        prevProps: prev.props, currProps: props,
+        prevPage: prev.page, currPage: page,
+        prevLayout: prev.layout, currLayout: layout
+      });
+    }
+    prevRef.current = { props, page, layout };
+  });
 
   return (
     // <div className="w3-col m9">

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { addComponent } from '../utils/add-component';
 import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
@@ -13,6 +13,33 @@ export function ReviewListWidget(props) {
   const widget = props.widget;
   const bindedContext = BindedContext(props, true);
 
+  // Deep comparison debug
+  const prevRef = useRef({ props: null, context: null, page: null, layout: null });
+  useEffect(() => {
+    const prev = prevRef.current;
+    const deepChanged =
+      JSON.stringify(prev.props) !== JSON.stringify(props) ||
+      JSON.stringify(prev.context) !== JSON.stringify(context) ||
+      JSON.stringify(prev.page) !== JSON.stringify(page) ||
+      JSON.stringify(prev.layout) !== JSON.stringify(layout);
+    if (deepChanged) {
+      console.log('%c[ReviewListWidget] Deep change detected', 'color:blue;font-weight:bold', {
+        prevProps: prev.props, currProps: props,
+        prevContext: prev.context, currContext: context,
+        prevPage: prev.page, currPage: page,
+        prevLayout: prev.layout, currLayout: layout
+      });
+    } else {
+      console.log('%c[ReviewListWidget] No deep change', 'color:blue', {
+        prevProps: prev.props, currProps: props,
+        prevContext: prev.context, currContext: context,
+        prevPage: prev.page, currPage: page,
+        prevLayout: prev.layout, currLayout: layout
+      });
+    }
+    prevRef.current = { props, context, page, layout };
+  });
+  
   return (
     // <div className="w3-col m9 w3-right">
       <div className="w3-row-padding w3-margin-bottom">

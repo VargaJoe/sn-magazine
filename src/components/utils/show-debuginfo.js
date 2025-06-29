@@ -1,21 +1,32 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
+import { clearLazyComponentCache } from './add-component';
+
+const DEBUG_KEY = 'sn-debug-enabled';
 
 const ShowDebugInfo = (title, context, currentPage, widget, layout) => {
   const [showDebug, setDebug] = useState(false);
+  const location = useLocation();
+
+  // Persist debug mode in localStorage based on URL param
+  React.useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const debugParam = params.get('debug');
+    if (debugParam === 'true') {
+      localStorage.setItem(DEBUG_KEY, 'true');
+    } else if (debugParam === 'false') {
+      localStorage.removeItem(DEBUG_KEY);
+    }
+  }, [location.search]);
+
+  const isDebug =
+    (process.env.NODE_ENV === 'development' && localStorage.getItem(DEBUG_KEY) === 'true');
+
+  if (!isDebug) return;
+
   const handleToggle = () => {
     setDebug(!showDebug);
   };
-
-  function useQuery() {
-    const { search } = useLocation();
-
-    return React.useMemo(() => new URLSearchParams(search), [search]);
-  }
-  const query = useQuery();
-  const isDebug = query.get("debug");
-
-  if (!isDebug || isDebug !== "true") return;
 
   function showContextInfo(context) {
     if (context !== undefined) {
@@ -139,6 +150,15 @@ const ShowDebugInfo = (title, context, currentPage, widget, layout) => {
         <button title="show" onClick={handleToggle}>
           show
         </button>
+        {process.env.NODE_ENV === 'development' && (
+          <button
+            title="Clear dynamic component cache"
+            style={{ marginLeft: 8 }}
+            onClick={clearLazyComponentCache}
+          >
+            clear cache
+          </button>
+        )}
       </div>
       <div
         className={`debug-info-details w3-left  ${showDebug ? "" : "hidden"}`}

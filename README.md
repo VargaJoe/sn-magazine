@@ -144,6 +144,10 @@ When you create a `Layout` content on a context path, the app will use it as dat
 
 There is a special layout name for in case you have to override layout of a specific type at certain context paths. Use the name `This` under `(layout)` instead of the context content type. The app will use this layout on that context even so layout with the context type name is exists. For example if you have a `/Root/Content/SampleWorkspace/Memolist/(layout)/This` layout content, then it will be used when you browse `http://localhost:3000/Memolist` even if you have `/Root/Content/SampleWorkspace/(layout)/Memolist` layout defined. `This` content has priority on resolve layouts.
 
+## Dynamic Component Resolution
+
+See [docs/dynamic-component-resolution.md](docs/dynamic-component-resolution.md) for a detailed explanation of the dynamic component resolution system, including architecture, workflow, error handling, and best practices.
+
 # Note:
 - layout = formerly known as page content
 - widget = formerly known as pagecomponent or portlet
