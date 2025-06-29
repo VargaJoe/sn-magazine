@@ -10,6 +10,12 @@
 ## Completed Stories
 - **Story 001: Initial Dynamic Layout and Widget System** ([docs/stories/story001-initial-dynamic-layout.md](docs/stories/story001-initial-dynamic-layout.md))
 - **Story 002: Global Store and Debug Info Consolidation** ([docs/stories/story002-global-store-debug.md](docs/stories/story002-global-store-debug.md))
+  - [x] Implement zustand global store for app state
+  - [x] Refactor components to use global store
+  - [x] Consolidate debug info and logging utilities
+  - [x] Add debug info UI for development
+  - [x] Document store usage and debug features
+  - [x] Add state management best practices doc and reference from README
 - **Story 003: Authentication and Client Auth** ([docs/stories/story003-auth-client.md](docs/stories/story003-auth-client.md))
 - **Story 004: Facebook Comments Widget and Social Features** ([docs/stories/story004-facebook-comments.md](docs/stories/story004-facebook-comments.md))
 - **Story 005: Layout and Card Visual Improvements** ([docs/stories/story005-layout-card-visuals.md](docs/stories/story005-layout-card-visuals.md))

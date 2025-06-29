@@ -151,3 +151,5 @@ See [docs/dynamic-component-resolution.md](docs/dynamic-component-resolution.md)
 # Note:
 - layout = formerly known as page content
 - widget = formerly known as pagecomponent or portlet
+
+- [State Management Best Practices (zustand)](docs/state-management-best-practices.md)
