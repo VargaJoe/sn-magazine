@@ -39,14 +39,15 @@
   - [x] Fixed bug in page-wrapper.js: now always clears previous component before setting a new one and keys the main content wrapper on wrappercompo.key to force remounts, ensuring old components are removed on navigation. Added wrappercompo?.key to useCallback dependency array to fix React lint error.
   - [x] Refactored and stabilized getComponentKey logic for unique and stable React keys in dynamic components.
   - [x] All changes documented in implementation-tasks.md for traceability.
-
-## In Progress Stories
 - **Story 007: State Management Optimization** ([docs/stories/story007-state-management.md](docs/stories/story007-state-management.md))
   - [x] Created feature branch 'feature/state-management-optimization' from 'develop/review-site' to proceed with state management optimization.
   - [x] Audit all widget/component usages of useSnStore and props to identify redundant props.
   - [x] Refactor widgets/components to remove redundant props (page/layout) in favor of zustand.
-  - [ ] Consider moving more widget/context state to zustand if it improves maintainability, but avoid over-globalizing state.
-  - [ ] Document best practices for store usage and component design.
+  - [x] Consider moving more widget/context state to zustand if it improves maintainability, but avoid over-globalizing state.
+  - [x] Document best practices for store usage and component design.
+  - [x] All Story 007 tasks complete. State management optimization is finalized and ready for PR/merge.
+
+## In Progress Stories
 - **Story 008: API Integration Refactor** ([docs/stories/story008-api-integration.md](docs/stories/story008-api-integration.md))
   - [ ] Abstract sensenet API calls into a dedicated service layer
   - [ ] Add retry logic and user feedback for failed requests
