@@ -21,7 +21,9 @@ export function HalfSizedNewsListWidget(props) {
             <h3>{bindedContext?.content?.DisplayName}</h3>
               <div className="news-cards">
                 {bindedContext?.children?.map((child) => { 
-                  return addComponent('widgets', 'nested',`list-news-item-${child.Type.toLowerCase()}`, `${widget.Id}-${context.Id}-${child.Id}`, child, props.page, child); 
+                  // return addComponent('widgets', 'nested',`list-news-item-${child.Type.toLowerCase()}`, `${widget.Id}-${context.Id}-${child.Id}`, child, props.page, child); 
+                  const itemType = `list-news-item`;
+                  return addComponent('widgets', 'nested', itemType, `${widget.Id}-${context.Id}-${child.Id}`, child, props.page, child); 
                 })}
               </div>
             </div>
