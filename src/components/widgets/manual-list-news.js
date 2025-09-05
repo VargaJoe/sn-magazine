@@ -21,12 +21,12 @@ export function NewsListWidget(props) {
       <div className="w3-card w3-round w3-white">
       {ShowDebugInfo("news widget", context, page, widget, layout)}
         <div className="w3-container w3-padding component-news-half">
-        <h3>{bindedContext?.content?.DisplayName}</h3>
+        <h3>{widget.Title || bindedContext?.content?.DisplayName}</h3>
           <div className="news-cards">
             {bindedContext.children?.map((child) => {
               return (
                 <LazyLoad key={`news-list-${child.Id}`} className="lazy-load-news-item">
-                  {addComponent('widgets', 'nested', `list-news-item-${child.Type.toLowerCase()}`, `${widget.Id}-${context.Id}-${child.Id}`, child, props.page, child)}
+                  {addComponent('widgets', 'nested', `list-news-item-${child.Type.toLowerCase()}`, `${widget.Id}-${context.Id}-${child.Id}`, child, props.page, child, 'list-news-item')}
                 </LazyLoad>
               )
             })}

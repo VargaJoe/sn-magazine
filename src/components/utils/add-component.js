@@ -46,9 +46,15 @@ function importView(type, prefix, component, fallback) {
       view: lazy(() =>
         import(`../${type}/${prefix}-${component}`)
           .catch((err) => {
-            const msg = `importView: Failed to import ../${type}/${prefix}-${component}, falling back to auto-${fallback || defaultComponent}`;
-            console.warn(msg, err);
-            return import(`../${type}/auto-${fallback || defaultComponent}`);
+            if (fallback) {
+              const msg = `importView: Failed to import ../${type}/${prefix}-${component}, falling back to ${prefix}-${fallback}`;
+              console.warn(msg, err);
+              return import(`../${type}/${prefix}-${fallback}`);
+            } else {
+              const msg = `importView: Failed to import ../${type}/${prefix}-${component}, falling back to auto-${defaultComponent}`;
+              console.warn(msg, err);
+              return import(`../${type}/auto-${defaultComponent}`);
+            }
           })
       )
     };
