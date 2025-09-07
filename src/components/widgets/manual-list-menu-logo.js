@@ -54,13 +54,13 @@ export function MenuWithLogoWidget(props) {
   function iconItem (item) { 
     if (item.Type === "LeisureCategory") {
       return (
-        <Link key={`sidemenu-link-${item.Id}`} to={'/' + item.Name} className="side-menu-link" title={'index: '+item.Index}>
+        <Link key={`sidemenu-link-${item.Id}`} to={'/' + item.Name} className="side-menu-link" title={item.DisplayName}>
           <i className={`fa ${item.IconName} fa-fw w3-margin-right w3-text-theme`}></i>
         </Link>
       )
     } else if (item.Url !== "") {
         return (
-          <a key={`sidemenu-icon-${item.Id}`} href={item.Url} target="_blank" rel="noreferrer" className="no-score">
+          <a key={`sidemenu-icon-${item.Id}`} href={item.Url} target="_blank" rel="noreferrer" className="no-score"  title={item.DisplayName}>
            <i className={`fa ${item.IconName} fa-fw w3-margin-right w3-text-theme`}></i>
           </a>
         )
@@ -86,7 +86,7 @@ export function MenuWithLogoWidget(props) {
           return (
           <div className="sidemenu-link" key={`sidemenu-${child.Id}`}>
             {/* <i className="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i>  */}
-            <Link key={`sidemenu-link-${child.Id}`} to={'/' + child.Name} className="side-menu-link" title={'index: '+child.Index}>
+            <Link key={`sidemenu-link-${child.Id}`} to={'/' + child.Name} className="side-menu-link" title={child.DisplayName}>
               {child.DisplayName}
             </Link>
           </div>
