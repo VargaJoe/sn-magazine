@@ -34,8 +34,12 @@ export function FacebookCommentsWidget(props) {
       script.crossOrigin = 'anonymous';
       
       script.onload = () => {
+        console.log('Facebook SDK loaded successfully');
         if (window.FB && window.FB.XFBML && typeof window.FB.XFBML.parse === 'function') {
           window.FB.XFBML.parse();
+          console.log('FB.XFBML.parse() called');
+        } else {
+          console.error('FB.XFBML.parse not available after SDK load');
         }
       };
       
@@ -58,6 +62,7 @@ export function FacebookCommentsWidget(props) {
             <div className="fb-comments w3-container w3-padding">
               <h3>Hozzászólások</h3>
               <small>{window.location.href}</small>
+              {console.log('Facebook comments data-href:', window.location.href)}
               <div className="fb-comments" data-href={window.location.href} data-width="100%" data-numposts="5" data-order-by="reverse_time" data-lazy></div>
             </div>
           </div>
