@@ -6,8 +6,7 @@ import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
 import { useSnStore } from "../store/sn-store";
 
-// Todo: use bindedcontext but enhance it to load expanded content only, not children
-
+// Todo: obsolate, manual-content-manga should be used instead
 const DATA = require('../../config.json');
 
 // Todo: rename manual-list-manga to be consistent

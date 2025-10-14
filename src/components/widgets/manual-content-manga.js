@@ -6,40 +6,39 @@ import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
 import { useSnStore } from "../store/sn-store";
 
-// Todo: obsolate, manual-content-simple should be used instead
+// Todo: use bindedcontext but enhance it to load expanded content only, not children
+
 const DATA = require('../../config.json');
 
-export function SimpleReviewWidget(props) {
-  console.log('%cSimpleReview', "font-size:16px;color:green", { props: props });
+// Todo: rename manual-list-manga to be consistent
+export function MangaContentWidget(props) {
+  console.log('%cMangaContent', "font-size:16px;color:green", { props: props });
   const repo = useRepository();
   const [expContext, setExpContext] = useState([]);
   
   // const layout = props.page;
   // let context = props.data;
-  const {context, page, layout} = useSnStore((state) => state);
-  const widget = props.widget;
-  const bindedContext = BindedContext(props, true);
-
+  const {page, layout} = useSnStore((state) => state);
+  const bindedContext = BindedContext(props, false);
+  const widget = props.widget;  
+ 
   // console.log(widget.Name + " - " + widget.ContextBinding);
   // if (widget.ContextBinding[0] === "customroot") {
   //   if (widget.CustomRoot !== undefined) {
-  //     context = widget.CustomRoot;
+  //     bindedContext = widget.CustomRoot;
   //   } else {
   //     console.log("customroot is not set");
   //   }
   // }
 
-  // todo: maybe should load only related content, context already in?
+  //todo: maybe should load only related content, context already in?
   const loadContent = useCallback(async () => {
-    if (!bindedContext.content) {
-      return;
-    }
-    const contextPathWorkaround = bindedContext.content?.Path.replace("(", "%28").replace(")", "%29");
+    const contextPathWorkaround = bindedContext.content?.Path?.replace("(", "%28").replace(")", "%29");
     await repo.load({
       idOrPath: `${contextPathWorkaround}`,
       oDataOptions: {
         select: 'all',
-        expand: 'RelatedContent'
+        expand: 'RelatedContent, Translation'
       },
     }).then(result => {
       if (result?.d?.Type) {
@@ -51,17 +50,17 @@ export function SimpleReviewWidget(props) {
     .catch(error => {
       //
     });
-  }, [bindedContext.content, repo]);
+  }, [bindedContext, repo]);
 
   useEffect(() => {
-      loadContent();
-  }, [bindedContext.content, loadContent, repo]);
+    loadContent();
+  }, [bindedContext, loadContent, repo]);
 
   function newsImage () { 
-    if (!bindedContext.content?.Image?.Url) {
+    if (bindedContext.content?.Image?.Url === "") {
       return "";
     }
-    console.log("!!!!!newsImage", bindedContext.content);
+
     return (
       <div className="w3-left w3-padding article-cover-outer">
         <div className="w3-col article-cover-inner">
@@ -71,43 +70,44 @@ export function SimpleReviewWidget(props) {
     );   
   };
 
-  function relatedContents (cont) { 
-    if (cont?.RelatedContent === undefined 
+  function relatedContents (collection, title) { 
+    if (collection === undefined 
       ) {
       return "";
     }
+    console.log('related components: ', collection, title);
+    if (collection.length > 0) {      
+      const renderLinks = collection.map((child) => {
+        console.log('related components item: ', child);
+        return addComponent(
+          "widgets",
+          "nested",
+          `review-related-${child.Type.toLowerCase()}`,
+          `${widget.Id}-${bindedContext.content?.Id}-${child.Id}`,
+          child,
+          props.page,
+          widget
+        );
+      })
 
-    const renderLinks = expContext.RelatedContent.map((child) => {
-      return addComponent(
-        "widgets",
-        "nested",
-        `review-related-${child.Type.toLowerCase()}`,
-        `${widget.Id}-${context.Id}-${child.Id}`,
-        child,
-        props.page,
-        widget
-      );
-    })
-
-    if (expContext?.RelatedContent?.length > 0) {      
       return (
         <div className="related-contents">
           <div className="w3-padding">
-          <h4>Kapcsolódó linkek</h4>
+            <h4>{title}</h4>
           </div>
           {renderLinks}
         </div>
       )
     }
   };
-
+    
 
   return (
     // <div className="w3-col m9 w3-right">
     <div className="w3-row-padding w3-margin-bottom">
       <div className="w3-col m12">
         <div className="w3-card w3-round w3-white">
-        {ShowDebugInfo("book review widget", bindedContext, page, widget, layout)}
+        {ShowDebugInfo("manga review widget", bindedContext, page, widget, layout)}
           <div className="w3-container w3-padding article-full">
             <h1>
               {bindedContext.content?.DisplayName} 
@@ -122,7 +122,8 @@ export function SimpleReviewWidget(props) {
               <div dangerouslySetInnerHTML={{ __html: bindedContext.content?.Body }}/>
               <div className="small">{bindedContext.content?.Author} ({bindedContext.content?.Publisher}, {Moment(bindedContext.content?.PublishDate).format('yyyy.MM.DD')})</div>
             </div>
-            {relatedContents(expContext)}
+            {relatedContents(expContext?.Translation, "Fordítások")}
+            {relatedContents(expContext?.RelatedContent, "Kapcsolódó linkek")}
           </div>
         </div>
       </div>
@@ -131,4 +132,4 @@ export function SimpleReviewWidget(props) {
   );
 }
 
-export default SimpleReviewWidget;
+export default MangaContentWidget;
