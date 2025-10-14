@@ -116,30 +116,28 @@ export function useListSorting(widget, props, BindedContext) {
 
   // Sorting UI component
   const SortingControls = () => (
-    <div className="w3-row">
-      <div className="w3-col m12 w3-right-align">
-        <div className="w3-margin-bottom">
-          <label className="w3-text-grey w3-small">Sort by: </label>
-          <select
-            value={sortBy}
-            onChange={(e) => handleSortChange(e.target.value)}
-            className="w3-select w3-border w3-small"
-            style={{width: 'auto', display: 'inline-block', marginRight: '8px'}}
-          >
-            {sortOptions.map(option => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-          <button
-            onClick={toggleSortOrder}
-            className="w3-button w3-small w3-border"
-            title={sortOrder === 'asc' ? 'Switch to Descending' : 'Switch to Ascending'}
-          >
-            {sortOrder === 'asc' ? '↑' : '↓'}
-          </button>
-        </div>
+    <div className="w3-right-align">
+      <div style={{marginBottom: 0}}>
+        <label className="w3-text-grey w3-small">Sort by: </label>
+        <select
+          value={sortBy}
+          onChange={(e) => handleSortChange(e.target.value)}
+          className="w3-select w3-border w3-small"
+          style={{width: 'auto', display: 'inline-block', marginRight: '8px'}}
+        >
+          {sortOptions.map(option => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+        <button
+          onClick={toggleSortOrder}
+          className="w3-button w3-small w3-border"
+          title={sortOrder === 'asc' ? 'Switch to Descending' : 'Switch to Ascending'}
+        >
+          {sortOrder === 'asc' ? '↑' : '↓'}
+        </button>
       </div>
     </div>
   );  return {
