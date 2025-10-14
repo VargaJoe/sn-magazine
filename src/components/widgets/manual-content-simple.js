@@ -6,11 +6,12 @@ import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
 import { useSnStore } from "../store/sn-store";
 
-// Todo: obsolate, manual-content-simple should be used instead
+// Todo: use bindedcontext but enhance it to load expanded content only, not children
+
 const DATA = require('../../config.json');
 
-export function SimpleReviewWidget(props) {
-  console.log('%cSimpleReview', "font-size:16px;color:green", { props: props });
+export function SimpleContentWidget(props) {
+  console.log('%cSimpleContent', "font-size:16px;color:green", { props: props });
   const repo = useRepository();
   const [expContext, setExpContext] = useState([]);
   
@@ -131,4 +132,4 @@ export function SimpleReviewWidget(props) {
   );
 }
 
-export default SimpleReviewWidget;
+export default SimpleContentWidget;

@@ -3,6 +3,7 @@ import { addComponent } from '../utils/add-component';
 import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
 import { useSnStore } from "../store/sn-store";
+import { useListSorting } from '../utils/use-list-sorting';
 
 // Todo: rename manual-list-review to be consistent
 export function ReviewListWidget(props) {
@@ -11,7 +12,9 @@ export function ReviewListWidget(props) {
   // let context = props.data;
   const {context, page, layout} = useSnStore((state) => state);
   const widget = props.widget;
-  const bindedContext = BindedContext(props, true);
+  
+  // Use the reusable sorting hook
+  const { sortedBindedContext, SortingControls } = useListSorting(widget, props, BindedContext);
 
   return (
     // <div className="w3-col m9 w3-right">
@@ -20,9 +23,14 @@ export function ReviewListWidget(props) {
           <div className="w3-card w3-round w3-white">
             {ShowDebugInfo("gallery widget", context, page, widget, layout)}
             <div className="w3-container w3-padding">
-            <h1>{context.DisplayName}</h1>
+              <div className="w3-row w3-margin-bottom" style={{position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                <h1 style={{margin: 0}}>{context.DisplayName}</h1>
+                <div style={{position: 'absolute', right: 0}}>
+                  <SortingControls />
+                </div>
+              </div>
               <div className="review-cards">
-                {bindedContext.children?.map((child) => { 
+                {sortedBindedContext.children?.map((child) => { 
                   return addComponent('widgets', 'nested','review-list-item', `${widget.Id}-${context.Id}-${child.Id}`, child, layout, child); 
                 })}
               </div>
