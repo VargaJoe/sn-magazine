@@ -53,6 +53,7 @@
 ## Bug Fixes and Minor Improvements (2025-09-05)
 - [x] Fixed addComponent fallback mechanism in manual-list-news.js by adding 'list-news-item' as the fallback parameter. Now when nested-list-news-item-{type} components don't exist (like nested-list-news-item-leisuretvreview.js), the system will automatically fall back to nested-list-news-item.js instead of breaking the site.
 - [x] Fixed addComponent fallback logic in importView function. Now when a specific fallback is provided, it uses the same prefix (e.g., nested-list-news-item). When no fallback is provided, it falls back to auto-default. This ensures the correct component resolution hierarchy.
+- [x] Implemented custom page view tracking in React SPA using Google Tag Manager. Created AnalyticsTracker component that pushes 'react_page_view' events to dataLayer on route changes, providing accurate page_title and page_path for GA4 analytics. Safely handles environments without GTM loaded.
 
 ## Planned Stories
 - **Story 008: API Integration Refactor** ([docs/stories/story008-api-integration.md](docs/stories/story008-api-integration.md))
