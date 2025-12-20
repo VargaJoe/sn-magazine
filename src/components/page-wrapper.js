@@ -4,6 +4,9 @@ import { addComponent, addLayout } from './utils/add-component';
 import { useLocation } from 'react-router-dom';
 import { useSnStore } from "./store/sn-store";
 import CommonHelmet from './layouts/partial-head';
+import { maintenanceTemplate } from '../configuration';
+// import MaintenanceLayout from './layouts/page-maintenance';
+// import MaintenanceLeisureLayout from './layouts/page-maintenance-leisure';
 
 const DATA = require('../config.json');
 
@@ -39,10 +42,10 @@ export const PageWrapper = (props) => {
   }
 
   // Patch setPage to also update local debug state
-  const setPageDebug = (p) => {
+  const setPageDebug = useCallback((p) => {
     setPage(p);
     setDebugPage(p);
-  };
+  }, [setPage]);
 
   useEffect(() => {
     // Log on every render and navigation
@@ -177,15 +180,15 @@ export const PageWrapper = (props) => {
         // TODO: error page 
         // setCompo(addComponent('layouts', 'page', "vanilla", `err-${context.Id}`, context)); 
         const addedComponent = addLayout(context, setLayout)
-          if (wrappercompo.key !== addedComponent.key) {
-            console.log('set page load useEffect catch', { wrappercompo: wrappercompo }, { addedComponent: addedComponent });
-            setCompo(addedComponent);
-          } else {
-            console.log('skip page load useEffect catch');
-          }     
+        if (wrappercompo.key !== addedComponent.key) {
+          console.log('set page load useEffect catch', { wrappercompo: wrappercompo }, { addedComponent: addedComponent });
+          setCompo(addedComponent);
+        } else {
+          console.log('skip page load useEffect catch');
+        }
       });
     };
-  }, [context, layoutContentType, repo, setLayout, setPage, setWidgets, widgetContentType, wrappercompo]);
+  }, [context, layoutContentType, repo, setLayout, setPageDebug, setWidgets, widgetContentType, wrappercompo]);
 
   const loadContent = useCallback(async () => {
     console.log("Load content useEffect:", locationPath);
@@ -201,6 +204,26 @@ export const PageWrapper = (props) => {
         console.log('First level context:', result.d);
         setContext(result.d);
       };
+    })
+    .catch(connectionrefused => {
+        console.error('Connection refused on loading page: ', connectionrefused);
+        // setCompo(addComponent('layouts', 'page', 'maintenance', 1));
+        
+        setCompo(addComponent('layouts', 'page', maintenanceTemplate, 666));
+
+
+        // // const addedComponent = addComponent('layouts', 'page', 'maintenance', `page-maintenance`, null, null, null);
+        // // setCompo(addedComponent);
+        // // if (maintenance) {
+        //   switch (maintenanceTemplate) {
+        //     case 'maintenance-leisure':
+        //        return <MaintenanceLeisureLayout />;
+        //     case 'maintenance':
+        //     default:
+        //       setCompo(addComponent('layouts', 'page', 'maintenance', 666));
+        //       // return <MaintenanceLayout />;
+        //   }
+        // // }
     })
     .catch(error => {
       console.error('error on loading content: ', error);
@@ -240,7 +263,7 @@ export const PageWrapper = (props) => {
     }
   }, [context, loadPage, repo]);
 
-  if (context === undefined || context === null || wrappercompo === undefined || wrappercompo === null)
+  if (wrappercompo === undefined || wrappercompo === null)
     return null;
 
   if (context === undefined || wrappercompo === undefined || wrappercompo === null)
