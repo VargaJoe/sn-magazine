@@ -18,6 +18,19 @@ export function BindedContext(props, withChildren) {
                                       children: []
                                     });
   const [loading, setLoading] = useState(false);
+
+  // Shallow equality check helper
+  function shallowEqual(objA, objB) {
+    if (objA === objB) return true;
+    if (!objA || !objB) return false;
+    const keysA = Object.keys(objA);
+    const keysB = Object.keys(objB);
+    if (keysA.length !== keysB.length) return false;
+    for (let key of keysA) {
+      if (objA[key] !== objB[key]) return false;
+    }
+    return true;
+  }
   
   console.log('bindedContext params', { props, withChildren });
   // const widget = props.widget;
@@ -79,7 +92,12 @@ export function BindedContext(props, withChildren) {
     const contextObj = getPreContextObj();
 
     if (!contextObj.reload) {
-      setContext(contextObj)
+      setContext(prevContext => {
+        if (shallowEqual(prevContext, contextObj)) {
+          return prevContext;
+        }
+        return contextObj;
+      });
     }
 
     const options = {
@@ -124,8 +142,26 @@ export function BindedContext(props, withChildren) {
       if (result.d.results.filter(cnt => cnt.Path === contextObj.contextPath)[0] !== undefined) {
         contextObj.content = result.d.results.filter(cnt => cnt.Path === contextObj.contextPath)[0] 
       }
-      setContext(contextObj);
+      // Only update state if the contextObj has actually changed
+      setContext(prevContext => {
+        if (shallowEqual(prevContext, contextObj)) {
+          return prevContext; // No change, return previous state
+        }
+        return contextObj; // Update with new state
+      });
     } else {
+      // Handle case where no results
+      const emptyContext = {
+        contextPath: contextObj.contextPath,
+        content: contextObj.content,
+        children: []
+      };
+      setContext(prevContext => {
+        if (shallowEqual(prevContext, emptyContext)) {
+          return prevContext;
+        }
+        return emptyContext;
+      });
     }
     setLoading(false);
   }, [context?.Workspace, expContext, repo, widget, withChildren]);
