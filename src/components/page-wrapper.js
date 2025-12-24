@@ -28,6 +28,10 @@ export const PageWrapper = (props) => {
   const prevPageRef = useRef();
   const [debugPage, setDebugPage] = useState(); // local page state for debug
 
+  // Loading states
+  const [loadingContext, setLoadingContext] = useState(false);
+  const [loadingPage, setLoadingPage] = useState(false);
+
   // Shallow equality check helper
   function shallowEqual(objA, objB) {
     if (objA === objB) return true;
@@ -80,6 +84,7 @@ export const PageWrapper = (props) => {
   const loadPage = useCallback(async () => {
     console.log('%cloadPage', "font-size:14px;color:green");
     console.log("Context of Load page:", context);
+    setLoadingPage(true);
 
     // layoutPathList: return path list of possible layoutdeclarations
     const layoutPathList = () => {
@@ -186,12 +191,16 @@ export const PageWrapper = (props) => {
         } else {
           console.log('skip page load useEffect catch');
         }
+      })
+      .finally(() => {
+        setLoadingPage(false);
       });
     };
   }, [context, layoutContentType, repo, setLayout, setPageDebug, setWidgets, widgetContentType, wrappercompo]);
 
   const loadContent = useCallback(async () => {
     console.log("Load content useEffect:", locationPath);
+    setLoadingContext(true);
     const locationPathWorkaround = locationPath.replace("(", "%28").replace(")", "%29");
     await repo.load({
       idOrPath: `${process.env.REACT_APP_DATA_PATH || DATA.dataPath}/${locationPathWorkaround}`,
@@ -228,6 +237,9 @@ export const PageWrapper = (props) => {
     .catch(error => {
       console.error('error on loading content: ', error);
       setCompo(addComponent('layouts', 'page', 'error', 1));
+    })
+    .finally(() => {
+      setLoadingContext(false);
     });
   }, [locationPath, repo, setContext]);
 

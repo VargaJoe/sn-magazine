@@ -17,12 +17,14 @@ export function BindedContext(props, withChildren) {
                                       content: null,
                                       children: []
                                     });
+  const [loading, setLoading] = useState(false);
   
   console.log('bindedContext params', { props, withChildren });
   // const widget = props.widget;
   // const context = props.data; 
 
   const loadContents = useCallback(async () => {
+    setLoading(true);
     function getPreContextObj() {
       let resultObj = {
             contextPath:  expContext.Path,
@@ -125,14 +127,15 @@ export function BindedContext(props, withChildren) {
       setContext(contextObj);
     } else {
     }
-  }, [context.Workspace, expContext, repo, widget, withChildren]);
+    setLoading(false);
+  }, [context?.Workspace, expContext, repo, widget, withChildren]);
 
   useEffect(() => {
     loadContents();
   }, [loadContents]);
   
   console.log('bindedContext result', bndContext);
-  return bndContext;
+  return { ...bndContext, loading };
 }
 
 export default BindedContext;

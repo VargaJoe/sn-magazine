@@ -15,6 +15,11 @@ export function ContentCollectionWidget(props) {
   const widgetTitle = (bindedContext.widget !== null && bindedContext.widget?.Title !== undefined && bindedContext.widget?.Title !== '') ? bindedContext.widget?.Title : bindedContext.content?.DisplayName
   
   let counter = 0;
+
+  if (bindedContext.loading) {
+    return <div>Loading widget...</div>; // Loading state
+  }
+
   return (
     // <div className="w3-col m9 w3-right">
       <div className="w3-row-padding w3-margin-bottom">
