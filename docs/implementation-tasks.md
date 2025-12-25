@@ -116,3 +116,19 @@
   - [x] App ready for testing to validate render count reduction
   - [x] Validated successful render count reduction: renders decreased from 45+ to 17 across navigation session, with "loadPage already in progress, skipping" log message confirming fix. Renders now primarily due to legitimate state changes, closer to 1-2 per navigation target, with remaining optimization for widget-level renders.
   - [x] Fixed navigation issue by resetting loadingRef.current = false at the beginning of loadContent, so each new location load resets the loading state and allows loadPage to execute properly. Navigation now works on first click.
+  - [x] Replaced single loadingRef with loadingRefs Map for per-context loading states to prevent blocking new location loads while allowing concurrent loads for different contexts.
+  - [x] Added React.memo to key widgets (nested-review-list-item, manual-list-banner, manual-list-news) to prevent unnecessary re-renders when props unchanged.
+  - [x] Updated Zustand store to use createWithEqualityFn with shallow equality for efficient state updates.
+  - [x] Further reduced renders to ~29 total across navigations, with deep change detection logs indicating remaining re-renders from unstable props (likely recreated arrays/objects).
+  - [x] Committed and pushed changes to fix/double-reload-of-pages branch for live testing.
+  - [x] Implemented global contextCache Map in context-binding.js to avoid redundant API calls for same contexts.
+  - [x] Added loading checks in widgets (manual-list-news-half.js, manual-list-banner.js, manual-list-menu-logo.js, manual-list-news.js, manual-list-review.js) to defer rendering until bindedContext.loading is false, ensuring components render only once when all data is available.
+  - [x] Implemented deep equality check in page-wrapper.js to prevent unnecessary widget state updates, avoiding re-renders when widget arrays are recreated but content unchanged.
+  - [x] Build succeeded without errors, ready for live testing to validate further render reduction.
+### Technical Tasks - ShowDebugInfo Component Fix and App Stability
+  - [x] Fixed ShowDebugInfo component syntax error by converting from invalid class component with hooks to proper function component using useState and useEffect
+  - [x] Fixed missing deepEqual import in manual-list-review.js
+  - [x] Build now succeeds with only warnings, app loads without syntax errors
+  - [x] Implemented stable element caching in page-leisure-simple.js using useRef(Map) to cache component elements by componentId, preventing remounts that cause hook count mismatches and 'Rendered fewer hooks than expected' errors
+  - [x] Cleaned up unused imports and fixed JSX comment syntax in manual-list-news-half.js
+  - [x] Build succeeded with only minor warnings in unrelated files, app ready for testing to validate stable renders and no hook errors

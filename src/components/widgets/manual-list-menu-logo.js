@@ -1,48 +1,52 @@
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 import { Link } from "react-router-dom";
-import ShowDebugInfo from "../utils/show-debuginfo"
-import BindedContext from "../utils/context-binding"
-import { useSnStore } from "../store/sn-store";
+// import ShowDebugInfo from "../utils/show-debuginfo"
+import useBindedContext from "../utils/context-binding"
+// import { useSnStore } from "../store/sn-store";
 
 const DATA = require('../../config.json');
 const defaultImage = require('../../images/logo.png');
 
 const MenuWithLogoWidget = React.memo(function MenuWithLogoWidget(props) {
   // Deep comparison debug
-  const {context, page, layout} = useSnStore((state) => state);
-  const prevRef = useRef({ props: null, context: null, page: null, widget: null, layout: null });
-  useEffect(() => {
-    const prev = prevRef.current;
-    const deepChanged =
-      JSON.stringify(prev.props) !== JSON.stringify(props) ||
-      JSON.stringify(prev.context) !== JSON.stringify(context) ||
-      JSON.stringify(prev.page) !== JSON.stringify(page) ||
-      JSON.stringify(prev.widget) !== JSON.stringify(props.widget) ||
-      JSON.stringify(prev.layout) !== JSON.stringify(layout);
-    if (deepChanged) {
-      console.log('%c[MenuWithLogoWidget] Deep change detected', 'color:purple;font-weight:bold', {
-        prevProps: prev.props, currProps: props,
-        prevContext: prev.context, currContext: context,
-        prevPage: prev.page, currPage: page,
-        prevWidget: prev.widget, currWidget: props.widget,
-        prevLayout: prev.layout, currLayout: layout
-      });
-    } else {
-      console.log('%c[MenuWithLogoWidget] No deep change', 'color:purple', {
-        prevProps: prev.props, currProps: props,
-        prevContext: prev.context, currContext: context,
-        prevPage: prev.page, currPage: page,
-        prevWidget: prev.widget, currWidget: props.widget,
-        prevLayout: prev.layout, currLayout: layout
-      });
-    }
-    prevRef.current = { props, context, page, widget: props.widget, layout };
-  });
-  console.log('%cMenuWithLogo render', 'font-size:16px;color:green', { widgetId: props.widget?.Id });
+  // const {context, page, layout} = useSnStore((state) => state);
+  // const prevRef = useRef({ props: null, context: null, page: null, widget: null, layout: null });
+  // useEffect(() => {
+  //   const prev = prevRef.current;
+  //   const deepChanged =
+  //     JSON.stringify(prev.props) !== JSON.stringify(props) ||
+  //     JSON.stringify(prev.context) !== JSON.stringify(context) ||
+  //     JSON.stringify(prev.page) !== JSON.stringify(page) ||
+  //     JSON.stringify(prev.widget) !== JSON.stringify(props.widget) ||
+  //     JSON.stringify(prev.layout) !== JSON.stringify(layout);
+  //   if (deepChanged) {
+  //     // console.log('%c[MenuWithLogoWidget] Deep change detected', 'color:purple;font-weight:bold', {
+  //     //   prevProps: prev.props, currProps: props,
+  //     //   prevContext: prev.context, currContext: context,
+  //     //   prevPage: prev.page, currPage: page,
+  //     //   prevWidget: prev.widget, currWidget: props.widget,
+  //     //   prevLayout: prev.layout, currLayout: layout
+  //     // });
+  //   } else {
+  //     // console.log('%c[MenuWithLogoWidget] No deep change', 'color:purple', {
+  //     //   prevProps: prev.props, currProps: props,
+  //     //   prevContext: prev.context, currContext: context,
+  //     //   prevPage: prev.page, currPage: page,
+  //     //   prevWidget: prev.widget, currWidget: props.widget,
+  //     //   prevLayout: prev.layout, currLayout: layout
+  //     // });
+  //   }
+  //   prevRef.current = { props, context, page, widget: props.widget, layout };
+  // });
+  // console.log('%cMenuWithLogo render', 'font-size:16px;color:green', { widgetId: props.widget?.Id });
 
   let widget = props.widget;  // still passed as prop for config
-  const bindedContext = BindedContext(props, true);
+  const bindedContext = useBindedContext(props, true);
   
+  if (bindedContext.loading) {
+    return null; // Don't render until data is loaded
+  }
+
   let logoPath = process.env.REACT_APP_LOGO_PATH || DATA.siteLogo;
   let apiUrl = process.env.REACT_APP_API_URL || DATA.apiUrl;
   let dataPath = process.env.REACT_APP_DATA_PATH || DATA.dataPath;
@@ -72,7 +76,7 @@ const MenuWithLogoWidget = React.memo(function MenuWithLogoWidget(props) {
   // }
   return (
     <div className="w3-card w3-round w3-white w3-margin-bottom">
-      {ShowDebugInfo("menu with logo", context, page, widget, layout)}
+      {/* {ShowDebugInfo("menu with logo", context, page, widget, layout)} */}
       <div className="w3-container">
       <h4 className="w3-center hidden">{widget.DisplayName}</h4>
       <Link to={'/'}>
@@ -82,7 +86,7 @@ const MenuWithLogoWidget = React.memo(function MenuWithLogoWidget(props) {
       <hr className="no-margin"/>
       <div className="side-menu-uppercase">
         {bindedContext.children?.filter(item => item.DisplayZone?.includes("menuitem")).map((child) => {
-          console.log(child.Name);
+          // console.log(child.Name);
           return (
           <div className="sidemenu-link" key={`sidemenu-${child.Id}`}>
             {/* <i className="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i>  */}

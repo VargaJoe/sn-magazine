@@ -2,16 +2,16 @@ import ShowDebugInfo from "../utils/show-debuginfo"
 import { useSnStore } from "../store/sn-store";
 
 export function NestedReviewRelatedSoftLink(props) {
-  console.log('%cNestedReviewRelatedSoftLink', 'font-size:16px;color:green', { props: props });
+  // console.log('%cNestedReviewRelatedSoftLink', 'font-size:16px;color:green', { props: props });
   const context = props.data;
-  const {page, layout} = useSnStore((state) => state);
+  const {page} = useSnStore((state) => state);
   const widget = props.widget;
 
   return (
     <div className="w3-row-padding w3-margin-bottom">
       <div className="w3-col m12">
         <div className="w3-card w3-round w3-white">
-        {ShowDebugInfo("review related softlink", context, page, widget, layout)}
+        <ShowDebugInfo title="review related softlink" context={context} currentPage={page} widget={widget} />
           <div className="w3-container w3-padding related-card">
             <a key={`news-item-${context.Id}`} href={context.Url} target="_blank" rel="noreferrer" className="no-score">
               <div className="w3-left w3-padding related-link-meta">

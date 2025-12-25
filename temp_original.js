@@ -8,29 +8,6 @@ import { maintenanceTemplate } from '../configuration';
 // import MaintenanceLayout from './layouts/page-maintenance';
 // import MaintenanceLeisureLayout from './layouts/page-maintenance-leisure';
 
-// Deep equality check for arrays/objects
-const deepEqual = (a, b) => {
-  if (a === b) return true;
-  if (a == null || b == null) return false;
-  if (Array.isArray(a) && Array.isArray(b)) {
-    if (a.length !== b.length) return false;
-    for (let i = 0; i < a.length; i++) {
-      if (!deepEqual(a[i], b[i])) return false;
-    }
-    return true;
-  }
-  if (typeof a === 'object' && typeof b === 'object') {
-    const keysA = Object.keys(a);
-    const keysB = Object.keys(b);
-    if (keysA.length !== keysB.length) return false;
-    for (let key of keysA) {
-      if (!deepEqual(a[key], b[key])) return false;
-    }
-    return true;
-  }
-  return false;
-};
-
 const DATA = require('../config.json');
 
 const PageWrapper = React.memo((props) => {
@@ -75,11 +52,11 @@ const PageWrapper = React.memo((props) => {
 
   // refactor: filters should get from page fields
   const loadPage = useCallback(async () => {
-    // console.log('%cloadPage for context', "font-size:14px;color:green", context?.Id);
+    console.log('%cloadPage for context', "font-size:14px;color:green", context?.Id);
 
     const isLoading = loadingRefs.current.get(context?.Id);
     if (isLoading) {
-      // console.log('loadPage already in progress for context', context?.Id, 'skipping');
+      console.log('loadPage already in progress for context', context?.Id, 'skipping');
       return;
     }
     loadingRefs.current.set(context?.Id, true);
@@ -100,7 +77,7 @@ const PageWrapper = React.memo((props) => {
       {
         lpl[lpl.length]=`'${basePath}'`;
       }
-      // console.log('LPL', lpl);
+      console.log('LPL', lpl);
       return lpl;
     };
 
@@ -154,31 +131,31 @@ const PageWrapper = React.memo((props) => {
           setPageDebug(page);
           // Check if widgets changed before setting
           const currentWidgets = useSnStore.getState().widgets;
-          if (!deepEqual(widgets, currentWidgets)) {
+          if (JSON.stringify(widgets) !== JSON.stringify(currentWidgets)) {
             setWidgets(widgets);
           }
           // setLayout(layout);
-          // console.log('selected page:', page?.Name, 'widgets:', widgets?.length);
+          console.log('selected page:', page?.Name, 'widgets:', widgets?.length);
           const addedComponent =  !page || page.PageTemplate === '' || page.PageTemplate === null ? 
             addLayout(context, setLayout) :
             addComponent('layouts', 'page', page.PageTemplate, `page-${page.PageTemplate}`, null, null, null);
           // const addedComponent =  addComponent('layouts', 'page', page.PageTemplate, `page-${page.PageTemplate}`, null, null, null);
           
           if (wrappercompo.key !== addedComponent.key) {
-            // console.log('set page load useEffect then', { wrappercompo: wrappercompo }, { addedComponent: addedComponent });
+            console.log('set page load useEffect then', { wrappercompo: wrappercompo }, { addedComponent: addedComponent });
             setCompo(addedComponent);
           } else {
-            // console.log('skip page load useEffect then');
+            console.log('skip page load useEffect then');
           }
         } else {
           console.warn('no page was found - else:', context.Type.toLowerCase());
           
           const addedComponent = addLayout(context, setLayout)
           if (wrappercompo.key !== addedComponent.key) {
-            // console.log('set page load useEffect else', { wrappercompo: wrappercompo }, { addedComponent: addedComponent });
+            console.log('set page load useEffect else', { wrappercompo: wrappercompo }, { addedComponent: addedComponent });
             setCompo(addedComponent);
           } else {
-            // console.log('skip page load useEffect else');
+            console.log('skip page load useEffect else');
           }          
         }
       }).catch(error => {
@@ -188,10 +165,10 @@ const PageWrapper = React.memo((props) => {
         // setCompo(addComponent('layouts', 'page', "vanilla", `err-${context.Id}`, context)); 
         const addedComponent = addLayout(context, setLayout)
         if (wrappercompo.key !== addedComponent.key) {
-          // console.log('set page load useEffect catch', { wrappercompo: wrappercompo }, { addedComponent: addedComponent });
+          console.log('set page load useEffect catch', { wrappercompo: wrappercompo }, { addedComponent: addedComponent });
           setCompo(addedComponent);
         } else {
-          // console.log('skip page load useEffect catch');
+          console.log('skip page load useEffect catch');
         }
       })
       .finally(() => {
@@ -201,7 +178,7 @@ const PageWrapper = React.memo((props) => {
   }, [context, layoutContentType, widgetContentType, repo, setLayout, setPageDebug, setWidgets, wrappercompo]);
 
   const loadContent = useCallback(async () => {
-    // console.log("Load content for:", locationPath);
+    console.log("Load content for:", locationPath);
     const locationPathWorkaround = locationPath.replace("(", "%28").replace(")", "%29");
     await repo.load({
       idOrPath: `${process.env.REACT_APP_DATA_PATH || DATA.dataPath}/${locationPathWorkaround}`,
@@ -211,7 +188,7 @@ const PageWrapper = React.memo((props) => {
       },
     }).then(result => {
       if (result?.d?.Type) {
-        // console.log('First level context loaded:', result.d.Id);
+        console.log('First level context loaded:', result.d.Id);
         setContext(result.d);
       };
     })

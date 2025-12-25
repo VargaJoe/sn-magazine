@@ -4,7 +4,10 @@ import { useSnStore } from "../store/sn-store";
 
 const DATA = require('../../config.json');
 
-export function BindedContext(props, withChildren) {
+// Global cache for binded contexts
+const contextCache = new Map();
+
+export function useBindedContext(props, withChildren) {
   const repo = useRepository();
   const context = useSnStore((state) => state.context);
   
@@ -32,7 +35,7 @@ export function BindedContext(props, withChildren) {
     return true;
   }
   
-  console.log('bindedContext params', { widgetId: widget?.Id, withChildren });
+  // console.log('bindedContext params', { widgetId: widget?.Id, withChildren });
   // const widget = props.widget;
   // const context = props.data; 
 
@@ -58,7 +61,7 @@ export function BindedContext(props, withChildren) {
               resultObj.contextPath = widget.CustomRoot.Path
               resultObj.content = widget.CustomRoot
             } else {
-              console.log("customroot is not set");
+              // console.log("customroot is not set");
             }
             break;
           case "currentsite":
@@ -129,7 +132,24 @@ export function BindedContext(props, withChildren) {
       options.expand += ','+widget.Expand
     } 
 
-    console.log('options', options);
+    // console.log('options', options);
+
+    // Check cache first
+    const cacheKey = `${contextObj.contextPath}-${JSON.stringify(options)}`;
+    if (contextCache.has(cacheKey)) {
+      // console.log('Using cached context for', cacheKey);
+      const cachedData = contextCache.get(cacheKey);
+      setContext(prevContext => {
+        if (shallowEqual(prevContext, cachedData)) {
+          return prevContext;
+        }
+        return cachedData;
+      });
+      setLoading(false);
+      return;
+    } else {
+      console.log('Cache miss for', cacheKey); // Log cache misses to debug
+    }
 
     // relativepath have to be loaded
     const result = await repo.loadCollection({
@@ -142,6 +162,8 @@ export function BindedContext(props, withChildren) {
       if (result.d.results.filter(cnt => cnt.Path === contextObj.contextPath)[0] !== undefined) {
         contextObj.content = result.d.results.filter(cnt => cnt.Path === contextObj.contextPath)[0] 
       }
+      // Cache the result
+      contextCache.set(cacheKey, { ...contextObj });
       // Only update state if the contextObj has actually changed
       setContext(prevContext => {
         if (shallowEqual(prevContext, contextObj)) {
@@ -156,6 +178,7 @@ export function BindedContext(props, withChildren) {
         content: contextObj.content,
         children: []
       };
+      contextCache.set(cacheKey, { ...emptyContext });
       setContext(prevContext => {
         if (shallowEqual(prevContext, emptyContext)) {
           return prevContext;
@@ -170,8 +193,8 @@ export function BindedContext(props, withChildren) {
     loadContents();
   }, [loadContents]);
   
-  console.log('bindedContext result', { contextPath: bndContext.contextPath, childrenCount: bndContext.children?.length });
+  // console.log('bindedContext result', { contextPath: bndContext.contextPath, childrenCount: bndContext.children?.length });
   return useMemo(() => ({ ...bndContext, loading }), [bndContext, loading]);
 }
 
-export default BindedContext;
+export default useBindedContext;

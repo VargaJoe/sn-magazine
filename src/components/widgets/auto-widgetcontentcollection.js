@@ -25,7 +25,7 @@ export function ContentCollectionWidget(props) {
       <div className="w3-row-padding w3-margin-bottom">
         <div className="w3-col m12">
           <div className="w3-card w3-round w3-white">
-            {ShowDebugInfo("content collection widget", context, page, widget, layout)}
+            <ShowDebugInfo title="content collection widget" context={context} currentPage={page} widget={widget} />
             <div className="w3-container w3-padding">
             <h2>{widgetTitle}</h2>
               <div className="context-info">

@@ -1,42 +1,73 @@
-import React, { useRef, useEffect } from 'react';
-import { addComponentsByZone } from '../utils/add-component';
+import React, { useRef } from 'react';
+import { addComponent } from '../utils/add-component';
 import { useSnStore } from "../store/sn-store";
-import { shallow } from 'zustand/shallow';
+import deepEqual from "../utils/deep-equal";
 
 export const LeisureSimpleLayout = React.memo((props) => {
-  const {context, layout, widgets} = useSnStore((state) => ({ context: state.context, layout: state.layout, widgets: state.widgets }), shallow);
+  const widgets = useSnStore((state) => state.widgets, deepEqual);
 
   // Deep comparison debug
-  const prevRef = useRef({ props: null, context: null, layout: null, widgets: null });
-  useEffect(() => {
-    const prev = prevRef.current;
-    const deepChanged =
-      JSON.stringify(prev.props) !== JSON.stringify(props) ||
-      JSON.stringify(prev.context) !== JSON.stringify(context) ||
-      JSON.stringify(prev.layout) !== JSON.stringify(layout) ||
-      JSON.stringify(prev.widgets) !== JSON.stringify(widgets);
-    if (deepChanged) {
-      console.log('%c[LeisureSimpleLayout] Deep change detected', 'color:purple;font-weight:bold', {
-        prevProps: prev.props, currProps: props,
-        prevContext: prev.context, currContext: context,
-        prevLayout: prev.layout, currLayout: layout,
-        prevWidgets: prev.widgets, currWidgets: widgets
-      });
-    } else {
-      console.log('%c[LeisureSimpleLayout] No deep change', 'color:purple', {
-        prevProps: prev.props, currProps: props,
-        prevContext: prev.context, currContext: context,
-        prevLayout: prev.layout, currLayout: layout,
-        prevWidgets: prev.widgets, currWidgets: widgets
-      });
+  // const prevRef = useRef({ props: null, context: null, layout: null, widgets: null });
+  // useEffect(() => {
+  //   const prev = prevRef.current;
+  //   const deepChanged =
+  //     JSON.stringify(prev.props) !== JSON.stringify(props) ||
+  //     JSON.stringify(prev.context) !== JSON.stringify(context) ||
+  //     JSON.stringify(prev.layout) !== JSON.stringify(layout) ||
+  //     JSON.stringify(prev.widgets) !== JSON.stringify(widgets);
+  //   if (deepChanged) {
+  //     // console.log('%c[LeisureSimpleLayout] Deep change detected', 'color:purple;font-weight:bold', {
+  //     //   prevProps: prev.props, currProps: props,
+  //     //     prevContext: prev.context, currContext: context,
+  //     //     prevLayout: prev.layout, currLayout: layout,
+  //     //     prevWidgets: prev.widgets, currWidgets: widgets
+  //     //   });
+  //   } else {
+  //     // console.log('%c[LeisureSimpleLayout] No deep change', 'color:purple', {
+  //     //   prevProps: prev.props, currProps: props,
+  //     //   prevContext: prev.context, currContext: context,
+  //     //   prevLayout: prev.layout, currLayout: layout,
+  //     //   prevWidgets: prev.widgets, currWidgets: widgets
+  //     // });
+  //   }
+  //   prevRef.current = { props, context, layout, widgets };
+  // });
+
+  // console.log('%cleisure-simple layout render', "font-size:16px;color:green", { contextId: context?.Id, widgetsCount: widgets?.length });
+  
+  const sideComponentsRef = useRef(new Map());
+  const contentComponentsRef = useRef(new Map());
+  
+  if (!widgets || !Array.isArray(widgets)) {
+    return <div>Loading layout...</div>;
+  }
+  
+  const sideWidgets = widgets.filter(w => w.PortletZone === 'side');
+  const contentWidgets = widgets.filter(w => w.PortletZone === 'content');
+  
+  const sideboxes = sideWidgets.map((child) => { 
+    const componentId = `${child.Id}`;
+    if (!sideComponentsRef.current.has(componentId)) {
+      const isAuto = (child.ClientComponent === undefined || child.ClientComponent === null || child.ClientComponent === '');
+      const compoType = isAuto ? child.Type : child.ClientComponent;
+      const prefix = (isAuto) ? "auto" : "manual";
+      const element = addComponent('widgets', prefix, compoType.toLowerCase(), componentId, null, null, child);
+      sideComponentsRef.current.set(componentId, element);
     }
-    prevRef.current = { props, context, layout, widgets };
+    return sideComponentsRef.current.get(componentId);
   });
 
-  console.log('%cleisure-simple layout render', "font-size:16px;color:green", { contextId: context?.Id, widgetsCount: widgets?.length });
-  
-  const sideboxes = addComponentsByZone('widgets', 'side', null, null, widgets);
-  const components = addComponentsByZone('widgets', 'content', null, null, widgets);
+  const components = contentWidgets.map((child) => { 
+    const componentId = `${child.Id}`;
+    if (!contentComponentsRef.current.has(componentId)) {
+      const isAuto = (child.ClientComponent === undefined || child.ClientComponent === null || child.ClientComponent === '');
+      const compoType = isAuto ? child.Type : child.ClientComponent;
+      const prefix = (isAuto) ? "auto" : "manual";
+      const element = addComponent('widgets', prefix, compoType.toLowerCase(), componentId, null, null, child);
+      contentComponentsRef.current.set(componentId, element);
+    }
+    return contentComponentsRef.current.get(componentId);
+  });
 
   return (
     <div className="App w3-theme-l5">

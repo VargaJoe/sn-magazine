@@ -18,7 +18,7 @@ export function MangaListWidget(props) {
       <div className="w3-row-padding w3-margin-bottom">
         <div className="w3-col m12">
           <div className="w3-card w3-round w3-white">
-            {ShowDebugInfo("gallery widget", context, page, widget, layout)}
+            <ShowDebugInfo title="gallery widget" context={context} currentPage={page} widget={widget} />
             <div className="w3-container w3-padding">
               <div className="w3-row w3-margin-bottom" style={{position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
                 <h1 style={{margin: 0}}>{sortedBindedContext.content?.DisplayName}</h1>

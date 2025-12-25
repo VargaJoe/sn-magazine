@@ -29,7 +29,7 @@ export function TestWidget(props) {
 
   return (
     <div className="w3-card w3-round w3-white w3-margin-bottom">
-      {ShowDebugInfo("side menu with logo", bindedContext.content, layout, widget)}
+      <ShowDebugInfo title="side menu with logo" context={bindedContext.content} currentPage={layout} widget={widget} />
       <div className="w3-container">
         <div>{bindedContext?.content?.DisplayName}</div>
         <div className="side-menu-uppercase">
