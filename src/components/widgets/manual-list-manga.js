@@ -26,7 +26,7 @@ export function MangaListWidget(props) {
                   <SortingControls />
                 </div>
               </div>
-              <div class="review-cards">
+              <div className="review-cards">
                 {sortedBindedContext.children?.map((child) => { 
                   return addComponent('widgets', 'nested','list-manga-item', `${widget.Id}-${context.Id}-${child.Id}`, child, layout, child); 
                 })}
