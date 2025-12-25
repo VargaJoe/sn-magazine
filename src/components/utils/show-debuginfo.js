@@ -1,15 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { useSnStore } from "../store/sn-store";
 import { clearLazyComponentCache } from './add-component';
 
 const DEBUG_KEY = 'sn-debug-enabled';
 
-const ShowDebugInfo = (title, context, currentPage, widget, layout) => {
-  const [showDebug, setDebug] = useState(false);
+function ShowDebugInfo({ title, context, currentPage, widget }) {
+  const [showDebug, setShowDebug] = useState(false);
+  const store = useSnStore();
+  const layout = store.layout;
   const location = useLocation();
 
-  // Persist debug mode in localStorage based on URL param
-  React.useEffect(() => {
+  useEffect(() => {
     const params = new URLSearchParams(location.search);
     const debugParam = params.get('debug');
     if (debugParam === 'true') {
@@ -19,14 +21,14 @@ const ShowDebugInfo = (title, context, currentPage, widget, layout) => {
     }
   }, [location.search]);
 
+  const handleToggle = () => {
+    setShowDebug(!showDebug);
+  };
+
   const isDebug =
     (process.env.NODE_ENV === 'development' && localStorage.getItem(DEBUG_KEY) === 'true');
 
-  if (!isDebug) return;
-
-  const handleToggle = () => {
-    setDebug(!showDebug);
-  };
+  if (!isDebug) return null;
 
   function showContextInfo(context) {
     if (context !== undefined) {
@@ -176,6 +178,6 @@ const ShowDebugInfo = (title, context, currentPage, widget, layout) => {
       </div>
     </div>
   );
-};
+}
 
 export default ShowDebugInfo;

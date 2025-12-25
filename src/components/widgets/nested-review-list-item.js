@@ -1,43 +1,43 @@
 import { Link } from "react-router-dom";
 import Moment from 'moment';
-import ShowDebugInfo from "../utils/show-debuginfo"
+// import ShowDebugInfo from "../utils/show-debuginfo";
 import LazyImage from "../utils/lazyload-image";
 import { useSnStore } from "../store/sn-store";
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 
 const DATA = require('../../config.json');
 
-export function NestedReviewListItemComponent(props) {
-  console.log('%cNestedReviewListItemComponent', "font-size:16px;color:green", { props: props });
+const NestedReviewListItemComponent = React.memo((props) => {
+  // console.log('%cNestedReviewListItemComponent', "font-size:16px;color:green", { props: props });
   const context = props.data;  
-  const {page, layout} = useSnStore((state) => state);
-  const widget = props.widget;
+  // const {page, layout} = useSnStore((state) => state);
+  // const widget = props.widget;
 
   const relativePath = context.Path.substr((process.env.REACT_APP_DATA_PATH || DATA.dataPath).length + 1);
 
   // Deep comparison debug
-  const prevRef = useRef({ props: null, page: null, layout: null });
-  useEffect(() => {
-    const prev = prevRef.current;
-    const deepChanged =
-      JSON.stringify(prev.props) !== JSON.stringify(props) ||
-      JSON.stringify(prev.page) !== JSON.stringify(page) ||
-      JSON.stringify(prev.layout) !== JSON.stringify(layout);
-    if (deepChanged) {
-      console.log('%c[NestedReviewListItemComponent] Deep change detected', 'color:orange;font-weight:bold', {
-        prevProps: prev.props, currProps: props,
-        prevPage: prev.page, currPage: page,
-        prevLayout: prev.layout, currLayout: layout
-      });
-    } else {
-      console.log('%c[NestedReviewListItemComponent] No deep change', 'color:orange', {
-        prevProps: prev.props, currProps: props,
-        prevPage: prev.page, currPage: page,
-        prevLayout: prev.layout, currLayout: layout
-      });
-    }
-    prevRef.current = { props, page, layout };
-  }, [props, page, layout]);
+  // const prevRef = useRef({ props: null, page: null, layout: null });
+  // useEffect(() => {
+  //   const prev = prevRef.current;
+  //   const deepChanged =
+  //     JSON.stringify(prev.props) !== JSON.stringify(props) ||
+  //     JSON.stringify(prev.page) !== JSON.stringify(page) ||
+  //     JSON.stringify(prev.layout) !== JSON.stringify(layout);
+  //   if (deepChanged) {
+  //     // console.log('%c[NestedReviewListItemComponent] Deep change detected', 'color:orange;font-weight:bold', {
+  //     //   prevProps: prev.props, currProps: props,
+  //     //   prevPage: prev.page, currPage: page,
+  //     //   prevLayout: prev.layout, currLayout: layout
+  //     // });
+  //   } else {
+  //     // console.log('%c[NestedReviewListItemComponent] No deep change', 'color:orange', {
+  //     //   prevProps: prev.props, currProps: props,
+  //     //   prevPage: prev.page, currPage: page,
+  //     //   prevLayout: prev.layout, currLayout: layout
+  //     // });
+  //   }
+  //   prevRef.current = { props, page, layout };
+  // }, [props, page, layout]);
 
   if ( context === undefined || context === null) {
     return (<div>loading</div>)
@@ -48,7 +48,7 @@ export function NestedReviewListItemComponent(props) {
       <div className="w3-row-padding w3-margin-bottom w3-left gallery-item">
         <div className="w3-col">
           <div className="w3-card w3-round w3-white">
-          {ShowDebugInfo("gallery item", context, page, widget, layout)}
+          {/* {ShowDebugInfo("gallery item", context, page, widget, layout)} */}
             <div className="w3-container w3-padding">
               {/* <h1>{props.data.DisplayName}</h1> */}
               <div className="context-info">
@@ -74,8 +74,7 @@ export function NestedReviewListItemComponent(props) {
           </div>
         </div>
       </div>
-    // </div>
   );
-}
+});
 
 export default NestedReviewListItemComponent;

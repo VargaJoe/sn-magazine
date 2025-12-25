@@ -1,6 +1,6 @@
 import ShowDebugInfo from "../utils/show-debuginfo"
 import { addComponent } from '../utils/add-component';
-import BindedContext from "../utils/context-binding"
+import useBindedContext from "../utils/context-binding"
 import { useSnStore } from "../store/sn-store";
 
 export function ContentViewWidget(props) {
@@ -9,11 +9,11 @@ export function ContentViewWidget(props) {
   // let context = props.data; // todo: context binding
   const {context, page, layout} = useSnStore((state) => state);
   const widget = props.widget;
-  const bindedContext = BindedContext(props, true);
+  const bindedContext = useBindedContext(props, true);
 
   return (
     <div>
-        {ShowDebugInfo("contentview widget", context, page, widget, layout)}
+        <ShowDebugInfo title="contentview widget" context={context} currentPage={page} widget={widget} />
         {addComponent('content', 'auto', bindedContext.content?.Type.toLowerCase(), `cv-${context.Id}-${bindedContext.content?.Id}`, bindedContext.content, props.page, widget)}
     </div>
   );

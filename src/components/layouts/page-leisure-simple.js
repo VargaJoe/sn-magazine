@@ -1,46 +1,43 @@
-import React, { useRef, useEffect } from 'react';
-import { addComponentsByZone } from '../utils/add-component';
+import React from 'react';
+import { CachedComponentsByZone } from '../utils/add-component';
 import { useSnStore } from "../store/sn-store";
+import deepEqual from "../utils/deep-equal";
 
-export const LeisureSimpleLayout = (props) => {
-  const {context, layout, widgets} = useSnStore((state) => state);
+export const LeisureSimpleLayout = React.memo((props) => {
+  const { context, widgets } = useSnStore((state) => state, deepEqual);
 
   // Deep comparison debug
-  const prevRef = useRef({ props: null, context: null, layout: null, widgets: null });
-  useEffect(() => {
-    const prev = prevRef.current;
-    const deepChanged =
-      JSON.stringify(prev.props) !== JSON.stringify(props) ||
-      JSON.stringify(prev.context) !== JSON.stringify(context) ||
-      JSON.stringify(prev.layout) !== JSON.stringify(layout) ||
-      JSON.stringify(prev.widgets) !== JSON.stringify(widgets);
-    if (deepChanged) {
-      console.log('%c[LeisureSimpleLayout] Deep change detected', 'color:purple;font-weight:bold', {
-        prevProps: prev.props, currProps: props,
-        prevContext: prev.context, currContext: context,
-        prevLayout: prev.layout, currLayout: layout,
-        prevWidgets: prev.widgets, currWidgets: widgets
-      });
-    } else {
-      console.log('%c[LeisureSimpleLayout] No deep change', 'color:purple', {
-        prevProps: prev.props, currProps: props,
-        prevContext: prev.context, currContext: context,
-        prevLayout: prev.layout, currLayout: layout,
-        prevWidgets: prev.widgets, currWidgets: widgets
-      });
-    }
-    prevRef.current = { props, context, layout, widgets };
-  });
+  // const prevRef = useRef({ props: null, context: null, layout: null, widgets: null });
+  // useEffect(() => {
+  //   const prev = prevRef.current;
+  //   const deepChanged =
+  //     JSON.stringify(prev.props) !== JSON.stringify(props) ||
+  //     JSON.stringify(prev.context) !== JSON.stringify(context) ||
+  //     JSON.stringify(prev.layout) !== JSON.stringify(layout) ||
+  //     JSON.stringify(prev.widgets) !== JSON.stringify(widgets);
+  //   if (deepChanged) {
+  //     // console.log('%c[LeisureSimpleLayout] Deep change detected', 'color:purple;font-weight:bold', {
+  //     //   prevProps: prev.props, currProps: props,
+  //     //     prevContext: prev.context, currContext: context,
+  //     //     prevLayout: prev.layout, currLayout: layout,
+  //     //     prevWidgets: prev.widgets, currWidgets: widgets
+  //     //   });
+  //   } else {
+  //     // console.log('%c[LeisureSimpleLayout] No deep change', 'color:purple', {
+  //     //   prevProps: prev.props, currProps: props,
+  //     //   prevContext: prev.context, currContext: context,
+  //     //   prevLayout: prev.layout, currLayout: layout,
+  //     //   prevWidgets: prev.widgets, currWidgets: widgets
+  //     // });
+  //   }
+  //   prevRef.current = { props, context, layout, widgets };
+  // });
 
-  console.log('%cleisure-simple layout', "font-size:16px;color:green", { props: props }, { context: context}, { layout: layout}, { widgets: widgets });
+  // console.log('%cleisure-simple layout render', "font-size:16px;color:green", { contextId: context?.Id, widgetsCount: widgets?.length });
   
-  const sideboxes = addComponentsByZone('widgets', 'side', null, null, widgets);
-  console.log('sideboxes');
-  console.log(sideboxes);
-
-  const components = addComponentsByZone('widgets', 'content', null, null, widgets);
-  console.log('components');
-  console.log(components);
+  if (!widgets || !Array.isArray(widgets)) {
+    return <div>Loading layout...</div>;
+  }
 
   return (
     <div className="App w3-theme-l5">
@@ -50,7 +47,7 @@ export const LeisureSimpleLayout = (props) => {
         <div className="w3-row layout-container">
           {/* Left Column */}
           <div className="w3-col m2 layout-left">
-            {sideboxes}
+            <CachedComponentsByZone type="widgets" zone="side" widgets={widgets} context={context} />
           </div>
           {/* End Left Column */}
 
@@ -65,7 +62,7 @@ export const LeisureSimpleLayout = (props) => {
                 </div>
               </div>
             </div>
-            {components}
+            <CachedComponentsByZone type="widgets" zone="content" widgets={widgets} context={context} />
           </div>
           {/* End Middle Column */}
 
@@ -88,6 +85,6 @@ export const LeisureSimpleLayout = (props) => {
       {/* End Footer */}
     </div>
   );
-}
+});
 
 export default LeisureSimpleLayout;

@@ -1,5 +1,4 @@
-import React, { lazy } from 'react';
-import { useSnStore } from "../store/sn-store";
+import React from 'react';
 
 const DATA = require('../../config.json');
 
@@ -33,31 +32,57 @@ function importView(type, prefix, component, fallback) {
   if (!type || !prefix || !component) {
     const msg = `importView: Missing type, prefix, or component: type=${type}, prefix=${prefix}, component=${component}`;
     console.error(msg);
-    return lazy(() => import(`../${type}/auto-${fallback || defaultComponent}`));
+    try {
+      return require(`../${type}/auto-${fallback || defaultComponent}`).default;
+    } catch (err) {
+      console.error('Failed to require fallback component', err);
+      return null;
+    }
   }
   // Check cache first
   let lazyView = lazyComponents.find(ptmplt => ptmplt.type === type && ptmplt.prefix === prefix && ptmplt.component === component && ptmplt.fallback === fallback);
   if (!lazyView) {
-    lazyView = {
-      type,
-      prefix,
-      component,
-      fallback,
-      view: lazy(() =>
-        import(`../${type}/${prefix}-${component}`)
-          .catch((err) => {
-            if (fallback) {
-              const msg = `importView: Failed to import ../${type}/${prefix}-${component}, falling back to ${prefix}-${fallback}`;
-              console.warn(msg, err);
-              return import(`../${type}/${prefix}-${fallback}`);
-            } else {
-              const msg = `importView: Failed to import ../${type}/${prefix}-${component}, falling back to auto-${defaultComponent}`;
-              console.warn(msg, err);
-              return import(`../${type}/auto-${defaultComponent}`);
-            }
-          })
-      )
-    };
+    try {
+      lazyView = {
+        type,
+        prefix,
+        component,
+        fallback,
+        view: require(`../${type}/${prefix}-${component}`).default
+      };
+    } catch (err) {
+      if (fallback) {
+        const msg = `importView: Failed to require ../${type}/${prefix}-${component}, falling back to ${prefix}-${fallback}`;
+        console.warn(msg, err);
+        try {
+          lazyView = {
+            type,
+            prefix,
+            component,
+            fallback,
+            view: require(`../${type}/${prefix}-${fallback}`).default
+          };
+        } catch (err2) {
+          console.error('Failed to require fallback', err2);
+          return null;
+        }
+      } else {
+        const msg = `importView: Failed to require ../${type}/${prefix}-${component}, falling back to auto-${defaultComponent}`;
+        console.warn(msg, err);
+        try {
+          lazyView = {
+            type,
+            prefix,
+            component,
+            fallback,
+            view: require(`../${type}/auto-${defaultComponent}`).default
+          };
+        } catch (err2) {
+          console.error('Failed to require default', err2);
+          return null;
+        }
+      }
+    }
     lazyComponents.push(lazyView);
     if (process.env.NODE_ENV === 'development') {
       console.log('importView: new component added to cache:', lazyView);
@@ -90,13 +115,41 @@ export const addComponent = (type, prefix, component, id, data, page, widget, fa
   );
 };
 
-export const addComponentsByZone = (type, zone, contextobs, page, widgets) => {
-  return ShowComponentsByZone(type, zone, contextobs, page, widgets);
+export const CachedComponentsByZone = ({ type, zone, widgets, context }) => {
+  const componentsRef = React.useRef(new Map());
+
+  if (!widgets || widgets.length === 0) {
+    console.log('cached component by zone - widgets undefined: ', {type: type}, {zone: zone}, {context: context});
+    if (zone === null || zone === 'content') {
+      return addComponent('content', 'auto', context.Type.toLowerCase(), `${type}-${zone}-err-${context.Id}`, null);
+    } else {
+      return null;
+    }
+  }
+
+  // console.log('cached component by zone - widgets: ', type, zone, context, widgets);
+  return (
+    widgets.filter(pcnt => pcnt.PortletZone === zone).map((child) => { 
+      const componentId = `${child.Id}`;
+      if (!componentsRef.current.has(componentId)) {
+        const isAuto = (child.ClientComponent === undefined || child.ClientComponent === null || child.ClientComponent === '');
+        const compoType = isAuto ? child.Type : child.ClientComponent;
+        const prefix = (isAuto) ? "auto" : "manual";
+        const element = addComponent(type, prefix, compoType.toLowerCase(), componentId, null, null, child);
+        componentsRef.current.set(componentId, element);
+      }
+      return componentsRef.current.get(componentId);
+    })
+  );
+};
+
+export const addComponentsByZone = (type, zone, contextobs, page, widgets, context) => {
+  return ShowComponentsByZone(type, zone, contextobs, page, widgets, context);
 }
 
-export const ShowComponentsByZone = (type, zone, contextobs, page, widgets) => {
+export const ShowComponentsByZone = (type, zone, contextobs, page, widgets, context) => {
   // if context is not present, use context from store, therefore it can not be a function 
-  const {context} = useSnStore((state) => state);
+  // const {context} = useSnStore((state) => state);
 
   if (!widgets || widgets.length === 0) {
     console.log('add component by zone - widgets undefined: ', {type: type}, {zone: zone}, {context: context}, {page: page});
@@ -144,27 +197,7 @@ export const addLayout = (contextAsWidget, setLayout) => {
  */
 function getComponentKey(component) {
   if (!component) return '';
-  // Use path or id as base identity
-  const base = component.Name || component.Path || component.Id || '';
-  // Only include relevant properties for settings
-  const relevant = {
-    ClientComponent: component.ClientComponent,
-    ContentQuery: component.ContentQuery,
-    PortletZone: component.PortletZone,
-    CacheKey: component.CacheKey,
-    Title: component.Title,
-    ContextBinding: component.ContextBinding,
-    // Add more fields if needed
-  };
-  // Stable stringify: sort keys
-  const stableStringify = (obj) => {
-    return JSON.stringify(Object.keys(obj).sort().reduce((acc, key) => {
-      acc[key] = obj[key];
-      return acc;
-    }, {}));
-  };
-  // return `${base}:${stableStringify(relevant)}`;
-  return `${base}:${stableStringify(relevant)}`;
+  return `${component.Id}`;
 }
 
 // --- End Dynamic Component Resolution ---

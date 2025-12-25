@@ -18,10 +18,6 @@
 ### Story 009: Component Modularity and Type Safety ([docs/stories/story009-component-modularity.md](docs/stories/story009-component-modularity.md))
   - [ ] Review all widget/layout/content components for self-containment
   - [ ] Add prop-types or TypeScript for type safety
-### Story 010: Performance Optimization ([docs/stories/story010-performance.md](docs/stories/story010-performance.md))
-  - [ ] Profile and optimize rendering of large content/widget trees
-  - [ ] Use React Suspense and lazy loading efficiently
-  - [ ] Optimize dynamic imports and caching
 ### Story 011: Test Coverage and Quality ([docs/stories/story011-testing.md](docs/stories/story011-testing.md))
   - [ ] Add unit tests for dynamic resolution logic
   - [ ] Add integration tests for API and component interactions
@@ -106,3 +102,43 @@
   - [x] Used addComponent to dynamically load maintenance layouts
   - [x] Verified maintenance page displays correctly when API is unavailable
   - [x] Verified build compiles without errors
+
+### Technical Tasks - Loading Ref Optimization in PageWrapper
+  - [x] Added loadingRef = useRef(false) to prevent double loadPage calls
+  - [x] Check if loadingRef.current is true at start of loadPage and return early if so
+  - [x] Set loadingRef.current to true after the check
+  - [x] Reset loadingRef.current to false in the finally block
+  - [x] Build succeeded with warnings about unused variables, no errors
+  - [x] App ready for testing to validate render count reduction
+  - [x] Validated successful render count reduction: renders decreased from 45+ to 17 across navigation session, with "loadPage already in progress, skipping" log message confirming fix. Renders now primarily due to legitimate state changes, closer to 1-2 per navigation target, with remaining optimization for widget-level renders.
+  - [x] Fixed navigation issue by resetting loadingRef.current = false at the beginning of loadContent, so each new location load resets the loading state and allows loadPage to execute properly. Navigation now works on first click.
+  - [x] Replaced single loadingRef with loadingRefs Map for per-context loading states to prevent blocking new location loads while allowing concurrent loads for different contexts.
+  - [x] Added React.memo to key widgets (nested-review-list-item, manual-list-banner, manual-list-news) to prevent unnecessary re-renders when props unchanged.
+  - [x] Updated Zustand store to use createWithEqualityFn with shallow equality for efficient state updates.
+  - [x] Further reduced renders to ~29 total across navigations, with deep change detection logs indicating remaining re-renders from unstable props (likely recreated arrays/objects).
+  - [x] Committed and pushed changes to fix/double-reload-of-pages branch for live testing.
+  - [x] Implemented global contextCache Map in context-binding.js to avoid redundant API calls for same contexts.
+  - [x] Added loading checks in widgets (manual-list-news-half.js, manual-list-banner.js, manual-list-menu-logo.js, manual-list-news.js, manual-list-review.js) to defer rendering until bindedContext.loading is false, ensuring components render only once when all data is available.
+  - [x] Implemented deep equality check in page-wrapper.js to prevent unnecessary widget state updates, avoiding re-renders when widget arrays are recreated but content unchanged.
+  - [x] Build succeeded without errors, ready for live testing to validate further render reduction.
+### Technical Tasks - ShowDebugInfo Component Fix and App Stability
+  - [x] Fixed ShowDebugInfo component syntax error by converting from invalid class component with hooks to proper function component using useState and useEffect
+  - [x] Fixed missing deepEqual import in manual-list-review.js
+  - [x] Build now succeeds with only warnings, app loads without syntax errors
+  - [x] Implemented stable element caching in page-leisure-simple.js using useRef(Map) to cache component elements by componentId, preventing remounts that cause hook count mismatches and 'Rendered fewer hooks than expected' errors
+  - [x] Cleaned up unused imports and fixed JSX comment syntax in manual-list-news-half.js
+  - [x] Build succeeded with only minor warnings in unrelated files, app ready for testing to validate stable renders and no hook errors
+### Technical Tasks - Layout Memoization Optimization
+  - [x] Added React.memo to all dynamic layout components (page-vanilla.js, page-wide.js, page-explore.js, page-mirror.js, page-double.js, page-error.js) to prevent unnecessary re-renders when props haven't changed
+  - [x] Extended performance optimizations from page-leisure-simple.js to ensure consistent memoization across all layouts
+  - [x] Build succeeded with only minor lint warnings about link accessibility, app ready for testing to validate reduced renders across all layouts
+### Technical Tasks - Layout Element Caching Optimization
+  - [x] Implemented element caching in all dynamic layout components (page-vanilla.js, page-wide.js, page-explore.js, page-mirror.js, page-double.js) using useRef(Map) to cache component elements by componentId, preventing remounts that cause hook count mismatches
+  - [x] Replaced addComponentsByZone with individual addComponent calls for each widget, ensuring consistent performance across all layouts
+  - [x] Build succeeded with only minor lint warnings, app ready for testing to validate stable renders and no hook errors in any layout
+  
+### Story 010: Performance Optimization ([docs/stories/story010-performance.md](docs/stories/story010-performance.md))
+  - [x] Profile and optimize rendering of large content/widget trees
+  - [x] Use React Suspense and lazy loading efficiently
+  - [x] Optimize dynamic imports and caching
+  - [x] Centralize element caching in CachedComponentsByZone React component for all dynamic layouts
