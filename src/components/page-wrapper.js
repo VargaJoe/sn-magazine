@@ -4,17 +4,43 @@ import { addComponent, addLayout } from './utils/add-component';
 import { useLocation } from 'react-router-dom';
 import { useSnStore } from "./store/sn-store";
 import CommonHelmet from './layouts/partial-head';
+import { maintenanceTemplate } from '../configuration';
+// import MaintenanceLayout from './layouts/page-maintenance';
+// import MaintenanceLeisureLayout from './layouts/page-maintenance-leisure';
+
+// Deep equality check for arrays/objects
+const deepEqual = (a, b) => {
+  if (a === b) return true;
+  if (a == null || b == null) return false;
+  if (Array.isArray(a) && Array.isArray(b)) {
+    if (a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) {
+      if (!deepEqual(a[i], b[i])) return false;
+    }
+    return true;
+  }
+  if (typeof a === 'object' && typeof b === 'object') {
+    const keysA = Object.keys(a);
+    const keysB = Object.keys(b);
+    if (keysA.length !== keysB.length) return false;
+    for (let key of keysA) {
+      if (!deepEqual(a[key], b[key])) return false;
+    }
+    return true;
+  }
+  return false;
+};
 
 const DATA = require('../config.json');
 
-export const PageWrapper = (props) => {
+const PageWrapper = React.memo((props) => {
   const location = useLocation();
   const repo = useRepository();
   const [wrappercompo, setCompo] = useState([]);
   // const [context, setContext] = useState();
   const { context, setContext, setLayout, setPage, setWidgets } = useSnStore();
   const locationPath = location.pathname;
-  // --- Debug instance identity ---
+  const loadingRefs = useRef(new Map());
   const instanceId = useRef(Math.random().toString(36).substr(2, 8));
   const renderCount = useRef(0);
   renderCount.current += 1;
@@ -39,44 +65,29 @@ export const PageWrapper = (props) => {
   }
 
   // Patch setPage to also update local debug state
-  const setPageDebug = (p) => {
+  const setPageDebug = useCallback((p) => {
     setPage(p);
     setDebugPage(p);
-  };
-
-  useEffect(() => {
-    // Log on every render and navigation
-    const contextChanged = !shallowEqual(context, prevContextRef.current);
-    const pageChanged = !shallowEqual(debugPage, prevPageRef.current);
-    console.log('%c[PageWrapper] Render', 'color:orange;font-weight:bold', {
-      instanceId: instanceId.current,
-      renderCount: renderCount.current,
-      locationPath,
-      contextType: context?.Type,
-      contextId: context?.Id,
-      contextPath: context?.Path,
-      contextChanged,
-      prevContext: prevContextRef.current,
-      currentContext: context,
-      pageChanged,
-      prevPage: prevPageRef.current,
-      currentPage: debugPage,
-      wrappercompoKey: wrappercompo?.key,
-      wrappercompoType: wrappercompo?.type,
-      wrappercompoName: wrappercompo?.props?.name,
-      wrappercompoProps: wrappercompo?.props,
-    });
-    prevContextRef.current = context;
-    prevPageRef.current = debugPage;
-  });
+  }, [setPage]);
 
   const layoutContentType = process.env.REACT_APP_LAYOUT_TYPE || DATA.layoutType || "Layout";
   const widgetContentType = process.env.REACT_APP_WIDGET_TYPE || DATA.widgetType || "Widget";
 
   // refactor: filters should get from page fields
   const loadPage = useCallback(async () => {
-    console.log('%cloadPage', "font-size:14px;color:green");
-    console.log("Context of Load page:", context);
+    // console.log('%cloadPage for context', "font-size:14px;color:green", context?.Id);
+
+    const isLoading = loadingRefs.current.get(locationPath);
+    if (isLoading) {
+      // console.log('loadPage already in progress for locationPath', locationPath, 'skipping');
+      return;
+    }
+    loadingRefs.current.set(locationPath, true);
+    if (isLoading) {
+      // console.log('loadPage already in progress for context', context?.Id, 'skipping');
+      return;
+    }
+    loadingRefs.current.set(context?.Id, true);
 
     // layoutPathList: return path list of possible layoutdeclarations
     const layoutPathList = () => {
@@ -94,7 +105,7 @@ export const PageWrapper = (props) => {
       {
         lpl[lpl.length]=`'${basePath}'`;
       }
-      console.log('LPL', lpl);
+      // console.log('LPL', lpl);
       return lpl;
     };
 
@@ -146,29 +157,33 @@ export const PageWrapper = (props) => {
           // const layout = !page || page.PageTemplate === '' || page.PageTemplate === null ? "vanilla" : page.PageTemplate;
 
           setPageDebug(page);
-          setWidgets(widgets);
+          // Check if widgets changed before setting
+          const currentWidgets = useSnStore.getState().widgets;
+          if (!deepEqual(widgets, currentWidgets)) {
+            setWidgets(widgets);
+          }
           // setLayout(layout);
-          console.log('selected page: ', { results: result.d.results }, { page: page?.Name, meta: page}, { widgets: widgets }, { layout: page?.PageTemplate } );
+          // console.log('selected page:', page?.Name, 'widgets:', widgets?.length);
           const addedComponent =  !page || page.PageTemplate === '' || page.PageTemplate === null ? 
             addLayout(context, setLayout) :
             addComponent('layouts', 'page', page.PageTemplate, `page-${page.PageTemplate}`, null, null, null);
           // const addedComponent =  addComponent('layouts', 'page', page.PageTemplate, `page-${page.PageTemplate}`, null, null, null);
           
           if (wrappercompo.key !== addedComponent.key) {
-            console.log('set page load useEffect then', { wrappercompo: wrappercompo }, { addedComponent: addedComponent });
+            // console.log('set page load useEffect then', { wrappercompo: wrappercompo }, { addedComponent: addedComponent });
             setCompo(addedComponent);
           } else {
-            console.log('skip page load useEffect then');
+            // console.log('skip page load useEffect then');
           }
         } else {
           console.warn('no page was found - else:', context.Type.toLowerCase());
           
           const addedComponent = addLayout(context, setLayout)
           if (wrappercompo.key !== addedComponent.key) {
-            console.log('set page load useEffect else', { wrappercompo: wrappercompo }, { addedComponent: addedComponent });
+            // console.log('set page load useEffect else', { wrappercompo: wrappercompo }, { addedComponent: addedComponent });
             setCompo(addedComponent);
           } else {
-            console.log('skip page load useEffect else');
+            // console.log('skip page load useEffect else');
           }          
         }
       }).catch(error => {
@@ -177,18 +192,21 @@ export const PageWrapper = (props) => {
         // TODO: error page 
         // setCompo(addComponent('layouts', 'page', "vanilla", `err-${context.Id}`, context)); 
         const addedComponent = addLayout(context, setLayout)
-          if (wrappercompo.key !== addedComponent.key) {
-            console.log('set page load useEffect catch', { wrappercompo: wrappercompo }, { addedComponent: addedComponent });
-            setCompo(addedComponent);
-          } else {
-            console.log('skip page load useEffect catch');
-          }     
+        if (wrappercompo.key !== addedComponent.key) {
+          // console.log('set page load useEffect catch', { wrappercompo: wrappercompo }, { addedComponent: addedComponent });
+          setCompo(addedComponent);
+        } else {
+          // console.log('skip page load useEffect catch');
+        }
+      })
+      .finally(() => {
+        loadingRefs.current.set(locationPath, false);
       });
     };
-  }, [context, layoutContentType, repo, setLayout, setPage, setWidgets, widgetContentType, wrappercompo]);
+  }, [context, layoutContentType, widgetContentType, repo, setLayout, setPageDebug, setWidgets]);
 
   const loadContent = useCallback(async () => {
-    console.log("Load content useEffect:", locationPath);
+    // console.log("Load content for:", locationPath);
     const locationPathWorkaround = locationPath.replace("(", "%28").replace(")", "%29");
     await repo.load({
       idOrPath: `${process.env.REACT_APP_DATA_PATH || DATA.dataPath}/${locationPathWorkaround}`,
@@ -198,49 +216,69 @@ export const PageWrapper = (props) => {
       },
     }).then(result => {
       if (result?.d?.Type) {
-        console.log('First level context:', result.d);
+        // console.log('First level context loaded:', result.d.Id);
         setContext(result.d);
       };
+    })
+    .catch(connectionrefused => {
+        console.error('Connection refused on loading page: ', connectionrefused);
+        // setCompo(addComponent('layouts', 'page', 'maintenance', 1));
+        
+        setCompo(addComponent('layouts', 'page', maintenanceTemplate, 666));
+
+
+        // // const addedComponent = addComponent('layouts', 'page', 'maintenance', `page-maintenance`, null, null, null);
+        // // setCompo(addedComponent);
+        // // if (maintenance) {
+        //   switch (maintenanceTemplate) {
+        //     case 'maintenance-leisure':
+        //        return <MaintenanceLeisureLayout />;
+        //     case 'maintenance':
+        //     default:
+        //       setCompo(addComponent('layouts', 'page', 'maintenance', 666));
+        //       // return <MaintenanceLayout />;
+        //   }
+        // }
     })
     .catch(error => {
       console.error('error on loading content: ', error);
       setCompo(addComponent('layouts', 'page', 'error', 1));
+    })
+    .finally(() => {
     });
   }, [locationPath, repo, setContext]);
 
   useEffect(() => {
-    // Log on every render and navigation
-    console.log('%c[PageWrapper] Render', 'color:orange;font-weight:bold', {
-      instanceId: instanceId.current,
-      renderCount: renderCount.current,
-      locationPath,
-      contextType: context?.Type,
-      contextId: context?.Id,
-      contextPath: context?.Path,
-      wrappercompoKey: wrappercompo?.key,
-      wrappercompoType: wrappercompo?.type,
-      wrappercompoName: wrappercompo?.props?.name,
-      wrappercompoProps: wrappercompo?.props,
-    });
-  });
-
-  useEffect(() => {
     if (locationPath !== null && locationPath !== undefined) {
-      console.log('%c[PageWrapper] useEffect: locationPath changed', 'color:orange', { instanceId: instanceId.current, locationPath });
       loadContent();
     }
-  }, [loadContent, locationPath, repo]);
+  }, [locationPath, loadContent]);
 
   useEffect(() => {
     if (context != null && context !== undefined) {
-      console.log('%c[PageWrapper] useEffect: context changed', 'color:orange', { instanceId: instanceId.current, context });
       loadPage();
-    } else {
-      console.log('%c[PageWrapper] useEffect: context is null/undefined', 'color:orange', { instanceId: instanceId.current });
     }
-  }, [context, loadPage, repo]);
+  }, [context]);
 
-  if (context === undefined || context === null || wrappercompo === undefined || wrappercompo === null)
+  useEffect(() => {
+    // Log only on significant changes
+    const contextChanged = !shallowEqual(context, prevContextRef.current);
+    const pageChanged = !shallowEqual(debugPage, prevPageRef.current);
+    if (contextChanged || pageChanged || renderCount.current === 1) {
+      console.log('%c[PageWrapper] Render', 'color:orange;font-weight:bold', {
+        renderCount: renderCount.current,
+        locationPath,
+        contextId: context?.Id,
+        contextChanged,
+        pageChanged,
+        wrappercompoKey: wrappercompo?.key,
+      });
+    }
+    prevContextRef.current = context;
+    prevPageRef.current = debugPage;
+  });
+
+  if (wrappercompo === undefined || wrappercompo === null)
     return null;
 
   if (context === undefined || wrappercompo === undefined || wrappercompo === null)
@@ -267,4 +305,6 @@ export const PageWrapper = (props) => {
       {wrappercompo}
     </React.Suspense>
   )
-};
+});
+
+export default PageWrapper;

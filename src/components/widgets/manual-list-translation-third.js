@@ -58,7 +58,7 @@ export function ThirdSizedTranslationList(props) {
     // <div className="w3-col m9 w3-right">
         <div className="w3-margin-bottom w3-col m4 news-padding">
           <div className="w3-card w3-round w3-white">
-            {ShowDebugInfo("half size news widget", context, page, widget, layout)}
+            <ShowDebugInfo title="half size news widget" context={context} currentPage={page} widget={widget} />
             <div className="w3-container w3-padding component-news-half">
             <h3>{bindedContext?.content?.DisplayName}</h3>
               <div>
@@ -66,7 +66,7 @@ export function ThirdSizedTranslationList(props) {
                   const relatedContent = itemCollection[0]
                   const relatedPath = relatedContent?.Path.substr((process.env.REACT_APP_DATA_PATH || DATA.dataPath).length + 1);
                   return (
-                    <div className="w3-row-padding w3-margin-bottom w3-left w3-block m1 news-item">
+                    <div key={`translation-item-${child.Id}`} className="w3-row-padding w3-margin-bottom w3-left w3-block m1 news-item">
                       <div className="w3-col">
                         <div className="w3-card w3-round w3-white">
                           <div className="w3-container w3-padding">

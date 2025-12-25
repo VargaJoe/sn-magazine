@@ -3,7 +3,7 @@ import { useRepository } from "@sensenet/hooks-react";
 import { addComponent } from "../utils/add-component";
 import Moment from 'moment';
 import ShowDebugInfo from "../utils/show-debuginfo"
-import BindedContext from "../utils/context-binding"
+import useBindedContext from "../utils/context-binding"
 import { useSnStore } from "../store/sn-store";
 
 // Todo: obsolate, manual-content-simple should be used instead
@@ -18,7 +18,7 @@ export function SimpleReviewWidget(props) {
   // let context = props.data;
   const {context, page, layout} = useSnStore((state) => state);
   const widget = props.widget;
-  const bindedContext = BindedContext(props, true);
+  const bindedContext = useBindedContext(props, true);
 
   // console.log(widget.Name + " - " + widget.ContextBinding);
   // if (widget.ContextBinding[0] === "customroot") {
@@ -107,7 +107,7 @@ export function SimpleReviewWidget(props) {
     <div className="w3-row-padding w3-margin-bottom">
       <div className="w3-col m12">
         <div className="w3-card w3-round w3-white">
-        {ShowDebugInfo("book review widget", bindedContext, page, widget, layout)}
+        <ShowDebugInfo title="book review widget" context={bindedContext} currentPage={page} widget={widget} />
           <div className="w3-container w3-padding article-full">
             <h1>
               {bindedContext.content?.DisplayName} 

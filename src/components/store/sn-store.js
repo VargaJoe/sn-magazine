@@ -1,6 +1,7 @@
-import { create } from 'zustand'
+import { createWithEqualityFn } from 'zustand/traditional'
+import { shallow } from 'zustand/shallow'
 
-export const useSnStore = create()((set) => ({
+export const useSnStore = createWithEqualityFn((set) => ({
   // context sn content
   context: null,
   setContext: (context) => set(() => ({ context: context })),
@@ -16,4 +17,4 @@ export const useSnStore = create()((set) => ({
   // layout react component
   wrappercompo: {},
   setCompo: (wrappercompo) => set(() => ({ wrappercompo: wrappercompo })),
-}));
+}), shallow);

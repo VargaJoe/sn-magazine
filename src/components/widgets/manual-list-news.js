@@ -2,10 +2,10 @@ import React from 'react';
 import { addComponent } from '../utils/add-component';
 import LazyLoad from 'react-lazyload';
 import ShowDebugInfo from "../utils/show-debuginfo"
-import BindedContext from "../utils/context-binding"
+import useBindedContext from "../utils/context-binding"
 import { useSnStore } from "../store/sn-store";
 
-export function NewsListWidget(props) {
+const NewsListWidget = React.memo((props) => {
   console.log('%cNewsList', "font-size:16px;color:green", { props: props });
   // const layout = props.page;
   // let context = props.data;
@@ -14,12 +14,16 @@ export function NewsListWidget(props) {
   
   // binded context could be result back with all widget variables contet, children, widget, layout
   // binded context withChildren should be set on widget content, not manual boolean variable
-  const bindedContext = BindedContext(props, true);
+  const bindedContext = useBindedContext(props, true);
  
+  if (bindedContext.loading) {
+    return null; // Don't render until data is loaded
+  }
+
   return (
     <div className="w3-margin-bottom w3-col m12 news-padding">
       <div className="w3-card w3-round w3-white">
-      {ShowDebugInfo("news widget", context, page, widget, layout)}
+      <ShowDebugInfo title="news widget" context={context} currentPage={page} widget={widget} />
         <div className="w3-container w3-padding component-news-half">
         <h3>{widget.Title || bindedContext?.content?.DisplayName}</h3>
           <div className="news-cards">
@@ -36,6 +40,6 @@ export function NewsListWidget(props) {
       {}
     </div>
   );
-}
+});
 
 export default NewsListWidget;

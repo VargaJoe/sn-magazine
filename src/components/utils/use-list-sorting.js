@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import useBindedContext from './context-binding';
 
 // Static field mappings for sorting
 const FIELD_MAPPINGS = {
@@ -12,10 +13,9 @@ const FIELD_MAPPINGS = {
  * Reusable sorting hook for list widgets
  * @param {Object} widget - The original widget object
  * @param {Object} props - The component props for BindedContext
- * @param {Function} BindedContext - The BindedContext function
  * @returns {Object} - Returns sortedBindedContext, sortOptions, sortBy, sortOrder, handleSortChange, toggleSortOrder, and SortingControls JSX
  */
-export function useListSorting(widget, props, BindedContext) {
+export function useListSorting(widget, props) {
   // Sorting state
   const [sortBy, setSortBy] = useState('PublishDate');
   const [sortOrder, setSortOrder] = useState('desc');
@@ -45,7 +45,7 @@ export function useListSorting(widget, props, BindedContext) {
     ...props,
     widget: sortedWidget
   };
-  const sortedBindedContext = BindedContext(bindedContextProps, true);
+  const sortedBindedContext = useBindedContext(bindedContextProps, true);
 
   // Dynamic sorting options based on available data
   const sortOptions = useMemo(() => {

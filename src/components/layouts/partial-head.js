@@ -17,9 +17,9 @@ const CommonHelmet = ({ context }) => {
   const siteHost = process.env.REACT_APP_SITE_HOST || DATA.siteHost;
   
   // const pagePath = window.location.pathname; // url path
-  const pagePath = context.Path.replace(dataPath, ''); // widget context content path
+  const pagePath = context?.Path.replace(dataPath, ''); // widget context content path
   const pageUrl = siteHost + pagePath;    
-  const pageTitle = (context.Id === context.Workspace.Id) ? `${context.DisplayName}` : `${context.Workspace.DisplayName} - ${context.DisplayName}`;
+  const pageTitle = (context?.Id === context?.Workspace?.Id) ? `${context?.DisplayName}` : `${context?.Workspace?.DisplayName} - ${context?.DisplayName}`;
 
   // TODO: get all currently static value (eg. description) dynamically to context
   const description = "book movie tvseries manga anime games reviews hungarian"

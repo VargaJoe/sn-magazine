@@ -3,7 +3,7 @@ import { useRepository } from "@sensenet/hooks-react";
 import { addComponent } from "../utils/add-component";
 import Moment from 'moment';
 import ShowDebugInfo from "../utils/show-debuginfo"
-import BindedContext from "../utils/context-binding"
+import useBindedContext from "../utils/context-binding"
 import { useSnStore } from "../store/sn-store";
 
 // Todo: obsolate, manual-content-manga should be used instead
@@ -18,7 +18,7 @@ export function MangaReviewWidget(props) {
   // const layout = props.page;
   // let context = props.data;
   const {page, layout} = useSnStore((state) => state);
-  const bindedContext = BindedContext(props, false);
+  const bindedContext = useBindedContext(props, false);
   const widget = props.widget;  
  
   // console.log(widget.Name + " - " + widget.ContextBinding);

@@ -17,7 +17,7 @@ export function HalfSizedMangaListWidget(props) {
     // <div className="w3-col m9 w3-right">
         <div className="w3-margin-bottom w3-col m6 news-padding">
           <div className="w3-card w3-round w3-white">
-            {ShowDebugInfo("half size news widget", context, page, widget, layout)}
+            <ShowDebugInfo title="half size news widget" context={context} currentPage={page} widget={widget} />
             <div className="w3-container w3-padding component-news-half">
             <h3>{bindedContext?.content?.DisplayName}</h3>
               <div className="news-cards">

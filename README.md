@@ -26,15 +26,12 @@ Your settings will look something like this:
 	"pagecontainerPath": 	"/Root/Content/(layout)",
 	"layoutType": 			"Layout",
 	"widgetType": 			"Widget",
-	"autoLayout": {
-		"default": 			"wide",
-		"folder" :			"explore",
-		"content" : 		"wide",
-		"isFolder" :		"explore",
-		"notFolder" : 		"wide"
-	}
-} 
-```
+	"pageTemplate": 		null,
+	"maintenanceTemplate": 	"maintenance",
+	"maintenanceSiteName": 	"Your Site Name",
+	"maintenanceTitle": 	"Site Under Maintenance",
+	"maintenanceText": 		"<p>The site is currently undergoing maintenance.</p><p>Please try again later.</p>",
+	"maintenanceEmail": 	"support@example.com",
 
 # Predefined Layout
 
@@ -69,6 +66,14 @@ Ok, maybe this is still difficult to understand yet, so just log in to your sens
 That is our app entry point. The above web example has `/Document_Library/books` url path. Now bring it all together, the app context will be: `/Root/Content/SampleWorkspace/Document_Library/books` content in your sensenet repository
 
 In this example the sensenet content with the name `books` has a content type `Folder`. In the above exmaple settings `autoLayout` has a value for `folder` property. It says `explore`. It means the app will try to resolve the `page-explore` react component under `layouts` folder with this context. It the context content type does not have a settings like this the app will try to identify if the context content is a folder or not and your react component accordingly in the same way as with previous example. If `isFolder` and `notFolder` settings are not in place the app will use`default` value as fallback.
+
+If `pageTemplate` is set (either in config.json or via REACT_APP_PAGE_TEMPLATE environment variable), it will override the autoLayout selection and use that layout for all pages.
+
+If `maintenanceTemplate` is set (either in config.json or via REACT_APP_MAINTENANCE_TEMPLATE environment variable), it will be used for the maintenance page when the API is unavailable. Default is "maintenance". Additional maintenance options include:
+- `maintenanceSiteName`: Site name displayed in the header (REACT_APP_MAINTENANCE_SITE_NAME)
+- `maintenanceTitle`: Page title for the maintenance message (REACT_APP_MAINTENANCE_TITLE)
+- `maintenanceText`: HTML content for the maintenance message (REACT_APP_MAINTENANCE_TEXT)
+- `maintenanceEmail`: Email address for support contact, shown as a mailto link if provided (REACT_APP_MAINTENANCE_EMAIL)
 
 Layouts are the first layer of the visualization. Layouts are like pagetemplates if you are familiar with previous versions of sensenet or similar content management systems. The second layer is widgets (or portlets, again with previous sensenet terminology). You can set "boxes", aka widgets on the layout in widget zones. With predefined layout logic it means they are hardcoded in the layout as `page-explore` as sample:
 ```jsx

@@ -1,7 +1,8 @@
 import { addComponent } from '../utils/add-component';
 import { useSnStore } from "../store/sn-store";
+import React from 'react';
 
-export const ErrorLayout = (props) => {
+export const ErrorLayout = React.memo((props) => {
   // const context = props.context;
   const {context, layout, widgets} = useSnStore((state) => state);
   console.log('%error layout', "font-size:16px;color:green", { props: props }, { context: context}, { layout: layout}, { widgets: widgets });
@@ -13,6 +14,7 @@ export const ErrorLayout = (props) => {
           <a
             href="/"
             className="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-theme-d2"
+            aria-label="Menu"
           >
             <i className="fa fa-bars"></i>
           </a>
@@ -26,6 +28,7 @@ export const ErrorLayout = (props) => {
             href="/"
             className="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white"
             title="News"
+            aria-label="News"
           >
             <i className="fa fa-globe"></i>
           </a>
@@ -40,6 +43,7 @@ export const ErrorLayout = (props) => {
             href="/"
             className="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white"
             title="Messages"
+            aria-label="Messages"
           >
             <i className="fa fa-envelope"></i>
           </a>
@@ -128,6 +132,6 @@ export const ErrorLayout = (props) => {
       {/* End Footer */}
     </div>
   );
-}
+});
 
 export default ErrorLayout;

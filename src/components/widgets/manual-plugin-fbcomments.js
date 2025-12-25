@@ -57,7 +57,7 @@ export function FacebookCommentsWidget(props) {
     <div className="w3-row-padding w3-margin-bottom full-width">
       <div className="w3-col m12">
         <div className="w3-card w3-round w3-white">
-          {ShowDebugInfo("facebook comment", context, page, widget, layout)}
+          <ShowDebugInfo title="facebook comment" context={context} currentPage={page} widget={widget} />
           <div className="w3-container w3-padding">
             <div className="fb-comments w3-container w3-padding">
               <h3>Hozzászólások</h3>
