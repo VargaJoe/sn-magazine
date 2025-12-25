@@ -7,7 +7,7 @@ import React, { useRef, useEffect } from 'react';
 
 const DATA = require('../../config.json');
 
-export function NestedReviewListItemComponent(props) {
+const NestedReviewListItemComponent = React.memo((props) => {
   console.log('%cNestedReviewListItemComponent', "font-size:16px;color:green", { props: props });
   const context = props.data;  
   const {page, layout} = useSnStore((state) => state);
@@ -74,8 +74,7 @@ export function NestedReviewListItemComponent(props) {
           </div>
         </div>
       </div>
-    // </div>
   );
-}
+});
 
 export default NestedReviewListItemComponent;

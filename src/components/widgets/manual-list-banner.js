@@ -6,7 +6,7 @@ import { useSnStore } from "../store/sn-store";
 const DATA = require('../../config.json');
 const defaultImage = require('../../images/logo.png');
 
-export function BannerListWidget(props) {
+const BannerListWidget = React.memo((props) => {
   console.log('%cBannerList', "font-size:16px;color:green", { props: props });
   // const layout = props.page;
   // let context = props.data;
@@ -45,6 +45,6 @@ export function BannerListWidget(props) {
       </div>
     </div>
   );
-}
+});
 
 export default BannerListWidget;

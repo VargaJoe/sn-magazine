@@ -1,9 +1,10 @@
 import React, { useRef, useEffect } from 'react';
 import { addComponentsByZone } from '../utils/add-component';
 import { useSnStore } from "../store/sn-store";
+import { shallow } from 'zustand/shallow';
 
 export const LeisureSimpleLayout = React.memo((props) => {
-  const {context, layout, widgets} = useSnStore((state) => state);
+  const {context, layout, widgets} = useSnStore((state) => ({ context: state.context, layout: state.layout, widgets: state.widgets }), shallow);
 
   // Deep comparison debug
   const prevRef = useRef({ props: null, context: null, layout: null, widgets: null });

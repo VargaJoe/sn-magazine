@@ -5,7 +5,7 @@ import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
 import { useSnStore } from "../store/sn-store";
 
-export function NewsListWidget(props) {
+const NewsListWidget = React.memo((props) => {
   console.log('%cNewsList', "font-size:16px;color:green", { props: props });
   // const layout = props.page;
   // let context = props.data;
@@ -36,6 +36,6 @@ export function NewsListWidget(props) {
       {}
     </div>
   );
-}
+});
 
 export default NewsListWidget;

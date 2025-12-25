@@ -17,7 +17,7 @@ const PageWrapper = React.memo((props) => {
   // const [context, setContext] = useState();
   const { context, setContext, setLayout, setPage, setWidgets } = useSnStore();
   const locationPath = location.pathname;
-  // --- Debug instance identity ---
+  const loadingRefs = useRef(new Map());
   const instanceId = useRef(Math.random().toString(36).substr(2, 8));
   const renderCount = useRef(0);
   renderCount.current += 1;
@@ -27,10 +27,6 @@ const PageWrapper = React.memo((props) => {
   const prevContextRef = useRef();
   const prevPageRef = useRef();
   const [debugPage, setDebugPage] = useState(); // local page state for debug
-
-  // Loading states
-  const [loadingContext, setLoadingContext] = useState(false);
-  const [loadingPage, setLoadingPage] = useState(false);
 
   // Shallow equality check helper
   function shallowEqual(objA, objB) {
@@ -51,31 +47,19 @@ const PageWrapper = React.memo((props) => {
     setDebugPage(p);
   }, [setPage]);
 
-  useEffect(() => {
-    // Log only on significant changes
-    const contextChanged = !shallowEqual(context, prevContextRef.current);
-    const pageChanged = !shallowEqual(debugPage, prevPageRef.current);
-    if (contextChanged || pageChanged || renderCount.current === 1) {
-      console.log('%c[PageWrapper] Render', 'color:orange;font-weight:bold', {
-        renderCount: renderCount.current,
-        locationPath,
-        contextId: context?.Id,
-        contextChanged,
-        pageChanged,
-        wrappercompoKey: wrappercompo?.key,
-      });
-    }
-    prevContextRef.current = context;
-    prevPageRef.current = debugPage;
-  });
-
   const layoutContentType = process.env.REACT_APP_LAYOUT_TYPE || DATA.layoutType || "Layout";
   const widgetContentType = process.env.REACT_APP_WIDGET_TYPE || DATA.widgetType || "Widget";
 
   // refactor: filters should get from page fields
   const loadPage = useCallback(async () => {
     console.log('%cloadPage for context', "font-size:14px;color:green", context?.Id);
-    setLoadingPage(true);
+
+    const isLoading = loadingRefs.current.get(context?.Id);
+    if (isLoading) {
+      console.log('loadPage already in progress for context', context?.Id, 'skipping');
+      return;
+    }
+    loadingRefs.current.set(context?.Id, true);
 
     // layoutPathList: return path list of possible layoutdeclarations
     const layoutPathList = () => {
@@ -145,7 +129,11 @@ const PageWrapper = React.memo((props) => {
           // const layout = !page || page.PageTemplate === '' || page.PageTemplate === null ? "vanilla" : page.PageTemplate;
 
           setPageDebug(page);
-          setWidgets(widgets);
+          // Check if widgets changed before setting
+          const currentWidgets = useSnStore.getState().widgets;
+          if (JSON.stringify(widgets) !== JSON.stringify(currentWidgets)) {
+            setWidgets(widgets);
+          }
           // setLayout(layout);
           console.log('selected page:', page?.Name, 'widgets:', widgets?.length);
           const addedComponent =  !page || page.PageTemplate === '' || page.PageTemplate === null ? 
@@ -184,14 +172,13 @@ const PageWrapper = React.memo((props) => {
         }
       })
       .finally(() => {
-        setLoadingPage(false);
+        loadingRefs.current.set(context?.Id, false);
       });
     };
-  }, [context, layoutContentType, widgetContentType]);
+  }, [context, layoutContentType, widgetContentType, repo, setLayout, setPageDebug, setWidgets, wrappercompo]);
 
   const loadContent = useCallback(async () => {
     console.log("Load content for:", locationPath);
-    setLoadingContext(true);
     const locationPathWorkaround = locationPath.replace("(", "%28").replace(")", "%29");
     await repo.load({
       idOrPath: `${process.env.REACT_APP_DATA_PATH || DATA.dataPath}/${locationPathWorkaround}`,
@@ -223,48 +210,45 @@ const PageWrapper = React.memo((props) => {
         //       setCompo(addComponent('layouts', 'page', 'maintenance', 666));
         //       // return <MaintenanceLayout />;
         //   }
-        // // }
+        // }
     })
     .catch(error => {
       console.error('error on loading content: ', error);
       setCompo(addComponent('layouts', 'page', 'error', 1));
     })
     .finally(() => {
-      setLoadingContext(false);
     });
-  }, [locationPath]);
-
-  useEffect(() => {
-    // Log on every render and navigation
-    console.log('%c[PageWrapper] Render', 'color:orange;font-weight:bold', {
-      instanceId: instanceId.current,
-      renderCount: renderCount.current,
-      locationPath,
-      contextType: context?.Type,
-      contextId: context?.Id,
-      contextPath: context?.Path,
-      wrappercompoKey: wrappercompo?.key,
-      wrappercompoType: wrappercompo?.type,
-      wrappercompoName: wrappercompo?.props?.name,
-      wrappercompoProps: wrappercompo?.props,
-    });
-  });
+  }, [locationPath, repo, setContext]);
 
   useEffect(() => {
     if (locationPath !== null && locationPath !== undefined) {
-      console.log('%c[PageWrapper] useEffect: locationPath changed', 'color:orange', { locationPath });
       loadContent();
     }
-  }, [locationPath]);
+  }, [locationPath, loadContent]);
 
   useEffect(() => {
     if (context != null && context !== undefined) {
-      console.log('%c[PageWrapper] useEffect: context changed', 'color:orange', { contextId: context.Id });
       loadPage();
-    } else {
-      console.log('%c[PageWrapper] useEffect: context is null/undefined', 'color:orange');
     }
-  }, [context]);
+  }, [context, loadPage]);
+
+  useEffect(() => {
+    // Log only on significant changes
+    const contextChanged = !shallowEqual(context, prevContextRef.current);
+    const pageChanged = !shallowEqual(debugPage, prevPageRef.current);
+    if (contextChanged || pageChanged || renderCount.current === 1) {
+      console.log('%c[PageWrapper] Render', 'color:orange;font-weight:bold', {
+        renderCount: renderCount.current,
+        locationPath,
+        contextId: context?.Id,
+        contextChanged,
+        pageChanged,
+        wrappercompoKey: wrappercompo?.key,
+      });
+    }
+    prevContextRef.current = context;
+    prevPageRef.current = debugPage;
+  });
 
   if (wrappercompo === undefined || wrappercompo === null)
     return null;
