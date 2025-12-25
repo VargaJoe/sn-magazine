@@ -196,7 +196,7 @@ export const PageWrapper = (props) => {
         setLoadingPage(false);
       });
     };
-  }, [context, layoutContentType, repo, setLayout, setPageDebug, setWidgets, widgetContentType, wrappercompo]);
+  }, [context, layoutContentType, widgetContentType]);
 
   const loadContent = useCallback(async () => {
     console.log("Load content useEffect:", locationPath);
@@ -241,7 +241,7 @@ export const PageWrapper = (props) => {
     .finally(() => {
       setLoadingContext(false);
     });
-  }, [locationPath, repo, setContext]);
+  }, [locationPath]);
 
   useEffect(() => {
     // Log on every render and navigation
@@ -264,7 +264,7 @@ export const PageWrapper = (props) => {
       console.log('%c[PageWrapper] useEffect: locationPath changed', 'color:orange', { instanceId: instanceId.current, locationPath });
       loadContent();
     }
-  }, [loadContent, locationPath, repo]);
+  }, [locationPath]);
 
   useEffect(() => {
     if (context != null && context !== undefined) {
@@ -273,7 +273,7 @@ export const PageWrapper = (props) => {
     } else {
       console.log('%c[PageWrapper] useEffect: context is null/undefined', 'color:orange', { instanceId: instanceId.current });
     }
-  }, [context, loadPage, repo]);
+  }, [context]);
 
   if (wrappercompo === undefined || wrappercompo === null)
     return null;
