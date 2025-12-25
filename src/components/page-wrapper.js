@@ -77,7 +77,12 @@ const PageWrapper = React.memo((props) => {
   const loadPage = useCallback(async () => {
     // console.log('%cloadPage for context', "font-size:14px;color:green", context?.Id);
 
-    const isLoading = loadingRefs.current.get(context?.Id);
+    const isLoading = loadingRefs.current.get(locationPath);
+    if (isLoading) {
+      // console.log('loadPage already in progress for locationPath', locationPath, 'skipping');
+      return;
+    }
+    loadingRefs.current.set(locationPath, true);
     if (isLoading) {
       // console.log('loadPage already in progress for context', context?.Id, 'skipping');
       return;
@@ -195,10 +200,10 @@ const PageWrapper = React.memo((props) => {
         }
       })
       .finally(() => {
-        loadingRefs.current.set(context?.Id, false);
+        loadingRefs.current.set(locationPath, false);
       });
     };
-  }, [context, layoutContentType, widgetContentType, repo, setLayout, setPageDebug, setWidgets, wrappercompo]);
+  }, [context, layoutContentType, widgetContentType, repo, setLayout, setPageDebug, setWidgets]);
 
   const loadContent = useCallback(async () => {
     // console.log("Load content for:", locationPath);
