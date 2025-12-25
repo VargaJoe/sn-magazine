@@ -118,13 +118,15 @@ export function useBindedContext(props, withChildren) {
 
         if (widget !== undefined && widget.ContentQuery !== undefined) {
           options.query = widget.ContentQuery
+        } else {
+          options.query = ''
         }
 
         // only first level children
         options.query += `(${options.query} +InFolder:'${contextObj.contextPath}') Path:'${contextObj.contextPath}'`
       } else if (contextObj.level === 'deep') {
         // get deep descendants
-        options.query = widget.ContentQuery
+        options.query = widget.ContentQuery || ''
       }
     } 
 

@@ -66,7 +66,7 @@ export function ThirdSizedTranslationList(props) {
                   const relatedContent = itemCollection[0]
                   const relatedPath = relatedContent?.Path.substr((process.env.REACT_APP_DATA_PATH || DATA.dataPath).length + 1);
                   return (
-                    <div className="w3-row-padding w3-margin-bottom w3-left w3-block m1 news-item">
+                    <div key={`translation-item-${child.Id}`} className="w3-row-padding w3-margin-bottom w3-left w3-block m1 news-item">
                       <div className="w3-col">
                         <div className="w3-card w3-round w3-white">
                           <div className="w3-container w3-padding">
