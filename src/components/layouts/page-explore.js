@@ -1,18 +1,18 @@
 import { BreadcrumbListWidget } from "../widgets/manual-list-breadcrumb";
 import { MenuListWidget } from "../widgets/manual-list-menu";
-import { ShowComponentsByZone } from '../utils/add-component';
+import { CachedComponentsByZone } from '../utils/add-component';
 import { Link } from 'react-router-dom';
 import { useSnStore } from "../store/sn-store";
+import React from 'react';
 
-export const ExploreLayout = (props) => {
-  const {context, layout, widgets} = useSnStore((state) => state);
-  console.log('%cexplore layout', "font-size:16px;color:green", { props: props }, { context: context}, { layout: layout}, { widgets: widgets });
+export const ExploreLayout = React.memo((props) => {
+  const { context, widgets } = useSnStore((state) => state);
 
-  const sideboxes = <ShowComponentsByZone type="widgets" zone="side" widgets={widgets} />
-  const components = <ShowComponentsByZone type="widgets" zone="content" widgets={widgets} />
-
-  console.log('explore layout sideboxes', sideboxes);
-  console.log('explore layout components', components);
+  // console.log('%cexplore layout render', "font-size:16px;color:green", { contextId: context?.Id, widgetsCount: widgets?.length });
+  
+  if (!widgets || !Array.isArray(widgets)) {
+    return <div>Loading layout...</div>;
+  }
 
   return (
     <div className="App w3-theme-l5">
@@ -21,6 +21,7 @@ export const ExploreLayout = (props) => {
           <a
             href="/"
             className="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-theme-d2"
+            aria-label="Menu"
           >
             <i className="fa fa-bars"></i>
           </a>
@@ -64,7 +65,7 @@ export const ExploreLayout = (props) => {
               ChildrenLevel: [ "child" ]
             }}/>
             <br/> 
-            {sideboxes}
+            <CachedComponentsByZone type="widgets" zone="side" widgets={widgets} context={context} />
           </div>
           
           {/* End Left Column */}
@@ -84,7 +85,7 @@ export const ExploreLayout = (props) => {
               ContextBinding: [ "currentcontext" ],
               ChildrenLevel: [ "child" ]
             }}/>
-            {components}
+            <CachedComponentsByZone type="widgets" zone="content" widgets={widgets} context={context} />
           </div>
           {/* End Middle Column */}
 
@@ -106,6 +107,6 @@ export const ExploreLayout = (props) => {
       {/* End Footer */}
     </div>
   );
-}
+});
 
 export default ExploreLayout;

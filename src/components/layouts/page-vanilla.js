@@ -1,17 +1,17 @@
 // import { SideMenu } from "../side-menu";
-import { addComponentsByZone, addComponent } from '../utils/add-component';
+import { CachedComponentsByZone, addComponent } from '../utils/add-component';
 import { Link } from 'react-router-dom';
 import { useSnStore } from "../store/sn-store";
+import React from 'react';
 
-export const VanillaPageTemplate = (props) => {
-  const {context, layout, widgets} = useSnStore((state) => state);
-  console.log('%cvanilla layout', "font-size:16px;color:green", { props: props }, { context: context}, { layout: layout}, { widgets: widgets });
+export const VanillaPageTemplate = React.memo((props) => {
+  const { context, widgets } = useSnStore((state) => state);
 
-  const sideboxes = addComponentsByZone('widgets', 'side', null, null, widgets);
-  const components = addComponentsByZone('widgets', 'content', null, null, widgets);
-
-  console.log('vanilla layout sideboxes', sideboxes);
-  console.log('vanilla layout components', components);
+  // console.log('%cvanilla layout render', "font-size:16px;color:green", { contextId: context?.Id, widgetsCount: widgets?.length });
+  
+  if (!widgets || !Array.isArray(widgets)) {
+    return <div>Loading layout...</div>;
+  }
 
   return (
     <div className="App w3-theme-l5">
@@ -20,6 +20,7 @@ export const VanillaPageTemplate = (props) => {
           <a
             href="/"
             className="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-theme-d2"
+            aria-label="Menu"
           >
             <i className="fa fa-bars"></i>
           </a>
@@ -32,6 +33,7 @@ export const VanillaPageTemplate = (props) => {
             href="/"
             className="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white"
             title="News"
+            aria-label="News"
           >
             <i className="fa fa-globe"></i>
           </a>
@@ -39,6 +41,7 @@ export const VanillaPageTemplate = (props) => {
            href="mailto:info@sensenet.com"
            className="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white"
            title="Messages"
+           aria-label="Messages"
          >
            <i className="fa fa-envelope"></i>
          </a>
@@ -59,7 +62,7 @@ export const VanillaPageTemplate = (props) => {
           <div className="w3-col m3">
             {/* <SideMenu />
             <br/> */}
-            {sideboxes}
+            <CachedComponentsByZone type="widgets" zone="side" widgets={widgets} context={context} />
             {addComponent('widgets', 'auto', 'widgetlogin', 1, null)}
           </div>
           
@@ -76,7 +79,7 @@ export const VanillaPageTemplate = (props) => {
                 </div>
               </div>
             </div>
-            {components}
+            <CachedComponentsByZone type="widgets" zone="content" widgets={widgets} context={context} />
           </div>
           {/* End Middle Column */}
         </div>
@@ -97,6 +100,6 @@ export const VanillaPageTemplate = (props) => {
       {/* End Footer */}
     </div>
   );
-}
+});
 
 export default VanillaPageTemplate;

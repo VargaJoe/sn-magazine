@@ -115,6 +115,34 @@ export const addComponent = (type, prefix, component, id, data, page, widget, fa
   );
 };
 
+export const CachedComponentsByZone = ({ type, zone, widgets, context }) => {
+  const componentsRef = React.useRef(new Map());
+
+  if (!widgets || widgets.length === 0) {
+    console.log('cached component by zone - widgets undefined: ', {type: type}, {zone: zone}, {context: context});
+    if (zone === null || zone === 'content') {
+      return addComponent('content', 'auto', context.Type.toLowerCase(), `${type}-${zone}-err-${context.Id}`, null);
+    } else {
+      return null;
+    }
+  }
+
+  // console.log('cached component by zone - widgets: ', type, zone, context, widgets);
+  return (
+    widgets.filter(pcnt => pcnt.PortletZone === zone).map((child) => { 
+      const componentId = `${child.Id}`;
+      if (!componentsRef.current.has(componentId)) {
+        const isAuto = (child.ClientComponent === undefined || child.ClientComponent === null || child.ClientComponent === '');
+        const compoType = isAuto ? child.Type : child.ClientComponent;
+        const prefix = (isAuto) ? "auto" : "manual";
+        const element = addComponent(type, prefix, compoType.toLowerCase(), componentId, null, null, child);
+        componentsRef.current.set(componentId, element);
+      }
+      return componentsRef.current.get(componentId);
+    })
+  );
+};
+
 export const addComponentsByZone = (type, zone, contextobs, page, widgets, context) => {
   return ShowComponentsByZone(type, zone, contextobs, page, widgets, context);
 }

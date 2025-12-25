@@ -1,15 +1,18 @@
 import { BreadcrumbListWidget } from "../widgets/manual-list-breadcrumb";
 // import { SideMenu } from "../side-menu";
-import { addComponentsByZone } from '../utils/add-component';
+import { CachedComponentsByZone } from '../utils/add-component';
 import { Link } from 'react-router-dom';
 import { useSnStore } from "../store/sn-store";
+import React from 'react';
 
-export const WidePageTemplate = (props) => {
-  const {context, layout, widgets} = useSnStore((state) => state);
-  console.log('%cwide layout', "font-size:16px;color:green", { props: props }, { context: context}, { layout: layout}, { widgets: widgets });
+export const WidePageTemplate = React.memo((props) => {
+  const { context, widgets } = useSnStore((state) => state);
 
-  const components = addComponentsByZone('content', 'content', null, null, widgets);
-  console.log(components);
+  // console.log('%cwide layout render', "font-size:16px;color:green", { contextId: context?.Id, widgetsCount: widgets?.length });
+  
+  if (!widgets || !Array.isArray(widgets)) {
+    return <div>Loading layout...</div>;
+  }
 
   return (
     <div className="App w3-theme-l5">
@@ -18,6 +21,7 @@ export const WidePageTemplate = (props) => {
           <a
             href="/"
             className="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-theme-d2"
+            aria-label="Menu"
           >
             <i className="fa fa-bars"></i>
           </a>
@@ -79,7 +83,7 @@ export const WidePageTemplate = (props) => {
                 ContextBinding: [ "currentcontext" ],
                 ChildrenLevel: [ "child" ]
               }}/>
-             {components}
+             <CachedComponentsByZone type="widgets" zone="content" widgets={widgets} context={context} />
           </div>
           {/* End Middle Column */}
 
@@ -105,6 +109,6 @@ export const WidePageTemplate = (props) => {
       {/* End Footer */}
     </div>
   );
-}
+});
 
 export default WidePageTemplate;

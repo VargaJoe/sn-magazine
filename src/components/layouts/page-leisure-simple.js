@@ -1,10 +1,10 @@
-import React, { useRef } from 'react';
-import { addComponent } from '../utils/add-component';
+import React from 'react';
+import { CachedComponentsByZone } from '../utils/add-component';
 import { useSnStore } from "../store/sn-store";
 import deepEqual from "../utils/deep-equal";
 
 export const LeisureSimpleLayout = React.memo((props) => {
-  const widgets = useSnStore((state) => state.widgets, deepEqual);
+  const { context, widgets } = useSnStore((state) => state, deepEqual);
 
   // Deep comparison debug
   // const prevRef = useRef({ props: null, context: null, layout: null, widgets: null });
@@ -35,39 +35,9 @@ export const LeisureSimpleLayout = React.memo((props) => {
 
   // console.log('%cleisure-simple layout render', "font-size:16px;color:green", { contextId: context?.Id, widgetsCount: widgets?.length });
   
-  const sideComponentsRef = useRef(new Map());
-  const contentComponentsRef = useRef(new Map());
-  
   if (!widgets || !Array.isArray(widgets)) {
     return <div>Loading layout...</div>;
   }
-  
-  const sideWidgets = widgets.filter(w => w.PortletZone === 'side');
-  const contentWidgets = widgets.filter(w => w.PortletZone === 'content');
-  
-  const sideboxes = sideWidgets.map((child) => { 
-    const componentId = `${child.Id}`;
-    if (!sideComponentsRef.current.has(componentId)) {
-      const isAuto = (child.ClientComponent === undefined || child.ClientComponent === null || child.ClientComponent === '');
-      const compoType = isAuto ? child.Type : child.ClientComponent;
-      const prefix = (isAuto) ? "auto" : "manual";
-      const element = addComponent('widgets', prefix, compoType.toLowerCase(), componentId, null, null, child);
-      sideComponentsRef.current.set(componentId, element);
-    }
-    return sideComponentsRef.current.get(componentId);
-  });
-
-  const components = contentWidgets.map((child) => { 
-    const componentId = `${child.Id}`;
-    if (!contentComponentsRef.current.has(componentId)) {
-      const isAuto = (child.ClientComponent === undefined || child.ClientComponent === null || child.ClientComponent === '');
-      const compoType = isAuto ? child.Type : child.ClientComponent;
-      const prefix = (isAuto) ? "auto" : "manual";
-      const element = addComponent('widgets', prefix, compoType.toLowerCase(), componentId, null, null, child);
-      contentComponentsRef.current.set(componentId, element);
-    }
-    return contentComponentsRef.current.get(componentId);
-  });
 
   return (
     <div className="App w3-theme-l5">
@@ -77,7 +47,7 @@ export const LeisureSimpleLayout = React.memo((props) => {
         <div className="w3-row layout-container">
           {/* Left Column */}
           <div className="w3-col m2 layout-left">
-            {sideboxes}
+            <CachedComponentsByZone type="widgets" zone="side" widgets={widgets} context={context} />
           </div>
           {/* End Left Column */}
 
@@ -92,7 +62,7 @@ export const LeisureSimpleLayout = React.memo((props) => {
                 </div>
               </div>
             </div>
-            {components}
+            <CachedComponentsByZone type="widgets" zone="content" widgets={widgets} context={context} />
           </div>
           {/* End Middle Column */}
 
