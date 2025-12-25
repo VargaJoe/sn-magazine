@@ -164,7 +164,7 @@ export function BindedContext(props, withChildren) {
       });
     }
     setLoading(false);
-  }, [context?.Workspace, expContext, repo, widget, withChildren]);
+  }, [context?.Path, widget?.Id, withChildren]);
 
   useEffect(() => {
     loadContents();
