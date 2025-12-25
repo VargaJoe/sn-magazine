@@ -1,9 +1,12 @@
 {
-	"apiUrl" : 				"https://eddie.sensenet.cloud",
-	"authUrl" : 			"https://eddie-is.sensenet.cloud",
-	"clientId": 			"AWahlJ7aLQPuDUAC",
-	"siteHost" :			"https://your-example.com",
-	"dataPath" :			"/Root/Content/SampleWorkspace",
+	"apiUrl" : 			"https://localhost:41016",
+	"yapiUrl" : 			"https://plastice.sensenet.cloud",
+	"xapiUrl" : 				"https://localhost:1111",
+	"authUrl" : 			"https://localhost:41017",
+	"xauthUrl" : 			"https://plastice-is.sensenet.cloud",
+	"clientId": 			"4oIeVFx92mCl6Nhc",
+	"siteHost" :			"https://mangajanlo.hu",
+	"dataPath" :			"/Root/Content/fotelvandor",
 	"pagecontainerPath": 	"/Root/Content/(layout)",
 	"layoutType": 			"Layout",
 	"widgetType": 			"Widget",
@@ -17,5 +20,12 @@
 		"notFolder" : 		"wide"
 		
 	},
-	"facebookappid": 		"1234567890"
+	"facebookappid": 		"744957871343880",
+	"xfacebookappid": 		"1483301362787276",
+	"disqusShortname": 		"mangajanlo",
+	"maintenanceTemplate": 	"maintenance",
+	"maintenanceSiteName": 	"MANGAjánló",
+	"maintenanceTitle": 	"Karbantartás",
+	"maintenanceEmail": 	"mangajanlo@protonmail.com",
+	"maintenanceText": 		"<p>Úgy tűnik, hiba történt vagy karbantartás van folyamatban. Látogass vissza később!</p><p>Ha a probléma továbbra is fennáll, vedd fel velünk a kapcsolatot a"
 } 
