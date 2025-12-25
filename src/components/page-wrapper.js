@@ -258,7 +258,7 @@ const PageWrapper = React.memo((props) => {
     if (context != null && context !== undefined) {
       loadPage();
     }
-  }, [context, loadPage]);
+  }, [context]);
 
   useEffect(() => {
     // Log only on significant changes
