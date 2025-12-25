@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import { addComponentsByZone } from '../utils/add-component';
 import { useSnStore } from "../store/sn-store";
 
-export const LeisureSimpleLayout = (props) => {
+export const LeisureSimpleLayout = React.memo((props) => {
   const {context, layout, widgets} = useSnStore((state) => state);
 
   // Deep comparison debug
@@ -83,6 +83,6 @@ export const LeisureSimpleLayout = (props) => {
       {/* End Footer */}
     </div>
   );
-}
+});
 
 export default LeisureSimpleLayout;

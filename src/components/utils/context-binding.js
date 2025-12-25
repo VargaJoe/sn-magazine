@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useMemo } from "react";
 import { useRepository } from "@sensenet/hooks-react";
 import { useSnStore } from "../store/sn-store";
 
@@ -171,7 +171,7 @@ export function BindedContext(props, withChildren) {
   }, [loadContents]);
   
   console.log('bindedContext result', { contextPath: bndContext.contextPath, childrenCount: bndContext.children?.length });
-  return { ...bndContext, loading };
+  return useMemo(() => ({ ...bndContext, loading }), [bndContext, loading]);
 }
 
 export default BindedContext;

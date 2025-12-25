@@ -7,7 +7,7 @@ import { useSnStore } from "../store/sn-store";
 const DATA = require('../../config.json');
 const defaultImage = require('../../images/logo.png');
 
-export function MenuWithLogoWidget(props) {
+const MenuWithLogoWidget = React.memo(function MenuWithLogoWidget(props) {
   // Deep comparison debug
   const {context, page, layout} = useSnStore((state) => state);
   const prevRef = useRef({ props: null, context: null, page: null, widget: null, layout: null });
@@ -103,6 +103,6 @@ export function MenuWithLogoWidget(props) {
       {}
     </div>
   );
-}
+});
 
 export default MenuWithLogoWidget;

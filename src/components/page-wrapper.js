@@ -10,7 +10,7 @@ import { maintenanceTemplate } from '../configuration';
 
 const DATA = require('../config.json');
 
-export const PageWrapper = (props) => {
+const PageWrapper = React.memo((props) => {
   const location = useLocation();
   const repo = useRepository();
   const [wrappercompo, setCompo] = useState([]);
@@ -293,4 +293,6 @@ export const PageWrapper = (props) => {
       {wrappercompo}
     </React.Suspense>
   )
-};
+});
+
+export default PageWrapper;
