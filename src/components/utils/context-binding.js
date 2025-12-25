@@ -32,7 +32,7 @@ export function BindedContext(props, withChildren) {
     return true;
   }
   
-  console.log('bindedContext params', { props, withChildren });
+  console.log('bindedContext params', { widgetId: widget?.Id, withChildren });
   // const widget = props.widget;
   // const context = props.data; 
 
@@ -170,7 +170,7 @@ export function BindedContext(props, withChildren) {
     loadContents();
   }, [loadContents]);
   
-  console.log('bindedContext result', bndContext);
+  console.log('bindedContext result', { contextPath: bndContext.contextPath, childrenCount: bndContext.children?.length });
   return { ...bndContext, loading };
 }
 

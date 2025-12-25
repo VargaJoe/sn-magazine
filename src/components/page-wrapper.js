@@ -52,27 +52,19 @@ export const PageWrapper = (props) => {
   }, [setPage]);
 
   useEffect(() => {
-    // Log on every render and navigation
+    // Log only on significant changes
     const contextChanged = !shallowEqual(context, prevContextRef.current);
     const pageChanged = !shallowEqual(debugPage, prevPageRef.current);
-    console.log('%c[PageWrapper] Render', 'color:orange;font-weight:bold', {
-      instanceId: instanceId.current,
-      renderCount: renderCount.current,
-      locationPath,
-      contextType: context?.Type,
-      contextId: context?.Id,
-      contextPath: context?.Path,
-      contextChanged,
-      prevContext: prevContextRef.current,
-      currentContext: context,
-      pageChanged,
-      prevPage: prevPageRef.current,
-      currentPage: debugPage,
-      wrappercompoKey: wrappercompo?.key,
-      wrappercompoType: wrappercompo?.type,
-      wrappercompoName: wrappercompo?.props?.name,
-      wrappercompoProps: wrappercompo?.props,
-    });
+    if (contextChanged || pageChanged || renderCount.current === 1) {
+      console.log('%c[PageWrapper] Render', 'color:orange;font-weight:bold', {
+        renderCount: renderCount.current,
+        locationPath,
+        contextId: context?.Id,
+        contextChanged,
+        pageChanged,
+        wrappercompoKey: wrappercompo?.key,
+      });
+    }
     prevContextRef.current = context;
     prevPageRef.current = debugPage;
   });
@@ -82,8 +74,7 @@ export const PageWrapper = (props) => {
 
   // refactor: filters should get from page fields
   const loadPage = useCallback(async () => {
-    console.log('%cloadPage', "font-size:14px;color:green");
-    console.log("Context of Load page:", context);
+    console.log('%cloadPage for context', "font-size:14px;color:green", context?.Id);
     setLoadingPage(true);
 
     // layoutPathList: return path list of possible layoutdeclarations
@@ -156,7 +147,7 @@ export const PageWrapper = (props) => {
           setPageDebug(page);
           setWidgets(widgets);
           // setLayout(layout);
-          console.log('selected page: ', { results: result.d.results }, { page: page?.Name, meta: page}, { widgets: widgets }, { layout: page?.PageTemplate } );
+          console.log('selected page:', page?.Name, 'widgets:', widgets?.length);
           const addedComponent =  !page || page.PageTemplate === '' || page.PageTemplate === null ? 
             addLayout(context, setLayout) :
             addComponent('layouts', 'page', page.PageTemplate, `page-${page.PageTemplate}`, null, null, null);
@@ -199,7 +190,7 @@ export const PageWrapper = (props) => {
   }, [context, layoutContentType, widgetContentType]);
 
   const loadContent = useCallback(async () => {
-    console.log("Load content useEffect:", locationPath);
+    console.log("Load content for:", locationPath);
     setLoadingContext(true);
     const locationPathWorkaround = locationPath.replace("(", "%28").replace(")", "%29");
     await repo.load({
@@ -210,7 +201,7 @@ export const PageWrapper = (props) => {
       },
     }).then(result => {
       if (result?.d?.Type) {
-        console.log('First level context:', result.d);
+        console.log('First level context loaded:', result.d.Id);
         setContext(result.d);
       };
     })
@@ -261,17 +252,17 @@ export const PageWrapper = (props) => {
 
   useEffect(() => {
     if (locationPath !== null && locationPath !== undefined) {
-      console.log('%c[PageWrapper] useEffect: locationPath changed', 'color:orange', { instanceId: instanceId.current, locationPath });
+      console.log('%c[PageWrapper] useEffect: locationPath changed', 'color:orange', { locationPath });
       loadContent();
     }
   }, [locationPath]);
 
   useEffect(() => {
     if (context != null && context !== undefined) {
-      console.log('%c[PageWrapper] useEffect: context changed', 'color:orange', { instanceId: instanceId.current, context });
+      console.log('%c[PageWrapper] useEffect: context changed', 'color:orange', { contextId: context.Id });
       loadPage();
     } else {
-      console.log('%c[PageWrapper] useEffect: context is null/undefined', 'color:orange', { instanceId: instanceId.current });
+      console.log('%c[PageWrapper] useEffect: context is null/undefined', 'color:orange');
     }
   }, [context]);
 

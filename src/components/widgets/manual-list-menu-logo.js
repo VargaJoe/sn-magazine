@@ -38,7 +38,7 @@ export function MenuWithLogoWidget(props) {
     }
     prevRef.current = { props, context, page, widget: props.widget, layout };
   });
-  console.log('%cMenuWithLogo', 'font-size:16px;color:green', { props: props });
+  console.log('%cMenuWithLogo render', 'font-size:16px;color:green', { widgetId: props.widget?.Id });
 
   let widget = props.widget;  // still passed as prop for config
   const bindedContext = BindedContext(props, true);

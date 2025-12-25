@@ -32,15 +32,10 @@ export const LeisureSimpleLayout = (props) => {
     prevRef.current = { props, context, layout, widgets };
   });
 
-  console.log('%cleisure-simple layout', "font-size:16px;color:green", { props: props }, { context: context}, { layout: layout}, { widgets: widgets });
+  console.log('%cleisure-simple layout render', "font-size:16px;color:green", { contextId: context?.Id, widgetsCount: widgets?.length });
   
   const sideboxes = addComponentsByZone('widgets', 'side', null, null, widgets);
-  console.log('sideboxes');
-  console.log(sideboxes);
-
   const components = addComponentsByZone('widgets', 'content', null, null, widgets);
-  console.log('components');
-  console.log(components);
 
   return (
     <div className="App w3-theme-l5">
