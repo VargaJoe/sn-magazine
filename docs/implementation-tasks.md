@@ -18,11 +18,6 @@
 ### Story 009: Component Modularity and Type Safety ([docs/stories/story009-component-modularity.md](docs/stories/story009-component-modularity.md))
   - [ ] Review all widget/layout/content components for self-containment
   - [ ] Add prop-types or TypeScript for type safety
-### Story 010: Performance Optimization ([docs/stories/story010-performance.md](docs/stories/story010-performance.md))
-  - [x] Profile and optimize rendering of large content/widget trees
-  - [x] Use React Suspense and lazy loading efficiently
-  - [x] Optimize dynamic imports and caching
-  - [x] Centralize element caching in CachedComponentsByZone React component for all dynamic layouts
 ### Story 011: Test Coverage and Quality ([docs/stories/story011-testing.md](docs/stories/story011-testing.md))
   - [ ] Add unit tests for dynamic resolution logic
   - [ ] Add integration tests for API and component interactions
@@ -141,3 +136,9 @@
   - [x] Implemented element caching in all dynamic layout components (page-vanilla.js, page-wide.js, page-explore.js, page-mirror.js, page-double.js) using useRef(Map) to cache component elements by componentId, preventing remounts that cause hook count mismatches
   - [x] Replaced addComponentsByZone with individual addComponent calls for each widget, ensuring consistent performance across all layouts
   - [x] Build succeeded with only minor lint warnings, app ready for testing to validate stable renders and no hook errors in any layout
+  
+### Story 010: Performance Optimization ([docs/stories/story010-performance.md](docs/stories/story010-performance.md))
+  - [x] Profile and optimize rendering of large content/widget trees
+  - [x] Use React Suspense and lazy loading efficiently
+  - [x] Optimize dynamic imports and caching
+  - [x] Centralize element caching in CachedComponentsByZone React component for all dynamic layouts
