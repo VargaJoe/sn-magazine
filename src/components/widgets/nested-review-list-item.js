@@ -5,15 +5,13 @@ import LazyImage from "../utils/lazyload-image";
 import { useSnStore } from "../store/sn-store";
 import React from 'react';
 
-const DATA = require('../../config.json');
-
 const NestedReviewListItemComponent = React.memo((props) => {
   // console.log('%cNestedReviewListItemComponent', "font-size:16px;color:green", { props: props });
   const context = props.data;  
   // const {page, layout} = useSnStore((state) => state);
   // const widget = props.widget;
 
-  const relativePath = context.Path.substr((process.env.REACT_APP_DATA_PATH || DATA.dataPath).length + 1);
+  const relativePath = context.Path.substr((process.env.REACT_APP_DATA_PATH).length + 1);
 
   // Deep comparison debug
   // const prevRef = useRef({ props: null, page: null, layout: null });
@@ -56,7 +54,7 @@ const NestedReviewListItemComponent = React.memo((props) => {
                   {/* <svg width="200px" height="200px" > */}
                     {/* <img src={DATA.apiUrl + context.Path + '/cover.jpg'} alt={context.DisplayName} className="w3-hover-opacity w3-col"/> */}
                     {/* <img src={DATA.apiUrl + DATA.dataPath + '/(structure)/Site/sample.png'} alt={context.DisplayName} className="w3-hover-opacity w3-col"/> */}
-                      <LazyImage src={(process.env.REACT_APP_API_URL || DATA.apiUrl) + context.Image?.Url} alt={context.DisplayName} className="w3-hover-opacity w3-col"/>
+                      <LazyImage src={process.env.REACT_APP_API_URL + context.Image?.Url} alt={context.DisplayName} className="w3-hover-opacity w3-col"/>
                   {/* </svg> */}
                     <div className="w3-white list-box-title">
                         <p>

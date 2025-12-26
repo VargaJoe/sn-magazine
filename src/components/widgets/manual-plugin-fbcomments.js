@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import ShowDebugInfo from "../utils/show-debuginfo"
 // import BindedContext from "../utils/context-binding"
 import { useSnStore } from "../store/sn-store";
-const DATA = require('../../config.json');
 
 // Facebook Comments Plugin
 // https://developers.facebook.com/docs/plugins/comments
@@ -15,7 +14,7 @@ export function FacebookCommentsWidget(props) {
   let widget = props.widget;  
   // const bindedContext = BindedContext(props, true);
 
-  const appId = process.env.REACT_APP_FB_APPID || DATA.facebookappid;
+  const appId = process.env.REACT_APP_FB_APPID;
   // const siteHost = process.env.REACT_APP_SITE_HOST || DATA.siteHost;
   // const dataPath = process.env.REACT_APP_DATA_PATH || DATA.dataPath;
   // const pagePath = context.Path.replace(dataPath, ''); // url context content path

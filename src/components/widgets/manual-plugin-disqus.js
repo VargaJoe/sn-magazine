@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import ShowDebugInfo from "../utils/show-debuginfo"
 import { useSnStore } from "../store/sn-store";
-const DATA = require('../../config.json');
 
 // Disqus Comments Plugin
 // https://disqus.com/admin/install/platforms/universalcode/
@@ -11,7 +10,7 @@ export function DisqusCommentsWidget(props) {
   const {context, page} = useSnStore((state) => state);
   let widget = props.widget;
 
-  const shortname = process.env.REACT_APP_DISQUS_SHORTNAME || DATA.disqusShortname;
+  const shortname = process.env.REACT_APP_DISQUS_SHORTNAME;
   const pageUrl = window.location.href;
   const pageIdentifier = context?.Id || pageUrl; // Use content ID or URL as identifier
 
