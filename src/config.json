@@ -1,12 +1,9 @@
 {
-	"apiUrl" : 			"https://localhost:41016",
-	"yapiUrl" : 			"https://plastice.sensenet.cloud",
-	"xapiUrl" : 				"https://localhost:1111",
-	"authUrl" : 			"https://localhost:41017",
-	"xauthUrl" : 			"https://plastice-is.sensenet.cloud",
-	"clientId": 			"4oIeVFx92mCl6Nhc",
-	"siteHost" :			"https://mangajanlo.hu",
-	"dataPath" :			"/Root/Content/fotelvandor",
+	"apiUrl" : 			"https://your-api-url",
+	"authUrl" : 			"https://your-auth-url",
+	"clientId": 			"your-client-id",
+	"siteHost" :			"https://your-site.com",
+	"dataPath" :			"/Root/Content/your-data-path",
 	"pagecontainerPath": 	"/Root/Content/(layout)",
 	"layoutType": 			"Layout",
 	"widgetType": 			"Widget",
@@ -20,12 +17,11 @@
 		"notFolder" : 		"wide"
 		
 	},
-	"facebookappid": 		"744957871343880",
-	"xfacebookappid": 		"1483301362787276",
-	"disqusShortname": 		"mangajanlo",
+	"facebookappid": 		"your-facebook-app-id",
+	"disqusShortname": 		"your-disqus-shortname",
 	"maintenanceTemplate": 	"maintenance",
-	"maintenanceSiteName": 	"MANGAjánló",
-	"maintenanceTitle": 	"Karbantartás",
-	"maintenanceEmail": 	"mangajanlo@protonmail.com",
-	"maintenanceText": 		"<p>Úgy tűnik, hiba történt vagy karbantartás van folyamatban. Látogass vissza később!</p><p>Ha a probléma továbbra is fennáll, vedd fel velünk a kapcsolatot a"
-} 
+	"maintenanceSiteName": 	"Your Site Name",
+	"maintenanceTitle": 	"Maintenance",
+	"maintenanceEmail": 	"your-email@example.com",
+	"maintenanceText": 		"<p>Site is under maintenance. Please check back later.</p>"
+}
