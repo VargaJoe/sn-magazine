@@ -1,0 +1,27 @@
+{
+	"apiUrl" : 			"https://your-api-url",
+	"authUrl" : 			"https://your-auth-url",
+	"clientId": 			"your-client-id",
+	"siteHost" :			"https://your-site.com",
+	"dataPath" :			"/Root/Content/your-data-path",
+	"pagecontainerPath": 	"/Root/Content/(layout)",
+	"layoutType": 			"Layout",
+	"widgetType": 			"Widget",
+	"siteLogo": 			"/(structure)/Site/logo.png",
+	"ogimage": 				"/(structure)/Site/ogimage.png",
+	"autoLayout": {
+		"default": 			"wide",
+		"folder" :			"explore",
+		"content" : 		"wide",
+		"isFolder" :		"explore",
+		"notFolder" : 		"wide"
+		
+	},
+	"facebookappid": 		"your-facebook-app-id",
+	"disqusShortname": 		"your-disqus-shortname",
+	"maintenanceTemplate": 	"maintenance",
+	"maintenanceSiteName": 	"Your Site Name",
+	"maintenanceTitle": 	"Maintenance",
+	"maintenanceEmail": 	"your-email@example.com",
+	"maintenanceText": 		"<p>Site is under maintenance. Please check back later.</p>"
+}
