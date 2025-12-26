@@ -12,8 +12,6 @@ export function MenuListWidget(props) {
   let widget = props.widget;  
   const bindedContext = BindedContext(props, true);
   
-  const DATA = require('../../config.json');
-  
   // if (itemCollection?.length === 0) {
   //   return (<div>loading</div>)
   // }
@@ -25,7 +23,7 @@ export function MenuListWidget(props) {
         <hr className="no-margin"/>
         <div className="side-menu-uppercase">
           {bindedContext.children?.map((child) => {
-            const relativePath = child.Path.substr((process.env.REACT_APP_DATA_PATH || DATA.dataPath).length + 1);
+            const relativePath = child.Path.substr((process.env.REACT_APP_DATA_PATH).length + 1);
             console.log(child.Name);
             return (
             <p key={`sidemenu-${child.Id}`}>

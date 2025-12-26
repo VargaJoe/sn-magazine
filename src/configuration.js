@@ -1,26 +1,24 @@
-delete require.cache[require.resolve('./config.json')];
-const DATA = require('./config.json');
-let clientId = process.env.REACT_APP_CLIENT_ID || DATA.clientId;
-// let automaticSilentRenew = process.env.REACT_APP_AUTOMATIC_SILENT_RENEW || DATA.automaticSilentRenew;
-// let redirectUri = process.env.REACT_APP_REDIRECT_URI || DATA.redirectUri;
-// let responseType = process.env.REACT_APP_RESPONSE_TYPE || DATA.responseType;
-// let postLogoutRedirectUri = process.env.REACT_APP_POST_LOGOUT_REDIRECT_URI || DATA.postLogoutRedirectUri;
-// let scope = process.env.REACT_APP_SCOPE || DATA.scope;
-// let silentRedirectUri = process.env.REACT_APP_SILENT_REDIRECT_URI || DATA.silentRedirectUri;
-// let extraQueryParams = process.env.REACT_APP_EXTRA_QUERY_PARAMS || DATA.extraQueryParams;
+const clientId = process.env.REACT_APP_CLIENT_ID;
+// let automaticSilentRenew = process.env.REACT_APP_AUTOMATIC_SILENT_RENEW;
+// let redirectUri = process.env.REACT_APP_REDIRECT_URI;
+// let responseType = process.env.REACT_APP_RESPONSE_TYPE;
+// let postLogoutRedirectUri = process.env.REACT_APP_POST_LOGOUT_REDIRECT_URI;
+// let scope = process.env.REACT_APP_SCOPE;
+// let silentRedirectUri = process.env.REACT_APP_SILENT_REDIRECT_URI;
+// let extraQueryParams = process.env.REACT_APP_EXTRA_QUERY_PARAMS;
 
-const maintenanceTemplate = process.env.REACT_APP_MAINTENANCE_TEMPLATE || DATA.maintenanceTemplate || "maintenance";
-const maintenanceSiteName = process.env.REACT_APP_MAINTENANCE_SITE_NAME || DATA.maintenanceSiteName || "Logo";
-const maintenanceTitle = process.env.REACT_APP_MAINTENANCE_TITLE || DATA.maintenanceTitle || "Site Under Maintenance";
-const maintenanceText = process.env.REACT_APP_MAINTENANCE_TEXT || DATA.maintenanceText || "<p>The site is currently undergoing maintenance. Please try again later.</p><p>If the problem persists, contact support.</p>";
-const maintenanceEmail = process.env.REACT_APP_MAINTENANCE_EMAIL || DATA.maintenanceEmail;
+const maintenanceTemplate = process.env.REACT_APP_MAINTENANCE_TEMPLATE || "maintenance";
+const maintenanceSiteName = process.env.REACT_APP_MAINTENANCE_SITE_NAME || "Logo";
+const maintenanceTitle = process.env.REACT_APP_MAINTENANCE_TITLE || "Site Under Maintenance";
+const maintenanceText = process.env.REACT_APP_MAINTENANCE_TEXT || "<p>The site is currently undergoing maintenance. Please try again later.</p><p>If the problem persists, contact support.</p>";
+const maintenanceEmail = process.env.REACT_APP_MAINTENANCE_EMAIL;
 
-console.log('Configuration loaded:', { maintenanceTemplate, DATA_maintenanceTemplate: DATA.maintenanceTemplate });
+console.log('Configuration loaded from env');
 
-// let repositoryUrl = process.env.REACT_APP_REPOSITORY_URL || DATA.repositoryUrl;
-    const apiUrl = process.env.REACT_APP_API_URL || DATA.apiUrl;
-// let authority = process.env.REACT_APP_AUTHORITY || DATA.authority;
-    const authUrl = process.env.REACT_APP_AUTH_URL || DATA.authUrl;
+// let repositoryUrl = process.env.REACT_APP_REPOSITORY_URL;
+    const apiUrl = process.env.REACT_APP_API_URL;
+// let authority = process.env.REACT_APP_AUTHORITY;
+    const authUrl = process.env.REACT_APP_AUTH_URL;
 
 export const repositoryUrl = apiUrl
 

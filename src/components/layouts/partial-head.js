@@ -1,20 +1,19 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
-const DATA = require('../../config.json');
 const defaultImage = require('../../images/logo.png');
 
 const CommonHelmet = ({ context }) => {
   // TODO: get og:image dynamically
-  const dataPath = process.env.REACT_APP_DATA_PATH || DATA.dataPath;
-  const apiUrl = process.env.REACT_APP_API_URL || DATA.apiUrl;
-  let logoPath = process.env.REACT_APP_LOGO_PATH || DATA.ogimage;
+  const dataPath = process.env.REACT_APP_DATA_PATH;
+  const apiUrl = process.env.REACT_APP_API_URL;
+  let logoPath = process.env.REACT_APP_LOGO_PATH;
   let logoUrl = apiUrl + dataPath + logoPath;
 		if (logoPath === undefined || logoUrl === apiUrl) {
 			logoUrl = defaultImage;
 		}
 
-  const appId = process.env.REACT_APP_FB_APPID || DATA.facebookappid;
-  const siteHost = process.env.REACT_APP_SITE_HOST || DATA.siteHost;
+  const appId = process.env.REACT_APP_FB_APPID;
+  const siteHost = process.env.REACT_APP_SITE_HOST;
   
   // const pagePath = window.location.pathname; // url path
   const pagePath = context?.Path.replace(dataPath, ''); // widget context content path

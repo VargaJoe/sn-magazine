@@ -6,10 +6,6 @@ import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
 import { useSnStore } from "../store/sn-store";
 
-// Todo: use bindedcontext but enhance it to load expanded content only, not children
-
-const DATA = require('../../config.json');
-
 export function SimpleContentWidget(props) {
   console.log('%cSimpleContent', "font-size:16px;color:green", { props: props });
   const repo = useRepository();
@@ -66,7 +62,7 @@ export function SimpleContentWidget(props) {
     return (
       <div className="w3-left w3-padding article-cover-outer">
         <div className="w3-col article-cover-inner">
-          <img src={(process.env.REACT_APP_API_URL || DATA.apiUrl) + bindedContext.content?.Image?.Url} alt={bindedContext.content?.DisplayName} className="w3-hover-opacity"/>
+          <img src={process.env.REACT_APP_API_URL + bindedContext.content?.Image?.Url} alt={bindedContext.content?.DisplayName} className="w3-hover-opacity"/>
         </div>
       </div>
     );   

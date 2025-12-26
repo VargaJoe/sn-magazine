@@ -6,10 +6,6 @@ import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
 import { useSnStore } from "../store/sn-store";
 
-// Todo: use bindedcontext but enhance it to load expanded content only, not children
-
-const DATA = require('../../config.json');
-
 // Todo: rename manual-list-manga to be consistent
 export function MangaContentWidget(props) {
   console.log('%cMangaContent', "font-size:16px;color:green", { props: props });
@@ -64,7 +60,7 @@ export function MangaContentWidget(props) {
     return (
       <div className="w3-left w3-padding article-cover-outer">
         <div className="w3-col article-cover-inner">
-          <img src={(process.env.REACT_APP_API_URL || DATA.apiUrl) + bindedContext.content?.Image?.Url} alt={bindedContext.content?.DisplayName} className="w3-hover-opacity"/>
+          <img src={process.env.REACT_APP_API_URL + bindedContext.content?.Image?.Url} alt={bindedContext.content?.DisplayName} className="w3-hover-opacity"/>
         </div>
       </div>
     );   

@@ -3,8 +3,6 @@ import { Link } from "react-router-dom";
 // import ShowDebugInfo from "../utils/show-debuginfo"
 import useBindedContext from "../utils/context-binding"
 // import { useSnStore } from "../store/sn-store";
-
-const DATA = require('../../config.json');
 const defaultImage = require('../../images/logo.png');
 
 const MenuWithLogoWidget = React.memo(function MenuWithLogoWidget(props) {
@@ -47,9 +45,9 @@ const MenuWithLogoWidget = React.memo(function MenuWithLogoWidget(props) {
     return null; // Don't render until data is loaded
   }
 
-  let logoPath = process.env.REACT_APP_LOGO_PATH || DATA.siteLogo;
-  let apiUrl = process.env.REACT_APP_API_URL || DATA.apiUrl;
-  let dataPath = process.env.REACT_APP_DATA_PATH || DATA.dataPath;
+  let logoPath = process.env.REACT_APP_LOGO_PATH;
+  let apiUrl = process.env.REACT_APP_API_URL;
+  let dataPath = process.env.REACT_APP_DATA_PATH;
   let logoUrl = apiUrl + dataPath + logoPath;
 		if (logoPath === undefined || logoUrl === apiUrl) {
 			logoUrl = defaultImage;

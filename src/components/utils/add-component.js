@@ -1,7 +1,5 @@
 import React from 'react';
 
-const DATA = require('../../config.json');
-
 // --- Dynamic Component Resolution ---
 // This array acts as a simple in-memory cache for lazy-loaded components.
 const defaultComponent = 'default';
@@ -176,12 +174,20 @@ export const ShowComponentsByZone = (type, zone, contextobs, page, widgets, cont
 export const addLayout = (contextAsWidget, setLayout) => {
   let layout = 'explore';
 
-  if (DATA.autoLayout[contextAsWidget.Type] !== undefined) {
-    layout = DATA.autoLayout[contextAsWidget.Type];
-  } else if (contextAsWidget.IsFolder && DATA.autoLayout.isFolder !== undefined) {
-    layout = DATA.autoLayout.isFolder;
-  } else if (!contextAsWidget.IsFolder && DATA.autoLayout.notFolder !== undefined) {
-    layout = DATA.autoLayout.notFolder;
+  const autoLayout = {
+    "default": "wide",
+    "folder": "explore",
+    "content": "wide",
+    "isFolder": "explore",
+    "notFolder": "wide"
+  };
+
+  if (autoLayout[contextAsWidget.Type] !== undefined) {
+    layout = autoLayout[contextAsWidget.Type];
+  } else if (contextAsWidget.IsFolder && autoLayout.isFolder !== undefined) {
+    layout = autoLayout.isFolder;
+  } else if (!contextAsWidget.IsFolder && autoLayout.notFolder !== undefined) {
+    layout = autoLayout.notFolder;
   }
 
   const componentId = getComponentKey(contextAsWidget);

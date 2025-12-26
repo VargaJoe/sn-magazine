@@ -4,8 +4,6 @@ import ShowDebugInfo from "../utils/show-debuginfo"
 import LazyImage from "../utils/lazyload-image";
 import { useSnStore } from "../store/sn-store";
 
-const DATA = require('../../config.json');
-
 // Todo: this component is flagged for deletion after next release
 
 export function NestedNewsItem(props) {
@@ -20,7 +18,7 @@ export function NestedNewsItem(props) {
   const leadSentences = context?.Lead?.split('. ');
   const truncatedLead = leadSentences&&leadSentences.slice(0, MAX_SENTENCES).join('. ').trim() + (leadSentences?.length > MAX_SENTENCES ? '...' : '');
 
-  const relativePath = context.Path.substr((process.env.REACT_APP_DATA_PATH || DATA.dataPath).length + 1);
+  const relativePath = context.Path.substr((process.env.REACT_APP_DATA_PATH).length + 1);
   
   function newsImage () { 
     if (context.Image.Url === "") {
@@ -30,7 +28,7 @@ export function NestedNewsItem(props) {
     return (
       <div className="news-image w3-padding">
          {/* {LazyImage((process.env.REACT_APP_API_URL || DATA.apiUrl) + context.Image.Url, context.DisplayName, "w3-hover-opacity")} */}
-        <LazyImage src={(process.env.REACT_APP_API_URL || DATA.apiUrl) + context.Image.Url} alt={context.DisplayName} className="w3-hover-opacity"/>
+        <LazyImage src={process.env.REACT_APP_API_URL + context.Image.Url} alt={context.DisplayName} className="w3-hover-opacity"/>
       </div>
     );   
   };

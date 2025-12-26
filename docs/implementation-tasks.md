@@ -142,3 +142,10 @@
   - [x] Use React Suspense and lazy loading efficiently
   - [x] Optimize dynamic imports and caching
   - [x] Centralize element caching in CachedComponentsByZone React component for all dynamic layouts
+### Story 015: Disqus Comments Widget and Configuration ([docs/stories/story015-disqus-comments.md](docs/stories/story015-disqus-comments.md))
+  - [x] Implement DisqusCommentsWidget component with SDK loading and configuration
+  - [x] Add disqusShortname configuration to config.json and environment variables
+  - [x] Create Disqus setup guide documentation
+  - [x] Refactor config to use environment variables instead of config.json requires
+  - [x] Add .env.example with all required environment variables
+  - [x] Test widget functionality and deploy previews
