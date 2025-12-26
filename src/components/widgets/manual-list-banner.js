@@ -2,8 +2,6 @@ import React from 'react';
 import useBindedContext from "../utils/context-binding"
 import ShowDebugInfo from "../utils/show-debuginfo";
 import deepEqual from "../utils/deep-equal";
-
-const DATA = require('../../config.json');
 const defaultImage = require('../../images/logo.png');
 
 const BannerListWidget = React.memo((props) => {
@@ -12,9 +10,9 @@ const BannerListWidget = React.memo((props) => {
   // let context = props.data;
   const bindedContext = useBindedContext(props, true);
   
-  let logoPath = process.env.REACT_APP_LOGO_PATH || DATA.siteLogo;
-  let apiUrl = process.env.REACT_APP_API_URL || DATA.apiUrl;
-  let dataPath = process.env.REACT_APP_DATA_PATH || DATA.dataPath;
+  let logoPath = process.env.REACT_APP_LOGO_PATH;
+  let apiUrl = process.env.REACT_APP_API_URL;
+  let dataPath = process.env.REACT_APP_DATA_PATH;
   let logoUrl = apiUrl + dataPath + logoPath;
 		if (logoPath === undefined || logoUrl === apiUrl) {
 			logoUrl = defaultImage;
@@ -44,7 +42,7 @@ const BannerListWidget = React.memo((props) => {
             return (
               <div className="banner-wrapper" key={`banner-${child.Id}`}>
                 <a key={`banner-link-${child.Id}`} href={child.Url} target="_blank" className="side-menu-link" title={'index: '+child.Index} rel="noreferrer">
-                <img src={(process.env.REACT_APP_API_URL || DATA.apiUrl) + child.Binary.__mediaresource.media_src} alt={child.DisplayName} className="banner-image"/>
+                <img src={process.env.REACT_APP_API_URL + child.Binary.__mediaresource.media_src} alt={child.DisplayName} className="banner-image"/>
                 </a>
               </div>
             )

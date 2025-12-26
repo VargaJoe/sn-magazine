@@ -2,8 +2,6 @@ import { useCallback, useEffect, useState, useMemo } from "react";
 import { useRepository } from "@sensenet/hooks-react";
 import { useSnStore } from "../store/sn-store";
 
-const DATA = require('../../config.json');
-
 // Global cache for binded contexts
 const contextCache = new Map();
 
@@ -69,7 +67,7 @@ export function useBindedContext(props, withChildren) {
               resultObj.contextPath = context.Workspace?.Path
               resultObj.content = context.Workspace
             } else {
-              resultObj.contextPath = process.env.REACT_APP_DATA_PATH || DATA.dataPath
+              resultObj.contextPath = process.env.REACT_APP_DATA_PATH
               resultObj.content = context.Workspace
             }
             break;

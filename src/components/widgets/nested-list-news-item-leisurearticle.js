@@ -4,15 +4,13 @@ import ShowDebugInfo from "../utils/show-debuginfo"
 import LazyImage from "../utils/lazyload-image";
 import { useSnStore } from "../store/sn-store";
 
-const DATA = require('../../config.json');
-
 export function NestedLeisureArticleItem(props) {
   console.log('%cNestedLeisureArticleItem', "font-size:16px;color:green", { props: props });
   const context = props.data;
   const {page, layout} = useSnStore((state) => state);
   const widget = props.widget;
 
-  const relativePath = context.Path.substr((process.env.REACT_APP_DATA_PATH || DATA.dataPath).length + 1);
+  const relativePath = context.Path.substr((process.env.REACT_APP_DATA_PATH).length + 1);
   
   function newsImage () { 
     if (context.Image.Url === "") {
@@ -21,7 +19,7 @@ export function NestedLeisureArticleItem(props) {
 
     return (
       <div className="news-image w3-left w3-padding">
-        <LazyImage src={(process.env.REACT_APP_API_URL || DATA.apiUrl) + context.Image.Url} alt={context.DisplayName} className="w3-hover-opacity"/>
+        <LazyImage src={process.env.REACT_APP_API_URL + context.Image.Url} alt={context.DisplayName} className="w3-hover-opacity"/>
       </div>
     );   
   };

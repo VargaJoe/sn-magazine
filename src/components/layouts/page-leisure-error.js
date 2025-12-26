@@ -1,8 +1,6 @@
 import { addComponent } from '../utils/add-component';
 import { Helmet } from 'react-helmet-async';
 import { useSnStore } from "../store/sn-store";
-
-const DATA = require('../../config.json');
 const defaultImage = require('../../images/logo.png');
 
 export const LeisureErrorLayout = (props) => {
@@ -15,8 +13,8 @@ export const LeisureErrorLayout = (props) => {
   const components = addComponent('content', 'auto', 'missing', 1, context);
   console.log('leisure-error layout components', components);
   
-  let logoPath = process.env.REACT_APP_LOGO_PATH || DATA.siteLogo;
-  let apiUrl = process.env.REACT_APP_API_URL || DATA.apiUrl;
+  let logoPath = process.env.REACT_APP_LOGO_PATH;
+  let apiUrl = process.env.REACT_APP_API_URL;
   let logoUrl = apiUrl + logoPath;
 		if (logoPath === undefined || logoUrl === apiUrl) {
 			logoUrl = defaultImage;

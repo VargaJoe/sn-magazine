@@ -9,8 +9,6 @@ import { useSnStore } from "../store/sn-store";
 import Moment from 'moment';
 import LazyImage from "../utils/lazyload-image";
 
-const DATA = require('../../config.json');
-
 export function ThirdSizedTranslationList(props) {
   console.log('%cThirdSizedTranslationList', "font-size:16px;color:green", { props: props });
   const repo = useRepository()
@@ -43,7 +41,7 @@ export function ThirdSizedTranslationList(props) {
 
     return (
       <div className="news-image w3-left w3-padding">
-        <LazyImage src={(process.env.REACT_APP_API_URL || DATA.apiUrl) + item.Image.Url} alt={item.DisplayName} className="w3-hover-opacity"/>
+        <LazyImage src={process.env.REACT_APP_API_URL + item.Image.Url} alt={item.DisplayName} className="w3-hover-opacity"/>
       </div>
     );   
   };
@@ -64,7 +62,7 @@ export function ThirdSizedTranslationList(props) {
               <div>
                 {bindedContext?.children?.map((child) => {
                   const relatedContent = itemCollection[0]
-                  const relatedPath = relatedContent?.Path.substr((process.env.REACT_APP_DATA_PATH || DATA.dataPath).length + 1);
+                  const relatedPath = relatedContent?.Path.substr((process.env.REACT_APP_DATA_PATH).length + 1);
                   return (
                     <div key={`translation-item-${child.Id}`} className="w3-row-padding w3-margin-bottom w3-left w3-block m1 news-item">
                       <div className="w3-col">

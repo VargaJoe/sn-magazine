@@ -31,8 +31,6 @@ const deepEqual = (a, b) => {
   return false;
 };
 
-const DATA = require('../config.json');
-
 const PageWrapper = React.memo((props) => {
   const location = useLocation();
   const repo = useRepository();
@@ -70,8 +68,8 @@ const PageWrapper = React.memo((props) => {
     setDebugPage(p);
   }, [setPage]);
 
-  const layoutContentType = process.env.REACT_APP_LAYOUT_TYPE || DATA.layoutType || "Layout";
-  const widgetContentType = process.env.REACT_APP_WIDGET_TYPE || DATA.widgetType || "Widget";
+  const layoutContentType = process.env.REACT_APP_LAYOUT_TYPE || "Layout";
+  const widgetContentType = process.env.REACT_APP_WIDGET_TYPE || "Widget";
 
   // refactor: filters should get from page fields
   const loadPage = useCallback(async () => {
@@ -92,7 +90,7 @@ const PageWrapper = React.memo((props) => {
     // layoutPathList: return path list of possible layoutdeclarations
     const layoutPathList = () => {
       const splittedPath = context.Path.split('/').filter(element => element);
-      const basePath = process.env.REACT_APP_PAGECONTAINER_PATH || DATA.pagecontainerPath;
+      const basePath = process.env.REACT_APP_PAGECONTAINER_PATH;
       const lpl = [];
       var newPathName = "";
       for (var i = 0; i < splittedPath.length; i++) {
@@ -209,7 +207,7 @@ const PageWrapper = React.memo((props) => {
     // console.log("Load content for:", locationPath);
     const locationPathWorkaround = locationPath.replace("(", "%28").replace(")", "%29");
     await repo.load({
-      idOrPath: `${process.env.REACT_APP_DATA_PATH || DATA.dataPath}/${locationPathWorkaround}`,
+      idOrPath: `${process.env.REACT_APP_DATA_PATH}/${locationPathWorkaround}`,
       oDataOptions: {
         select: 'all',
         expand: 'Workspace'

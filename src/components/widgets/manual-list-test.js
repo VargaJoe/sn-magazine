@@ -2,8 +2,6 @@ import React from 'react';
 import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
 import { useSnStore } from "../store/sn-store";
-
-const DATA = require('../../config.json');
 const defaultImage = require('../../images/logo.png');
 
 export function TestWidget(props) {
@@ -19,9 +17,9 @@ export function TestWidget(props) {
   const bindedContext = BindedContext(props, true);
   console.log('binded context: ', bindedContext);
 
-  let logoPath = process.env.REACT_APP_LOGO_PATH || DATA.siteLogo;
-  let apiUrl = process.env.REACT_APP_API_URL || DATA.apiUrl;
-  let dataPath = process.env.REACT_APP_DATA_PATH || DATA.dataPath;
+  let logoPath = process.env.REACT_APP_LOGO_PATH;
+  let apiUrl = process.env.REACT_APP_API_URL;
+  let dataPath = process.env.REACT_APP_DATA_PATH;
   let logoUrl = apiUrl + dataPath + logoPath;
 		if (logoPath === undefined || logoUrl === apiUrl) {
 			logoUrl = defaultImage;
@@ -40,7 +38,7 @@ export function TestWidget(props) {
             <p key={`banner-${child.Id}`}>
               {/* <i className="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i>  */}
               <a key={`banner-link-${child.Id}`} href={child.Url} target="_blank" rel="noreferrer" className="side-menu-link" title={'index: '+child.Index}>
-              <img src={(process.env.REACT_APP_API_URL || DATA.apiUrl) + child.Binary.__mediaresource.media_src} alt={child.DisplayName} className="banner-image"/>
+              <img src={process.env.REACT_APP_API_URL + child.Binary.__mediaresource.media_src} alt={child.DisplayName} className="banner-image"/>
               </a>
             </p>
           )}
