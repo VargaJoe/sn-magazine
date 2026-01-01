@@ -149,3 +149,4 @@
   - [x] Refactor config to use environment variables instead of config.json requires
   - [x] Add .env.example with all required environment variables
   - [x] Test widget functionality and deploy previews
+  - [x] Fixed bug where navigating away from a page with Disqus comments caused white screen and TypeError; improved cleanup to clear DOM and remove script on unmount, removed problematic reset call

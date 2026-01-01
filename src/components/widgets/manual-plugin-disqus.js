@@ -51,8 +51,13 @@ export function DisqusCommentsWidget(props) {
 
     // Cleanup function to reset Disqus on unmount
     return () => {
-      if (window.DISQUS && typeof window.DISQUS.reset === 'function') {
-        window.DISQUS.reset({ reload: true });
+      const disqusThread = document.getElementById('disqus_thread');
+      if (disqusThread) {
+        disqusThread.innerHTML = '';
+      }
+      const script = document.getElementById('disqus-sdk');
+      if (script) {
+        script.remove();
       }
     };
   }, [shortname, pageUrl, pageIdentifier]);
