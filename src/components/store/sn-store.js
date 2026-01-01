@@ -1,0 +1,20 @@
+import { createWithEqualityFn } from 'zustand/traditional'
+import { shallow } from 'zustand/shallow'
+
+export const useSnStore = createWithEqualityFn((set) => ({
+  // context sn content
+  context: null,
+  setContext: (context) => set(() => ({ context: context })),
+  // page sn content
+  page: null,
+  setPage: (page) => set(() => ({ page: page })),
+  // widgets sn contents
+  widgets: null,
+  setWidgets: (widgets) => set(() => ({ widgets: widgets })),  
+  // layout sn content
+  layout: 'vanilla',
+  setLayout: (layout) => set(() => ({ layout: layout })),
+  // layout react component
+  wrappercompo: {},
+  setCompo: (wrappercompo) => set(() => ({ wrappercompo: wrappercompo })),
+}), shallow);

@@ -1,9 +1,11 @@
 import ShowDebugInfo from "../utils/show-debuginfo"
+import { useSnStore } from "../store/sn-store";
 
 export function GenericContent(props) {
   const componentName = 'generic content'
-  const layout = props.page;
-  let context = props.data;
+  // const layout = props.page;
+  // let context = props.data;
+  const {context, page, layout} = useSnStore((state) => state);
   const widget = props.widget;
   console.log(componentName, context.DisplayName, props, layout, context, widget);
 
@@ -12,7 +14,7 @@ export function GenericContent(props) {
     <div className="w3-row-padding w3-margin-bottom">
       <div className="w3-col m12">
         <div className="w3-card w3-round w3-white">
-        {ShowDebugInfo(componentName, context, layout, widget)}
+        {ShowDebugInfo(componentName, context, page, widget, layout)}
           <div className="w3-container w3-padding">
             <h1>{context.DisplayName}</h1>
             <div className="context-info">

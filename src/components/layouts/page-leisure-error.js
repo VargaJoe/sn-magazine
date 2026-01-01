@@ -1,20 +1,20 @@
 import { addComponent } from '../utils/add-component';
 import { Helmet } from 'react-helmet-async';
-
-const DATA = require('../../config.json');
+import { useSnStore } from "../store/sn-store";
 const defaultImage = require('../../images/logo.png');
 
 export const LeisureErrorLayout = (props) => {
-  const context = props.data;
-  const layout = props.page;
-  const widgets = props.widget;
-  console.log('leisure-error layout: ', props, layout, widgets );
+  // const context = props.data;
+  // const layout = props.page;
+  // const widgets = props.widget;
+  const {context, layout, widgets} = useSnStore((state) => state);
+  console.log('%cleisure-error layout', "font-size:16px;color:green", { props: props }, { context: context}, { layout: layout}, { widgets: widgets });
   
   const components = addComponent('content', 'auto', 'missing', 1, context);
   console.log('leisure-error layout components', components);
   
-  let logoPath = process.env.REACT_APP_LOGO_PATH || DATA.siteLogo;
-  let apiUrl = process.env.REACT_APP_API_URL || DATA.apiUrl;
+  let logoPath = process.env.REACT_APP_LOGO_PATH;
+  let apiUrl = process.env.REACT_APP_API_URL;
   let logoUrl = apiUrl + logoPath;
 		if (logoPath === undefined || logoUrl === apiUrl) {
 			logoUrl = defaultImage;
@@ -68,10 +68,6 @@ export const LeisureErrorLayout = (props) => {
       {/* End Page Container */}
 
       {/* Footer */}
-      <footer className="w3-container w3-theme-d3 w3-padding-16 hidden">
-        <h5>Footer</h5>
-      </footer>
-
       <footer className="w3-container w3-theme-d5">
         <p>
           Powered by <a href="https://sensenet.com" target="_blank" rel="noreferrer">sensenet</a>, <a href="https://reactjs.org/" target="_blank" rel="noreferrer">react</a> and <a href="https://www.w3schools.com/w3css/default.asp" target="_blank" rel="noreferrer">w3.css</a>

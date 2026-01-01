@@ -1,15 +1,16 @@
-import "./App.css";
-import "./App-Custom.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+// import "./App.css";
+// import "./App-Custom.css";
+import { Routes, Route } from "react-router-dom";
 import SiteRoutes from "./navigation";
-import { HelmetProvider } from 'react-helmet-async';
+import { HelmetProvider } from "react-helmet-async";
+import AnalyticsTracker from "./AnalyticsTracker";
 
 function App() {
   const helmetContext = {};
 
   return (
     <HelmetProvider context={helmetContext}>
-      <BrowserRouter>
+      <AnalyticsTracker />
         <Routes>
           {SiteRoutes.public.map((route, index) => (
             <Route
@@ -19,7 +20,6 @@ function App() {
               element={<route.component />} />
           ))}
         </Routes>
-      </BrowserRouter>
     </HelmetProvider>
   );
 }

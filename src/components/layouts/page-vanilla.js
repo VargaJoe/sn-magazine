@@ -1,18 +1,17 @@
 // import { SideMenu } from "../side-menu";
-import { addComponentsByZone } from '../utils/add-component';
+import { CachedComponentsByZone, addComponent } from '../utils/add-component';
 import { Link } from 'react-router-dom';
+import { useSnStore } from "../store/sn-store";
+import React from 'react';
 
-export const VanillaPageTemplate = (props) => {
-  const context = props.data;
-  const layout = props.page;
-  const widgets = props.widget;
-  console.log('vanilla layout: ', props, context, layout, widgets);
+export const VanillaPageTemplate = React.memo((props) => {
+  const { context, widgets } = useSnStore((state) => state);
 
-  const sideboxes = addComponentsByZone('widgets', 'side', context, layout, widgets);
-  const components = addComponentsByZone('widgets', 'content', context, layout, widgets);
-
-  console.log('vanilla layout sideboxes', sideboxes);
-  console.log('vanilla layout components', components);
+  // console.log('%cvanilla layout render', "font-size:16px;color:green", { contextId: context?.Id, widgetsCount: widgets?.length });
+  
+  if (!widgets || !Array.isArray(widgets)) {
+    return <div>Loading layout...</div>;
+  }
 
   return (
     <div className="App w3-theme-l5">
@@ -21,6 +20,7 @@ export const VanillaPageTemplate = (props) => {
           <a
             href="/"
             className="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-theme-d2"
+            aria-label="Menu"
           >
             <i className="fa fa-bars"></i>
           </a>
@@ -33,54 +33,18 @@ export const VanillaPageTemplate = (props) => {
             href="/"
             className="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white"
             title="News"
+            aria-label="News"
           >
             <i className="fa fa-globe"></i>
           </a>
-          {/* <a
-            href="/"
-            className="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white"
-            title="Account Settings"
-          >
-            <i className="fa fa-user"></i>
-          </a> */}
             <a
            href="mailto:info@sensenet.com"
            className="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white"
            title="Messages"
+           aria-label="Messages"
          >
            <i className="fa fa-envelope"></i>
          </a>
-          {/* <div className="w3-dropdown-hover w3-hide-small">
-            <button
-              className="w3-button w3-padding-large"
-              title="Notifications"
-            >
-              <i className="fa fa-bell"></i>
-              <span className="w3-badge w3-right w3-small w3-green">3</span>
-            </button>
-            <div className="w3-dropdown-content w3-card-4 w3-bar-block w3-dropdown-content-custom">
-              <a href="/" className="w3-bar-item w3-button">
-                One new friend request
-              </a>
-              <a href="/" className="w3-bar-item w3-button">
-                John Doe posted on your wall
-              </a>
-              <a href="/" className="w3-bar-item w3-button">
-                Jane likes your post
-              </a>
-            </div>
-          </div> */}
-          {/* <a
-            href="/"
-            className="w3-bar-item w3-button w3-hide-small w3-right w3-padding-large w3-hover-white"
-            title="My Account"
-          >
-            <img
-              src="/w3images/avatar2.png"
-              className="w3-circle w2-circle-custom"
-              alt="Avatar"
-            />
-          </a> */}
         </div>
       </div>
 
@@ -88,10 +52,6 @@ export const VanillaPageTemplate = (props) => {
         id="navDemo"
         className="w3-bar-block w3-theme-d2 w3-hide w3-hide-large w3-hide-medium w3-large"
       >
-        {/* <a href="#" className="w3-bar-item w3-button w3-padding-large">Link 1</a>
-  <a href="#" className="w3-bar-item w3-button w3-padding-large">Link 2</a>
-  <a href="#" className="w3-bar-item w3-button w3-padding-large">Link 3</a>
-  <a href="#" className="w3-bar-item w3-button w3-padding-large">My Profile</a> */}
       </div>
       
       {/* Page Container */}
@@ -102,7 +62,8 @@ export const VanillaPageTemplate = (props) => {
           <div className="w3-col m3">
             {/* <SideMenu />
             <br/> */}
-            {sideboxes}
+            <CachedComponentsByZone type="widgets" zone="side" widgets={widgets} context={context} />
+            {addComponent('widgets', 'auto', 'widgetlogin', 1, null)}
           </div>
           
           {/* End Left Column */}
@@ -118,16 +79,9 @@ export const VanillaPageTemplate = (props) => {
                 </div>
               </div>
             </div>
-            {components}
+            <CachedComponentsByZone type="widgets" zone="content" widgets={widgets} context={context} />
           </div>
           {/* End Middle Column */}
-
-          {/* Right Column */}
-          {/* <div className="w3-col m2">
-            <SideReviews />
-            <SideTranslations />
-          </div> */}
-          {/* End Right Column */}
         </div>
         {/* End Grid */}
       </div>
@@ -135,10 +89,6 @@ export const VanillaPageTemplate = (props) => {
       {/* End Page Container */}
 
       {/* Footer */}
-      <footer className="w3-container w3-theme-d3 w3-padding-16">
-        <h5>Footer</h5>
-      </footer>
-
       <footer className="w3-container w3-theme-d5">
         <p>
           Powered by{" "}
@@ -150,6 +100,6 @@ export const VanillaPageTemplate = (props) => {
       {/* End Footer */}
     </div>
   );
-}
+});
 
 export default VanillaPageTemplate;

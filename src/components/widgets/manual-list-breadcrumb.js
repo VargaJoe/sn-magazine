@@ -2,22 +2,21 @@ import React from 'react';
 import { Link } from "react-router-dom";
 import ShowDebugInfo from "../utils/show-debuginfo"
 import BindedContext from "../utils/context-binding"
+import { useSnStore } from "../store/sn-store";
 
-export function Breadcrumb(props) {
-  console.groupCollapsed('%cbreadcrumb', 'font-size:16px;color:green');
-  console.log('breadcrumb', props);
-  const layout = props.page;
-  let context = props.data;
+export function BreadcrumbListWidget(props) {
+  console.log('%cBreadcrumbList', 'font-size:16px;color:green', { props: props });
+  // const layout = props.page;
+  // let context = props.data;
+  const {context, page, layout} = useSnStore((state) => state);
   let widget = props.widget;  
   const bindedContext = BindedContext(props, true);
-
-  const DATA = require('../../config.json');
-  const illegalBreadcrumbs = (process.env.REACT_APP_DATA_PATH || DATA.dataPath).split('/').filter(element => element);
-  const breadcrumbs = bindedContext.content.Path.split('/').filter(element => element);
+  const illegalBreadcrumbs = (process.env.REACT_APP_DATA_PATH).split('/').filter(element => element);
+  const breadcrumbs = bindedContext.content?.Path.split('/').filter(element => element);
   
   function showBreadcrumbItem (item, index, useLink) { 
     if (useLink) {
-      const pathToCrumbItem = bindedContext.content.Path.substr((process.env.REACT_APP_DATA_PATH || DATA.dataPath).length).split('/', index).join("/")
+      const pathToCrumbItem = bindedContext.content?.Path.substr((process.env.REACT_APP_DATA_PATH).length).split('/', index).join("/")
       console.log(index, pathToCrumbItem)
       return (
         <span key={`sidemenu-${item}`}>
@@ -44,7 +43,7 @@ export function Breadcrumb(props) {
     <div className="w3-row-padding w3-margin-bottom">
       <div className="w3-col m12">
         <div className="w3-card w3-round w3-white">
-          {ShowDebugInfo("side menu", context, layout, widget)}
+          <ShowDebugInfo title="breadcrumb list" context={context} currentPage={page} widget={widget} />
           <div className="w3-container w3-padding">
             <h4 className="w3-center hidden">{widget.DisplayName}</h4>
             <hr className="no-margin"/>
@@ -57,9 +56,9 @@ export function Breadcrumb(props) {
           </div>
         </div>
       </div>
-      {console.groupEnd()}
+      {}
     </div>
   );
 }
 
-export default Breadcrumb;
+export default BreadcrumbListWidget;

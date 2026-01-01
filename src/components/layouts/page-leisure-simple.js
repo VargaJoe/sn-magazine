@@ -1,50 +1,54 @@
-import { addComponentsByZone } from '../utils/add-component';
-import { Helmet } from 'react-helmet-async';
+import React from 'react';
+import { CachedComponentsByZone } from '../utils/add-component';
+import { useSnStore } from "../store/sn-store";
+import deepEqual from "../utils/deep-equal";
 
-const DATA = require('../../config.json');
-const defaultImage = require('../../images/logo.png');
+export const LeisureSimpleLayout = React.memo((props) => {
+  const { context, widgets } = useSnStore((state) => state, deepEqual);
 
-export const LeisureSimpleLayout = (props) => {
-  const context = props.data;
-  const layout = props.page;
-  const widgets = props.widget;
-  console.groupCollapsed('%cleisureSimpleLayout', "font-size:16px;color:green");
-  console.log('leisure-simple layout: ', props, context, layout, widgets );
+  // Deep comparison debug
+  // const prevRef = useRef({ props: null, context: null, layout: null, widgets: null });
+  // useEffect(() => {
+  //   const prev = prevRef.current;
+  //   const deepChanged =
+  //     JSON.stringify(prev.props) !== JSON.stringify(props) ||
+  //     JSON.stringify(prev.context) !== JSON.stringify(context) ||
+  //     JSON.stringify(prev.layout) !== JSON.stringify(layout) ||
+  //     JSON.stringify(prev.widgets) !== JSON.stringify(widgets);
+  //   if (deepChanged) {
+  //     // console.log('%c[LeisureSimpleLayout] Deep change detected', 'color:purple;font-weight:bold', {
+  //     //   prevProps: prev.props, currProps: props,
+  //     //     prevContext: prev.context, currContext: context,
+  //     //     prevLayout: prev.layout, currLayout: layout,
+  //     //     prevWidgets: prev.widgets, currWidgets: widgets
+  //     //   });
+  //   } else {
+  //     // console.log('%c[LeisureSimpleLayout] No deep change', 'color:purple', {
+  //     //   prevProps: prev.props, currProps: props,
+  //     //   prevContext: prev.context, currContext: context,
+  //     //   prevLayout: prev.layout, currLayout: layout,
+  //     //   prevWidgets: prev.widgets, currWidgets: widgets
+  //     // });
+  //   }
+  //   prevRef.current = { props, context, layout, widgets };
+  // });
+
+  // console.log('%cleisure-simple layout render', "font-size:16px;color:green", { contextId: context?.Id, widgetsCount: widgets?.length });
   
-  const sideboxes = addComponentsByZone('widgets', 'side', context, layout, widgets);
-  console.log('sideboxes');
-  console.log(sideboxes);
-
-  const components = addComponentsByZone('widgets', 'content', context, layout, widgets);
-  console.log('components');
-  console.log(components);
-
-  let logoPath = process.env.REACT_APP_LOGO_PATH || DATA.siteLogo;
-  let apiUrl = process.env.REACT_APP_API_URL || DATA.apiUrl;
-  let logoUrl = apiUrl + logoPath;
-		if (logoPath === undefined || logoUrl === apiUrl) {
-			logoUrl = defaultImage;
-		}
-
-  const pageTitle = (context.Id === context.Workspace.Id) ? `${context.DisplayName}` : `${context.Workspace.DisplayName} - ${context.DisplayName}`;
+  if (!widgets || !Array.isArray(widgets)) {
+    return <div>Loading layout...</div>;
+  }
 
   return (
     <div className="App w3-theme-l5">
-        <Helmet>
-					<meta charSet="utf-8" />
-					<title>{pageTitle}</title>
-					<link rel="canonical" href={`${apiUrl}/${context.Path}/`} />
-				</Helmet>
-      
       {/* Page Container */}
       <div className="w3-container w3-content w3-content-custom pagetemplate-custom">
         {/* The Grid */}
         <div className="w3-row layout-container">
           {/* Left Column */}
-          <div className="w3-col m2">
-            {sideboxes}
+          <div className="w3-col m2 layout-left">
+            <CachedComponentsByZone type="widgets" zone="side" widgets={widgets} context={context} />
           </div>
-          
           {/* End Left Column */}
 
           {/* Middle Column */}
@@ -58,7 +62,7 @@ export const LeisureSimpleLayout = (props) => {
                 </div>
               </div>
             </div>
-            {components}
+            <CachedComponentsByZone type="widgets" zone="content" widgets={widgets} context={context} />
           </div>
           {/* End Middle Column */}
 
@@ -73,19 +77,14 @@ export const LeisureSimpleLayout = (props) => {
       {/* End Page Container */}
 
       {/* Footer */}
-      <footer className="w3-container w3-theme-d3 w3-padding-16 hidden">
-        <h5>Footer</h5>
-      </footer>
-
       <footer className="w3-container w3-theme-d5">
         <p>
           Powered by <a href="https://sensenet.com" target="_blank" rel="noreferrer">sensenet</a>, <a href="https://reactjs.org/" target="_blank" rel="noreferrer">react</a> and <a href="https://www.w3schools.com/w3css/default.asp" target="_blank" rel="noreferrer">w3.css</a>
         </p>
       </footer>
-      {console.groupEnd()}
       {/* End Footer */}
     </div>
   );
-}
+});
 
 export default LeisureSimpleLayout;
