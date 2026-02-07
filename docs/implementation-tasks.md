@@ -150,3 +150,24 @@
   - [x] Add .env.example with all required environment variables
   - [x] Test widget functionality and deploy previews
   - [x] Fixed bug where navigating away from a page with Disqus comments caused white screen and TypeError; improved cleanup to clear DOM and remove script on unmount, removed problematic reset call
+
+### Technical Tasks - Docker Development Server Setup
+  - [x] Refactored Dockerfile to use Node.js 16 base image and run npm start for development server instead of static build
+  - [x] Updated docker-compose.fotelvandor-prod.yml to load environment variables from .env.fotelvandor-prod file
+  - [x] Reverted configuration.js to use process.env.REACT_APP_* variables directly for runtime configuration
+  - [x] Fixed index.js to render app synchronously without async config loading
+  - [x] Created .dockerignore to exclude sensitive .env files and unnecessary files from Docker builds
+  - [x] Built and published Docker image vargajoe/sn-magazine:preview to Docker Hub with sensitive files excluded
+  - [x] Updated compose files to use published image instead of local build
+  - [x] Created deployment example in deploy/ folder with README for using published image
+  - [x] Updated root docker-compose.yml for development with hot reload using local build
+  - [x] Verified container starts successfully and serves app on port 3000 with runtime environment variable support
+
+### Technical Tasks - Docker Multi-Architecture Support
+  - [x] Enabled Docker Buildx for multi-platform builds (AMD64 and ARM64)
+  - [x] Created build-docker-images.ps1 script in deploy/scripts/ to automate building and pushing all image variants
+  - [x] Built and published vargajoe/sn-magazine:preview-amd64 for AMD64 architecture
+  - [x] Built and published vargajoe/sn-magazine:preview-arm64 for ARM64 architecture  
+  - [x] Built and published vargajoe/sn-magazine:preview as multi-architecture image supporting both platforms
+  - [x] Verified Raspberry Pi (ARM64) can successfully pull and run the multi-architecture image
+  - [x] Updated documentation for multi-architecture deployment options

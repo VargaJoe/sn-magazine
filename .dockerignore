@@ -1,0 +1,69 @@
+# Environment files (sensitive configurations)
+.env
+.env.*
+!.env.example
+
+# Git
+.git
+.gitignore
+
+# Node modules (will be installed in container)
+node_modules
+
+# Build outputs
+build
+dist
+
+# IDE
+.vscode
+.idea
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage
+
+# Dependency directories
+jspm_packages/
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variables file
+.env
+
+# Deployment folders
+deploy/
+mangajanlo.docker/
+fotelvandor.docker/
+
+# Documentation
+docs/
+
+# Test files
+**/*.test.js
+**/*.test.jsx
+setupTests.js
