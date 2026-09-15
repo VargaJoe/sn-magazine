@@ -1,6 +1,10 @@
-/* FotelVándor R5 homepage skin — client CSS (magazine chrome)
-   Tokens: orange #E87A2E · charcoal #2B3544 · soft bg #F5F2EC
-   ECM still owns content; this file is visual only. */
+/* TEMPORARY client bootstrap for R5 layout slots only.
+ * Production skin tokens/CSS should live in SenseNet ECM:
+ *   {REACT_APP_API_URL}{REACT_APP_DATA_PATH}/(structure)/Site/skin.css
+ * (same Site folder as logo.png). Upload Fotel (or Manga) skin there —
+ * one engine, many sites. This file is layout-slot chrome until that asset exists.
+ * Do NOT treat public/Fotel-R5.css as the production path (removed).
+ */
 
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:wght@600;700&display=swap');
 
@@ -20,11 +24,6 @@
 
 .fotel-r5 a { color: inherit; text-decoration: none; }
 
-.fotel-r5__stock {
-  position: fixed; bottom: 10px; left: 10px; z-index: 30;
-  background: #000c; color: #fff; font-size: 10px; font-weight: 600;
-  padding: 6px 10px; border-radius: 4px; pointer-events: none;
-}
 
 /* —— header —— */
 .fotel-r5__header {
@@ -217,4 +216,19 @@
   .fotel-r5__hero-copy h1 { font-size: 28px; }
   .fotel-r5__latest-row { grid-template-columns: 72px 1fr; }
   .fotel-r5__latest-row .fotel-r5__btn-sm { grid-column: 2; justify-self: start; }
+}
+
+
+/* Graceful empty cover/still when ECM Image missing */
+.fotel-r5__hero-bg--empty,
+.fotel-r5__trip-shot--empty,
+.fotel-r5__latest-thumb--empty,
+.fotel-r5__thumb--empty {
+  background: linear-gradient(135deg, #2B3544 0%, #4a5568 55%, #E87A2E 140%);
+}
+.fotel-r5__brand-logo {
+  display: block; max-height: 40px; width: auto; object-fit: contain;
+}
+.fotel-r5__brand-fallback {
+  font-family: Fraunces, Georgia, serif; font-weight: 700; font-size: 20px;
 }

@@ -1,8 +1,15 @@
-# Design R5 assets
+# SN Magazine — R5 Fotel homepage (ECM-driven)
 
-- `DESIGN_ROUND5.md` — IA / tokens lock
-- `fotel-home-r5.html` — structural reference
-- `art/*` — STOCK placeholder covers (layout demo; replace with ECM/Binary or licensed stills)
-- Live skin: `src/components/layouts/page-fotel-r5.js` + `public/Fotel-R5.css`
+- Design refs: `art/*`, `DESIGN_ROUND5.md` (not production assets)
+- Live layout: `src/components/layouts/page-fotel-r5.js`
+- Temporary slot chrome: `src/components/layouts/fotel-r5-slots.css` (bootstrap only)
+- **Production skin CSS path (ECM):** `{REACT_APP_API_URL}{REACT_APP_DATA_PATH}/(structure)/Site/skin.css`
+  - Same Site folder as `logo.png`. Upload Fotel (or Manga) skin tokens there — one engine, many sites.
+  - Optional override: `REACT_APP_SKIN_CSS_PATH`
+- **Removed from production path:** `public/Fotel-R5.css`, `public/fotel-r5/*` stock covers, baked Iris wordmark, hardcoded Filmek/Könyvek routes, picsum/stock bake
 
-**ECM vs client CSS:** Visual chrome (header, hero fold, floating card, icon nav, trips grid, archive CTA) ships as client layout+CSS. SenseNet still owns content: set homepage Layout `PageTemplate` to `fotel-r5` (Fotel home also auto-resolves from `leisure-simple` when `REACT_APP_DATA_PATH` contains `fotelvandor`). Wire widgets / CustomRoot for live reviews when ready. Manga env files untouched.
+**Publish filter:** queries use `+PublishDate:<@@CurrentTime@@` (same as ECM SmartFolders `LEGFRISSEBB UTAZÁSOK` / `HÍREK` under `(structure)/Queries`).
+
+**Nav / logo:** ECM categories (`DisplayZone` menuitem/menuicon) + `REACT_APP_LOGO_PATH` API logo.
+
+Manga: `.env.mangajanlo*` untouched.

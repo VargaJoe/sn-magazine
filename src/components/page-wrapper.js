@@ -162,8 +162,8 @@ const PageWrapper = React.memo((props) => {
           }
           // setLayout(layout);
           // console.log('selected page:', page?.Name, 'widgets:', widgets?.length);
-                    // Fotel R5: homepage skin. Prefer explicit PageTemplate fotel-r5;
-          // also auto-map leisure-simple on fotelvandor site root so R5 shows without ECM edit.
+                    // Fotel R5 layout slots. Prefer explicit PageTemplate fotel-r5;
+          // auto-map leisure-simple on fotelvandor home. Skin CSS/logo/nav/content from ECM.
           const resolveTemplate = (pageNode, ctx) => {
             const raw = pageNode?.PageTemplate;
             const dataPathEnv = process.env.REACT_APP_DATA_PATH || '';
@@ -320,4 +320,5 @@ const PageWrapper = React.memo((props) => {
 });
 
 export default PageWrapper;
+
 

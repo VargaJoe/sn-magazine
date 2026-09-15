@@ -5,51 +5,13 @@ import { useRepository } from '@sensenet/hooks-react';
 import { CachedComponentsByZone } from '../utils/add-component';
 import { useSnStore } from '../store/sn-store';
 import deepEqual from '../utils/deep-equal';
+// Temporary layout-slot chrome only. Authoritative skin CSS lives in ECM:
+//   {API}{DATA_PATH}/(structure)/Site/skin.css  (same Site folder as logo.png)
+import './fotel-r5-slots.css';
 
-const STOCK = {
-  hero: '/fotel-r5/fotel-r5-hero.jpg',
-  dune: '/fotel-r5/r5-cover-dune.jpg',
-  dragon: '/fotel-r5/r5-cover-dragon.jpg',
-  map: '/fotel-r5/r5-cover-map.jpg',
-  latest: '/fotel-r5/r5-cover-latest.jpg',
-  scifi1: '/fotel-r5/r5-cover-scifi1.jpg',
-  scifi2: '/fotel-r5/r5-cover-scifi2.jpg',
-};
+const defaultLogo = require('../../images/logo.png');
 
-const FALLBACK_NAV = [
-  { label: 'Főoldal', path: '/', match: 'home' },
-  { label: 'Filmek', path: '/Filmek', nameHints: ['Filmek', 'Film'] },
-  { label: 'Könyvek', path: '/Konyvek', nameHints: ['Könyvek', 'Konyvek', 'Könyv'] },
-  { label: 'Játékkönyvek', path: '/Jatekonyvek', nameHints: ['Játékkönyvek', 'Jatekkonyvek', 'Játékkönyv'] },
-  { label: 'Sorozat', path: '/Sorozat', nameHints: ['Sorozat', 'Sorozatok'] },
-  { label: 'Visszatekintés', path: '/Visszatekintes', nameHints: ['Visszatekintés', 'Visszatekintes', 'Archívum', 'Archivum'] },
-];
-
-const FALLBACK_ICONS = [
-  { label: 'Film', emoji: '🎬', path: '/Filmek', on: true },
-  { label: 'Könyv', emoji: '📖', path: '/Konyvek' },
-  { label: 'Játékkönyv', emoji: '🎲', path: '/Jatekonyvek' },
-  { label: 'Sorozat', emoji: '📺', path: '/Sorozat' },
-  { label: 'Archívum', emoji: '🕘', path: '/Visszatekintes' },
-];
-
-const FALLBACK_TRIPS = [
-  { title: 'Dűne', subtitle: 'Homok, gépek, és a fotel mint űrhajó.', tag: 'Film', image: STOCK.dune, path: '/Filmek' },
-  { title: 'A Sárkányok Könyve', subtitle: 'Fantasy esszé — cover first.', tag: 'Könyv', image: STOCK.dragon, path: '/Konyvek' },
-  { title: 'Válassz! — interaktív', subtitle: 'Térkép a következő útra.', tag: 'Játékkönyv', image: STOCK.map, path: '/Jatekonyvek' },
-];
-
-const FALLBACK_LATEST = [
-  { title: 'Játékkönyv klasszikusok', subtitle: 'Rövid teaser — ritka pub, erős archívum.', image: STOCK.latest, path: '/Jatekonyvek' },
-  { title: 'Senki gyűjtemény', subtitle: 'Öt év, egy polc.', image: STOCK.map, path: '/Visszatekintes' },
-];
-
-const FALLBACK_NEWS = [
-  { title: 'Megújult külső', date: '2023.11.02' },
-  { title: 'A motorháztető alatt', date: '2021.08.14' },
-  { title: 'Magányos Farkas', date: '2021.03.20' },
-];
-
+/** ECM cover/still → absolute API URL. No stock bake. */
 function mediaUrl(item) {
   if (!item) return null;
   if (item.Image?.Url) return `${process.env.REACT_APP_API_URL}${item.Image.Url}`;
@@ -69,8 +31,26 @@ function relativePath(path) {
   return path.startsWith('/') ? path : `/${path}`;
 }
 
-function guessCategoryLabel(name = '') {
-  const n = name.toLowerCase();
+function siteLogoUrl() {
+  const apiUrl = process.env.REACT_APP_API_URL || '';
+  const dataPath = process.env.REACT_APP_DATA_PATH || '';
+  const logoPath = process.env.REACT_APP_LOGO_PATH;
+  if (!logoPath) return defaultLogo;
+  const url = `${apiUrl}${dataPath}${logoPath}`;
+  if (url === apiUrl || url === `${apiUrl}${dataPath}`) return defaultLogo;
+  return url;
+}
+
+/** ECM theme asset next to logo — one engine, many site skins. */
+function ecmSkinCssUrl() {
+  const apiUrl = process.env.REACT_APP_API_URL || '';
+  const dataPath = process.env.REACT_APP_DATA_PATH || '';
+  const skinPath = process.env.REACT_APP_SKIN_CSS_PATH || '/(structure)/Site/skin.css';
+  return `${apiUrl}${dataPath}${skinPath}`;
+}
+
+function guessCategoryLabel(name = '', path = '') {
+  const n = `${name} ${path}`.toLowerCase();
   if (n.includes('film')) return 'Film';
   if (n.includes('könyv') || n.includes('konyv') || n.includes('book')) return 'Könyv';
   if (n.includes('játék') || n.includes('jatek') || n.includes('game')) return 'Játékkönyv';
@@ -78,72 +58,100 @@ function guessCategoryLabel(name = '') {
   return 'Esszé';
 }
 
+function formatDate(src) {
+  if (!src) return '';
+  try {
+    return new Date(src).toISOString().slice(0, 10).replace(/-/g, '.');
+  } catch {
+    return '';
+  }
+}
+
 /**
- * FotelVándor R5 homepage layout — magazine chrome matching docs/design-r5 lock.
- * PageTemplate name: fotel-r5
- * SenseNet: categories / recent reviews enrich placeholders when available.
+ * FotelVándor R5 homepage — layout slots only; skin/content from SenseNet ECM.
+ * PageTemplate: fotel-r5
+ *
+ * Publish filter (restored from ECM SmartFolder queries under (structure)/Queries):
+ *   +PublishDate:<@@CurrentTime@@
+ * Same rule as LEGFRISSEBB UTAZÁSOK / HÍREK — future PublishDate never on fold/lists.
+ *
+ * Nav: ECM LeisureCategory/SoftLink (DisplayZone menuitem / menuicon), not hardcoded routes.
+ * Logo: REACT_APP_LOGO_PATH via API (live site logo).
+ * Images: content Image.Url; empty gradient fallback if missing — no public/fotel-r5 stock.
  */
 export const FotelR5Layout = React.memo((props) => {
   const { context, widgets } = useSnStore((state) => state, deepEqual);
   const repo = useRepository();
   const location = useLocation();
-  const [categories, setCategories] = useState([]);
+  const [navCats, setNavCats] = useState([]);
   const [featured, setFeatured] = useState([]);
   const [newsItems, setNewsItems] = useState([]);
+  const [logoOk, setLogoOk] = useState(true);
 
   const dataPath = process.env.REACT_APP_DATA_PATH || '/Root/Content/fotelvandor';
+  const logoUrl = useMemo(() => siteLogoUrl(), []);
+  const skinCss = useMemo(() => ecmSkinCssUrl(), []);
 
   const loadHomeData = useCallback(async () => {
     if (!repo) return;
+
+    // Side-menu pattern (ECM widget "Side menu"): categories + softlinks, Hidden:0
     try {
       const cats = await repo.loadCollection({
         path: dataPath,
         oDataOptions: {
-          query: 'TypeIs:LeisureCategory OR TypeIs:Folder',
-          select: ['Id', 'Name', 'DisplayName', 'Path', 'Index', 'IconName'],
+          query: '+Type:(LeisureCategory SoftLink) +Hidden:0',
+          select: ['Id', 'Name', 'DisplayName', 'Path', 'Index', 'IconName', 'DisplayZone', 'Url', 'Type'],
           orderby: ['Index', 'DisplayName'],
-          top: 20,
+          top: 40,
           metadata: 'no',
+          enablelifespanfilter: 'on',
         },
       });
-      setCategories(cats?.d?.results || []);
+      setNavCats(cats?.d?.results || []);
     } catch (e) {
-      console.warn('[fotel-r5] categories fallback', e?.message || e);
+      console.warn('[fotel-r5] nav/menu ECM load failed', e?.message || e);
+      setNavCats([]);
     }
 
+    // Same publish filter as ECM SmartFolder LEGFRISSEBB UTAZÁSOK
     try {
       const reviews = await repo.loadCollection({
         path: dataPath,
         oDataOptions: {
-          query: 'TypeIs:LeisureBookReview OR TypeIs:LeisureArticle OR TypeIs:Article',
+          query:
+            `+InTree:('${dataPath}/Könyv' '${dataPath}/Sorozat' '${dataPath}/Film' '${dataPath}/Játékkönyv') ` +
+            '+TypeIs:LeisureArticle +Hidden:0 +PublishDate:<@@CurrentTime@@',
           select: 'all',
-          orderby: [['PublishDate', 'desc'], ['ModificationDate', 'desc']],
+          orderby: [['PublishDate', 'desc']],
           top: 8,
           metadata: 'no',
+          enablelifespanfilter: 'on',
         },
       });
       setFeatured(reviews?.d?.results || []);
     } catch (e) {
-      console.warn('[fotel-r5] featured fallback', e?.message || e);
+      console.warn('[fotel-r5] featured ECM load failed', e?.message || e);
+      setFeatured([]);
     }
 
+    // Same publish filter as ECM SmartFolder HÍREK
     try {
       const news = await repo.loadCollection({
         path: dataPath,
         oDataOptions: {
-          query: "TypeIs:LeisureArticle AND (InFolder:'" + dataPath + "/Hirek' OR InFolder:'" + dataPath + "/News' OR DisplayName:*)",
-          select: ['Id', 'Name', 'DisplayName', 'Path', 'PublishDate', 'ModificationDate'],
+          query: `+InTree:('${dataPath}/hírek') +TypeIs:LeisureArticle +Hidden:0 +PublishDate:<@@CurrentTime@@`,
+          select: ['Id', 'Name', 'DisplayName', 'Path', 'PublishDate', 'ModificationDate', 'Image'],
           orderby: [['PublishDate', 'desc']],
-          top: 3,
+          top: 4,
           metadata: 'no',
+          enablelifespanfilter: 'on',
         },
       });
-      // Prefer items under Hirek if present; else keep empty so demoted placeholders show
-      const results = news?.d?.results || [];
-      const hirek = results.filter((r) => /hirek|hírek|news/i.test(r.Path || ''));
-      setNewsItems(hirek.length ? hirek : []);
+      setNewsItems(news?.d?.results || []);
     } catch (e) {
-      console.warn('[fotel-r5] news fallback', e?.message || e);
+      console.warn('[fotel-r5] news ECM load failed', e?.message || e);
+      setNewsItems([]);
     }
   }, [repo, dataPath]);
 
@@ -152,105 +160,94 @@ export const FotelR5Layout = React.memo((props) => {
   }, [loadHomeData]);
 
   const navItems = useMemo(() => {
-    return FALLBACK_NAV.map((item) => {
-      if (item.match === 'home') return { ...item, path: '/' };
-      const hit = categories.find((c) =>
-        (item.nameHints || []).some((h) =>
-          (c.Name || '').toLowerCase().includes(h.toLowerCase()) ||
-          (c.DisplayName || '').toLowerCase().includes(h.toLowerCase())
-        )
-      );
-      if (hit) {
-        return { ...item, path: relativePath(hit.Path), label: hit.DisplayName || item.label };
-      }
-      return item;
-    });
-  }, [categories]);
+    const home = { id: 'home', label: 'Főoldal', path: '/' };
+    const items = (navCats || [])
+      .filter((c) => Array.isArray(c.DisplayZone) && c.DisplayZone.includes('menuitem'))
+      .map((c) => ({
+        id: c.Id,
+        label: c.DisplayName || c.Name,
+        path: c.Type === 'SoftLink' && c.Url ? c.Url : relativePath(c.Path),
+        external: c.Type === 'SoftLink' && !!c.Url,
+      }));
+    return [home, ...items];
+  }, [navCats]);
 
   const iconItems = useMemo(() => {
-    return FALLBACK_ICONS.map((icon) => {
-      const hit = categories.find((c) =>
-        (c.DisplayName || '').toLowerCase().includes(icon.label.toLowerCase()) ||
-        (c.Name || '').toLowerCase().includes(icon.label.toLowerCase().slice(0, 4))
-      );
-      return hit
-        ? { ...icon, path: relativePath(hit.Path), label: hit.DisplayName || icon.label }
-        : icon;
-    });
-  }, [categories]);
+    const fromZone = (navCats || []).filter(
+      (c) => Array.isArray(c.DisplayZone) && (c.DisplayZone.includes('menuicon') || c.DisplayZone.includes('menuitem'))
+    );
+    // Prefer explicit menuicon; else menuitem categories for circular icon row
+    const icons = fromZone.filter((c) => c.DisplayZone.includes('menuicon'));
+    const source = icons.length ? icons : fromZone.filter((c) => c.DisplayZone.includes('menuitem'));
+    return source.map((c) => ({
+      id: c.Id,
+      label: c.DisplayName || c.Name,
+      path: relativePath(c.Path),
+      iconClass: c.IconName || null,
+    }));
+  }, [navCats]);
 
   const heroEssay = useMemo(() => {
     const first = featured[0];
-    if (!first) {
-      return {
-        title: 'Kritikus szemmel könyvekről, filmekről és játékkönyvekről.',
-        lead: 'Homepage = kirakat. A foldon erős kép + egy esszé — nem hírek, nem dump.',
-        category: 'Könyv',
-        meta: 'I, Robot · ~18 perc',
-        date: '2026.09.05',
-        path: '/Visszatekintes',
-        image: STOCK.hero,
-        isStock: true,
-      };
-    }
-    const dateSrc = first.PublishDate || first.ModificationDate;
-    const date = dateSrc
-      ? new Date(dateSrc).toISOString().slice(0, 10).replace(/-/g, '.')
-      : '';
+    if (!first) return null;
+    const img = mediaUrl(first);
     return {
       title: first.DisplayName || first.Name,
-      lead: first.Description || first.Lead || first.Subtitle || 'Kiemelt esszé a fotelből.',
-      category: guessCategoryLabel(first.DisplayName || first.Name || ''),
-      meta: first.Author ? `${first.Author}` : 'Esszé',
-      date,
+      lead: first.Description || first.Lead || first.Subtitle || '',
+      category: guessCategoryLabel(first.DisplayName || first.Name || '', first.Path || ''),
+      meta: first.Author || 'Esszé',
+      date: formatDate(first.PublishDate || first.ModificationDate),
       path: relativePath(first.Path),
-      image: mediaUrl(first) || STOCK.hero,
-      isStock: !mediaUrl(first),
+      image: img,
     };
   }, [featured]);
 
   const trips = useMemo(() => {
-    if (featured.length >= 3) {
-      return featured.slice(0, 3).map((item, idx) => ({
-        title: item.DisplayName || item.Name,
-        subtitle: item.Description || item.Lead || FALLBACK_TRIPS[idx]?.subtitle || '',
-        tag: guessCategoryLabel(item.DisplayName || item.Name || ''),
-        image: mediaUrl(item) || FALLBACK_TRIPS[idx]?.image || STOCK.dune,
-        path: relativePath(item.Path),
-      }));
-    }
-    return FALLBACK_TRIPS;
+    return featured.slice(0, 3).map((item) => ({
+      id: item.Id,
+      title: item.DisplayName || item.Name,
+      subtitle: item.Description || item.Lead || '',
+      tag: guessCategoryLabel(item.DisplayName || item.Name || '', item.Path || ''),
+      image: mediaUrl(item),
+      path: relativePath(item.Path),
+    }));
   }, [featured]);
 
   const latest = useMemo(() => {
-    if (featured.length >= 2) {
-      return featured.slice(0, 2).map((item, idx) => ({
-        title: item.DisplayName || item.Name,
-        subtitle: item.Description || item.Lead || FALLBACK_LATEST[idx]?.subtitle || '',
-        image: mediaUrl(item) || FALLBACK_LATEST[idx]?.image || STOCK.latest,
-        path: relativePath(item.Path),
-      }));
-    }
-    return FALLBACK_LATEST;
+    return featured.slice(0, 2).map((item) => ({
+      id: item.Id,
+      title: item.DisplayName || item.Name,
+      subtitle: item.Description || item.Lead || '',
+      image: mediaUrl(item),
+      path: relativePath(item.Path),
+    }));
+  }, [featured]);
+
+  const collectionThumbs = useMemo(() => {
+    return featured.slice(0, 3).map((item) => ({
+      id: item.Id,
+      image: mediaUrl(item),
+      title: item.DisplayName || item.Name,
+      path: relativePath(item.Path),
+    }));
   }, [featured]);
 
   const demotedNews = useMemo(() => {
-    if (newsItems.length) {
-      return newsItems.slice(0, 3).map((n) => ({
-        title: n.DisplayName || n.Name,
-        date: n.PublishDate
-          ? new Date(n.PublishDate).toISOString().slice(0, 10).replace(/-/g, '.')
-          : '',
-        path: relativePath(n.Path),
-      }));
-    }
-    return FALLBACK_NEWS;
+    return newsItems.slice(0, 3).map((n) => ({
+      id: n.Id,
+      title: n.DisplayName || n.Name,
+      date: formatDate(n.PublishDate),
+      path: relativePath(n.Path),
+    }));
   }, [newsItems]);
 
-  const archivePath = navItems.find((n) => /vissza|archív|archiv/i.test(n.label))?.path || '/Visszatekintes';
+  const archivePath =
+    navItems.find((n) => /vissza|archív|archiv/i.test(n.label))?.path ||
+    relativePath(`${dataPath}/Visszatekintés`);
+
   const isActive = (path) => {
     if (path === '/') return location.pathname === '/' || location.pathname === '';
-    return location.pathname.toLowerCase().startsWith(path.toLowerCase());
+    return location.pathname.toLowerCase().startsWith(String(path).toLowerCase());
   };
 
   const safeWidgets = Array.isArray(widgets) ? widgets : [];
@@ -258,32 +255,43 @@ export const FotelR5Layout = React.memo((props) => {
   return (
     <div className="fotel-r5 App">
       <Helmet>
-        <link rel="stylesheet" href="/Fotel-R5.css" />
-        <title>{context?.DisplayName || 'FotelVándor'}</title>
-        <meta name="theme-color" content="#E87A2E" />
+        {/* ECM skin (Fotel vs Manga tokens). 404 until uploaded — slots CSS still boots layout. */}
+        <link rel="stylesheet" href={skinCss} />
+        <title>{context?.DisplayName || context?.Workspace?.DisplayName || 'FotelVándor'}</title>
       </Helmet>
-
-      <div className="fotel-r5__stock">STOCK placeholder covers · layout demo</div>
 
       <header className="fotel-r5__header">
         <div className="fotel-r5__header-inner">
-          <Link className="fotel-r5__brand" to="/">
-            <div className="fotel-r5__mark" aria-hidden>🪑</div>
-            <div>
-              <div className="fotel-r5__name">Fotel<span>Vándor</span></div>
-              <span className="fotel-r5__tag">Kalandtúra a csomagban</span>
-            </div>
+          <Link className="fotel-r5__brand" to="/" aria-label="Kezdőlap">
+            {logoOk ? (
+              <img
+                className="fotel-r5__brand-logo"
+                src={logoUrl}
+                alt=""
+                onError={() => setLogoOk(false)}
+              />
+            ) : (
+              <span className="fotel-r5__brand-fallback">
+                {context?.Workspace?.DisplayName || context?.DisplayName || 'Home'}
+              </span>
+            )}
           </Link>
           <nav className="fotel-r5__nav" aria-label="Főmenü">
-            {navItems.map((item) => (
-              <Link
-                key={item.label}
-                to={item.path}
-                className={isActive(item.path) ? 'on' : undefined}
-              >
-                {item.label}
-              </Link>
-            ))}
+            {navItems.map((item) =>
+              item.external ? (
+                <a key={item.id} href={item.path} target="_blank" rel="noreferrer">
+                  {item.label}
+                </a>
+              ) : (
+                <Link
+                  key={item.id}
+                  to={item.path}
+                  className={isActive(item.path) ? 'on' : undefined}
+                >
+                  {item.label}
+                </Link>
+              )
+            )}
           </nav>
           <form className="fotel-r5__search" role="search" onSubmit={(e) => e.preventDefault()}>
             <span aria-hidden>⌕</span>
@@ -292,102 +300,122 @@ export const FotelR5Layout = React.memo((props) => {
         </div>
       </header>
 
-      <section className="fotel-r5__hero">
-        <div
-          className="fotel-r5__hero-bg"
-          style={{ backgroundImage: `url('${heroEssay.image}')` }}
-          role="img"
-          aria-label={heroEssay.isStock ? 'STOCK hero' : heroEssay.title}
-        />
-        <div className="fotel-r5__hero-inner">
-          <div className="fotel-r5__hero-copy">
-            <div className="fotel-r5__kicker">Kiemelt esszé · fold</div>
-            <h1>{heroEssay.title}</h1>
-            <div className="fotel-r5__meta">
-              <span className="fotel-r5__chip o">{heroEssay.category}</span>
-              <span className="fotel-r5__chip">{heroEssay.meta}</span>
-              {heroEssay.date ? <span className="fotel-r5__chip">{heroEssay.date}</span> : null}
-            </div>
-            <p>{heroEssay.lead}</p>
-            <div className="fotel-r5__actions">
-              <Link className="fotel-r5__btn" to={heroEssay.path}>Teljes esszé →</Link>
-              <Link className="fotel-r5__btn ghost" to={archivePath}>Visszatekintés</Link>
+      {heroEssay ? (
+        <section className="fotel-r5__hero">
+          <div
+            className={`fotel-r5__hero-bg${heroEssay.image ? '' : ' fotel-r5__hero-bg--empty'}`}
+            style={heroEssay.image ? { backgroundImage: `url('${heroEssay.image}')` } : undefined}
+            role="img"
+            aria-label={heroEssay.title}
+          />
+          <div className="fotel-r5__hero-inner">
+            <div className="fotel-r5__hero-copy">
+              <div className="fotel-r5__kicker">Kiemelt esszé · fold</div>
+              <h1>{heroEssay.title}</h1>
+              <div className="fotel-r5__meta">
+                <span className="fotel-r5__chip o">{heroEssay.category}</span>
+                {heroEssay.meta ? <span className="fotel-r5__chip">{heroEssay.meta}</span> : null}
+                {heroEssay.date ? <span className="fotel-r5__chip">{heroEssay.date}</span> : null}
+              </div>
+              {heroEssay.lead ? <p>{heroEssay.lead}</p> : null}
+              <div className="fotel-r5__actions">
+                <Link className="fotel-r5__btn" to={heroEssay.path}>Teljes esszé →</Link>
+                <Link className="fotel-r5__btn ghost" to={archivePath}>Visszatekintés</Link>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      ) : null}
 
       <div className="fotel-r5__stage">
         <div className="fotel-r5__float">
-          <div className="fotel-r5__icons">
-            {iconItems.map((icon) => (
-              <Link
-                key={icon.label}
-                className={`fotel-r5__icon${icon.on ? ' on' : ''}`}
-                to={icon.path}
-              >
-                <div className="c">{icon.emoji}</div>
-                <span>{icon.label}</span>
-              </Link>
-            ))}
-          </div>
+          {iconItems.length > 0 ? (
+            <div className="fotel-r5__icons">
+              {iconItems.map((icon) => (
+                <Link key={icon.id} className="fotel-r5__icon" to={icon.path}>
+                  <div className="c">
+                    {icon.iconClass ? <i className={`fa ${icon.iconClass}`} aria-hidden /> : '·'}
+                  </div>
+                  <span>{icon.label}</span>
+                </Link>
+              ))}
+            </div>
+          ) : null}
 
-          <div className="fotel-r5__sec-h">
-            <h2>Kiemelt utazások</h2>
-            <Link to={navItems[1]?.path || '/Filmek'}>Összes →</Link>
-          </div>
-          <div className="fotel-r5__trips">
-            {trips.map((trip) => (
-              <Link key={trip.title} className="fotel-r5__trip" to={trip.path}>
-                <div
-                  className="fotel-r5__trip-shot"
-                  style={{ backgroundImage: `url('${trip.image}')` }}
-                >
-                  <span className="fotel-r5__trip-tag">{trip.tag}</span>
-                </div>
-                <div className="fotel-r5__trip-body">
-                  <h3>{trip.title}</h3>
-                  <p>{trip.subtitle}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
+          {trips.length > 0 ? (
+            <>
+              <div className="fotel-r5__sec-h">
+                <h2>Kiemelt utazások</h2>
+                {navItems[1] ? <Link to={navItems[1].path}>Összes →</Link> : null}
+              </div>
+              <div className="fotel-r5__trips">
+                {trips.map((trip) => (
+                  <Link key={trip.id} className="fotel-r5__trip" to={trip.path}>
+                    <div
+                      className={`fotel-r5__trip-shot${trip.image ? '' : ' fotel-r5__trip-shot--empty'}`}
+                      style={trip.image ? { backgroundImage: `url('${trip.image}')` } : undefined}
+                    >
+                      <span className="fotel-r5__trip-tag">{trip.tag}</span>
+                    </div>
+                    <div className="fotel-r5__trip-body">
+                      <h3>{trip.title}</h3>
+                      {trip.subtitle ? <p>{trip.subtitle}</p> : null}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </>
+          ) : null}
 
           <div className="fotel-r5__split">
             <div>
-              <div className="fotel-r5__sec-h">
-                <h2>Tematikus gyűjtemények</h2>
-                <Link to={navItems.find((n) => /sorozat/i.test(n.label))?.path || '/Sorozat'}>
-                  Böngészés →
-                </Link>
-              </div>
-              <div className="fotel-r5__collect">
-                <h3>Top sci-fi sorozatok</h3>
-                <div className="fotel-r5__thumbs">
-                  <img src={STOCK.scifi1} alt="" />
-                  <img src={STOCK.scifi2} alt="" />
-                  <img src={STOCK.dune} alt="" />
-                </div>
-              </div>
-
-              <div className="fotel-r5__sec-h" style={{ marginTop: 22 }}>
-                <h2>Legfrissebb kalandok</h2>
-              </div>
-              <div>
-                {latest.map((row) => (
-                  <div className="fotel-r5__latest-row" key={row.title}>
-                    <div
-                      className="fotel-r5__latest-thumb"
-                      style={{ backgroundImage: `url('${row.image}')` }}
-                    />
-                    <div>
-                      <h3>{row.title}</h3>
-                      <p>{row.subtitle}</p>
-                    </div>
-                    <Link className="fotel-r5__btn-sm" to={row.path}>Olvasás</Link>
+              {collectionThumbs.length > 0 ? (
+                <>
+                  <div className="fotel-r5__sec-h">
+                    <h2>Tematikus gyűjtemények</h2>
+                    {navItems.find((n) => /sorozat/i.test(n.label)) ? (
+                      <Link to={navItems.find((n) => /sorozat/i.test(n.label)).path}>Böngészés →</Link>
+                    ) : null}
                   </div>
-                ))}
-              </div>
+                  <div className="fotel-r5__collect">
+                    <h3>Friss borítók</h3>
+                    <div className="fotel-r5__thumbs">
+                      {collectionThumbs.map((t) =>
+                        t.image ? (
+                          <Link key={t.id} to={t.path}>
+                            <img src={t.image} alt={t.title || ''} />
+                          </Link>
+                        ) : (
+                          <div key={t.id} className="fotel-r5__thumb--empty" style={{ width: 72, height: 96, borderRadius: 6 }} />
+                        )
+                      )}
+                    </div>
+                  </div>
+                </>
+              ) : null}
+
+              {latest.length > 0 ? (
+                <>
+                  <div className="fotel-r5__sec-h" style={{ marginTop: 22 }}>
+                    <h2>Legfrissebb kalandok</h2>
+                  </div>
+                  <div>
+                    {latest.map((row) => (
+                      <div className="fotel-r5__latest-row" key={row.id}>
+                        <div
+                          className={`fotel-r5__latest-thumb${row.image ? '' : ' fotel-r5__latest-thumb--empty'}`}
+                          style={row.image ? { backgroundImage: `url('${row.image}')` } : undefined}
+                        />
+                        <div>
+                          <h3>{row.title}</h3>
+                          {row.subtitle ? <p>{row.subtitle}</p> : null}
+                        </div>
+                        <Link className="fotel-r5__btn-sm" to={row.path}>Olvasás</Link>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : null}
             </div>
 
             <div>
@@ -396,20 +424,22 @@ export const FotelR5Layout = React.memo((props) => {
                 <p>Ritka megjelenés — a Visszatekintés a fő bejárat az archívumba.</p>
                 <Link className="fotel-r5__btn" to={archivePath}>Visszatekintés →</Link>
               </div>
-              <div className="fotel-r5__news">
-                <div className="fotel-r5__news-note">Hírek · demoted</div>
-                <h3>Hírek</h3>
-                {demotedNews.map((item) => (
-                  <div className="fotel-r5__news-item" key={item.title}>
-                    {item.path ? <Link to={item.path}>{item.title}</Link> : item.title}
-                    {item.date ? <span>{item.date}</span> : null}
-                  </div>
-                ))}
-              </div>
+              {demotedNews.length > 0 ? (
+                <div className="fotel-r5__news">
+                  <div className="fotel-r5__news-note">Hírek · demoted</div>
+                  <h3>Hírek</h3>
+                  {demotedNews.map((item) => (
+                    <div className="fotel-r5__news-item" key={item.id}>
+                      <Link to={item.path}>{item.title}</Link>
+                      {item.date ? <span>{item.date}</span> : null}
+                    </div>
+                  ))}
+                </div>
+              ) : null}
             </div>
           </div>
 
-          {/* Optional ECM widgets still render below the curated chrome */}
+          {/* ECM widgets (side/content) still available for banners / lists */}
           {safeWidgets.length > 0 ? (
             <div className="fotel-r5__zone">
               <CachedComponentsByZone type="widgets" zone="content" widgets={safeWidgets} context={context} />
@@ -419,7 +449,7 @@ export const FotelR5Layout = React.memo((props) => {
       </div>
 
       <footer className="fotel-r5__footer">
-        FotelVándor · PlasticE · sister → MANGAjánló (később)
+        {context?.Workspace?.DisplayName || context?.DisplayName || 'FotelVándor'}
       </footer>
     </div>
   );
