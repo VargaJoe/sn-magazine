@@ -162,9 +162,23 @@ const PageWrapper = React.memo((props) => {
           }
           // setLayout(layout);
           // console.log('selected page:', page?.Name, 'widgets:', widgets?.length);
-          const addedComponent =  !page || page.PageTemplate === '' || page.PageTemplate === null ? 
+                    // Fotel R5 layout slots. Prefer explicit PageTemplate fotel-r5;
+          // auto-map leisure-simple on fotelvandor home. Skin CSS/logo/nav/content from ECM.
+          const resolveTemplate = (pageNode, ctx) => {
+            const raw = pageNode?.PageTemplate;
+            const dataPathEnv = process.env.REACT_APP_DATA_PATH || '';
+            const isFotel = dataPathEnv.toLowerCase().includes('fotelvandor');
+            const isHome = ctx && ctx.Workspace && ctx.Id === ctx.Workspace.Id;
+            if (raw === 'fotel-r5') return 'fotel-r5';
+            if (isFotel && isHome && (raw === 'leisure-simple' || raw === '' || raw == null)) {
+              return 'fotel-r5';
+            }
+            return raw;
+          };
+          const templateName = resolveTemplate(page, context);
+          const addedComponent =  !page || templateName === '' || templateName === null ? 
             addLayout(context, setLayout) :
-            addComponent('layouts', 'page', page.PageTemplate, `page-${page.PageTemplate}`, null, null, null);
+            addComponent('layouts', 'page', templateName, `page-${templateName}`, null, null, null);
           // const addedComponent =  addComponent('layouts', 'page', page.PageTemplate, `page-${page.PageTemplate}`, null, null, null);
           
           if (wrappercompo.key !== addedComponent.key) {
@@ -306,3 +320,5 @@ const PageWrapper = React.memo((props) => {
 });
 
 export default PageWrapper;
+
+
