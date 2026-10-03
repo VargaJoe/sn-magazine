@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useRepository } from '@sensenet/hooks-react';
 import { addComponent, addLayout } from './utils/add-component';
+import { addPageTemplate } from './utils/page-template';
 import { useLocation } from 'react-router-dom';
 import { useSnStore } from "./store/sn-store";
 import CommonHelmet from './layouts/partial-head';
@@ -162,9 +163,9 @@ const PageWrapper = React.memo((props) => {
           }
           // setLayout(layout);
           // console.log('selected page:', page?.Name, 'widgets:', widgets?.length);
-          const addedComponent =  !page || page.PageTemplate === '' || page.PageTemplate === null ? 
+          const addedComponent = !page?.PageTemplate ?
             addLayout(context, setLayout) :
-            addComponent('layouts', 'page', page.PageTemplate, `page-${page.PageTemplate}`, null, null, null);
+            addPageTemplate(page.PageTemplate);
           // const addedComponent =  addComponent('layouts', 'page', page.PageTemplate, `page-${page.PageTemplate}`, null, null, null);
           
           if (wrappercompo.key !== addedComponent.key) {

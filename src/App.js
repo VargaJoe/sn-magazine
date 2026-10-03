@@ -4,13 +4,15 @@ import { Routes, Route } from "react-router-dom";
 import SiteRoutes from "./navigation";
 import { HelmetProvider } from "react-helmet-async";
 import AnalyticsTracker from "./AnalyticsTracker";
+import SitePresentationProvider from './presentation/site-presentation-provider';
 
 function App() {
   const helmetContext = {};
 
   return (
     <HelmetProvider context={helmetContext}>
-      <AnalyticsTracker />
+      <SitePresentationProvider>
+        <AnalyticsTracker />
         <Routes>
           {SiteRoutes.public.map((route, index) => (
             <Route
@@ -20,6 +22,7 @@ function App() {
               element={<route.component />} />
           ))}
         </Routes>
+      </SitePresentationProvider>
     </HelmetProvider>
   );
 }

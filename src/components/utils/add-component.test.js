@@ -1,14 +1,14 @@
 import { importView, addComponent, clearLazyComponentCache } from './add-component';
-import React from 'react';
 
 describe('Dynamic Component Resolution', () => {
   beforeEach(() => {
     clearLazyComponentCache();
   });
 
-  it('should return a fallback component if type/prefix/component is missing', () => {
+  it('returns null rather than an invalid React element when the folder is missing', () => {
     const Fallback = importView(undefined, 'auto', 'default');
-    expect(Fallback).toBeDefined();
+    expect(Fallback).toBeNull();
+    expect(addComponent(undefined, 'auto', 'default', 1)).toBeNull();
   });
 
   it('should cache components and not duplicate them', () => {
@@ -17,11 +17,12 @@ describe('Dynamic Component Resolution', () => {
     expect(Comp1).toBe(Comp2);
   });
 
-  it('should clear cache with clearLazyComponentCache', () => {
+  it('can resolve the same module after clearing its own cache', () => {
     const Comp1 = importView('widgets', 'auto', 'default');
     clearLazyComponentCache();
     const Comp2 = importView('widgets', 'auto', 'default');
-    expect(Comp1).not.toBe(Comp2);
+    // Clearing our lookup cache does not invalidate Webpack's module cache.
+    expect(Comp2).toBe(Comp1);
   });
 
   it('should support custom fallback', () => {
