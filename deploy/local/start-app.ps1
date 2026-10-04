@@ -7,7 +7,7 @@ $ErrorActionPreference='Stop'
 $settings=Get-Content -LiteralPath (Join-Path $PSScriptRoot 'runtime/import.json') -Raw | ConvertFrom-Json
 $repository=$settings.repositoryWriter.url
 if (-not ([uri]$repository).IsLoopback) { throw 'The app starter only uses a loopback repository.' }
-$values=Get-Content -LiteralPath (Join-Path $PSScriptRoot 'runtime/docker.env') | ConvertFrom-StringData
+$values=Get-Content -LiteralPath (Join-Path $PSScriptRoot 'runtime/docker.env') -Raw | ConvertFrom-StringData
 $localEnv=@{
     PORT="$Port"; HOST='127.0.0.1'; BROWSER='none';
     REACT_APP_API_URL=$repository; REACT_APP_AUTH_URL="http://localhost:$($values.AUTH_PORT)";

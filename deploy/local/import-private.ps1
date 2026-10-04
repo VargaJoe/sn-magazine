@@ -26,9 +26,25 @@ Copy-Item -LiteralPath (Join-Path $source 'Content') -Destination $staging -Recu
 Copy-Item -LiteralPath (Join-Path $source 'Content.Content') -Destination $staging
 $schema=Join-Path $source 'System/Schema/ContentTypes'
 $required=New-Object 'System.Collections.Generic.HashSet[string]'
+$normalizedImages=0
 foreach($contentFile in Get-ChildItem -LiteralPath (Join-Path $source 'Content') -Recurse -Filter '*.Content') {
     $content=Get-Content -LiteralPath $contentFile.FullName -Raw | ConvertFrom-Json
     $required.Add($content.ContentType) | Out-Null
+    # Image.Url is a computed export value containing the old node ID. The
+    # attached ImageData is authoritative and regenerates that URL after import.
+    if ($content.Fields.Image.Url -and $content.Fields.ImageData.Attachment) {
+        $relative=$contentFile.FullName.Substring($source.Length).TrimStart([char[]]'\/')
+        $stagedFile=Join-Path $staging $relative
+        $attachment=[IO.Path]::GetFullPath((Join-Path (Split-Path -Parent $stagedFile) $content.Fields.ImageData.Attachment))
+        $contentRoot=[IO.Path]::GetFullPath((Join-Path $staging 'Content'))+[IO.Path]::DirectorySeparatorChar
+        if (-not $attachment.StartsWith($contentRoot,[StringComparison]::OrdinalIgnoreCase) -or
+            -not (Test-Path -LiteralPath $attachment -PathType Leaf)) {
+            throw "Missing or invalid local ImageData attachment for $($contentFile.Name)."
+        }
+        $content.Fields.PSObject.Properties.Remove('Image')
+        $content | ConvertTo-Json -Depth 100 | Set-Content -LiteralPath $stagedFile -Encoding utf8
+        $normalizedImages++
+    }
 }
 $definitions=@{}
 foreach($file in Get-ChildItem -LiteralPath $schema -Recurse -Filter '*.xml') {
@@ -56,6 +72,6 @@ foreach($name in $required) {
     Copy-Item -LiteralPath $file.FullName -Destination $target
     $count++
 }
-Write-Output "Prepared private local staging with $count app/custom content types. Originals were preserved."
+Write-Output "Prepared private local staging with $count app/custom content types and $normalizedImages regenerated image URLs. Originals were preserved."
 & (Join-Path $PSScriptRoot '../import.ps1') -PATFile $SettingsFile -SourceFolder $staging
 Write-Output 'Private site content import finished. Staging and logs remain local and ignored.'

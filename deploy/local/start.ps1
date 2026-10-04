@@ -31,12 +31,20 @@ if (-not (Test-Path -LiteralPath $envFile)) {
     $key = New-LocalSecret
     @("SQL_PASSWORD=Sn9!$(New-LocalSecret)", "LOCAL_API_KEY=$key", "LOCAL_HEALTH_KEY=$(New-LocalSecret)",
       "REPOSITORY_PORT=$RepositoryPort", "AUTH_PORT=$AuthPort") | Set-Content -LiteralPath $envFile -Encoding utf8
-    @{ repositoryWriter = @{ url="http://localhost:$RepositoryPort"; authentication=@{ apiKey=$key } } } |
+    @{ repositoryWriter = @{ url="http://127.0.0.1:$RepositoryPort"; authentication=@{ apiKey=$key } } } |
         ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $settingsFile -Encoding utf8
 } elseif ($PSBoundParameters.ContainsKey('RepositoryPort') -or $PSBoundParameters.ContainsKey('AuthPort')) {
     throw 'Ports are fixed by runtime/docker.env after initialization. Reuse this singleton instance and its saved configuration.'
 }
 $settings = Get-Content -LiteralPath $settingsFile -Raw | ConvertFrom-Json
+$repositoryUri = [uri]$settings.repositoryWriter.url
+if ($repositoryUri.Scheme -eq 'http' -and $repositoryUri.Host -eq 'localhost') {
+    # Avoid IPv6-first connection delays against the IPv4-only Docker binding.
+    $builder = [UriBuilder]$repositoryUri
+    $builder.Host = '127.0.0.1'
+    $settings.repositoryWriter.url = $builder.Uri.AbsoluteUri.TrimEnd('/')
+    $settings | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $settingsFile -Encoding utf8
+}
 $repoUrl = $settings.repositoryWriter.url
 if (-not ([uri]$repoUrl).IsLoopback) { throw 'Local runtime configuration must use a loopback repository.' }
 Invoke-Docker @('config', '--quiet')

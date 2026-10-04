@@ -67,6 +67,11 @@ Start again with start.ps1 -SkipImport. No script resets databases or removes
 volumes. Inspect Compose logs locally if startup times out. Keep logs/configuration
 out of issues and PRs because private import details may appear in them.
 
+The generated writer URL uses 127.0.0.1. On the tested Windows host, .NET requests
+to localhost incurred about two seconds of IPv6-first connection delay each;
+explicit IPv4 removed that delay. start.ps1 also upgrades its older generated
+HTTP localhost writer configuration while preserving the key and port.
+
 ## Optional private export import
 
 Place private exports under the ignored temp/ directory. Pass the exported Root
@@ -87,6 +92,12 @@ ComponentDescription; the public app CTDs use RichText. SenseNet forbids changin
 an existing field's type. Keeping the installed app schema lets the HTML string
 values import without attempting that incompatible type change. This is a local
 fixture adaptation, not an in-place schema migration for a live repository.
+
+For embedded article images, an exported Image.Url can contain the old node ID.
+When an ImageData attachment is present, staging omits that computed Image value
+and imports the original attached binary, allowing SenseNet to regenerate the URL.
+The attachment must exist inside the staged Content tree. Original files and
+ImageRef fields are preserved; this also makes repeated fixture imports work.
 
 For a different export with additional app fields or external referenced contents,
 review its CTDs/dependencies before relying on an exact replica. This importer
