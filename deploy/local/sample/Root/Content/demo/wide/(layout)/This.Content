@@ -1,0 +1,10 @@
+{
+  "ContentType": "Layout",
+  "ContentName": "This",
+  "Fields": {
+    "PageTemplate": "wide",
+    "Stylesheets": [
+      "/Root/Content/demo/assets/a-assets.css"
+    ]
+  }
+}

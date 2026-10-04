@@ -11,15 +11,15 @@ function App() {
   return (
     <HelmetProvider context={helmetContext}>
       <AnalyticsTracker />
-        <Routes>
-          {SiteRoutes.public.map((route, index) => (
-            <Route
-              key={index}
-              path={route.path}
-              exact={route.exact}
-              element={<route.component />} />
-          ))}
-        </Routes>
+      <Routes>
+        {SiteRoutes.public.map((route, index) => (
+          <Route
+            key={index}
+            path={route.path}
+            exact={route.exact}
+            element={<route.component />} />
+        ))}
+      </Routes>
     </HelmetProvider>
   );
 }

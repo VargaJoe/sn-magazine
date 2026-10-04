@@ -24,7 +24,7 @@ export function clearLazyComponentCache() {
  * @param {string} prefix - The component prefix (e.g. 'auto', 'manual', 'page')
  * @param {string} component - The component name (without prefix)
  * @param {string} [fallback] - Optional custom fallback component name
- * @returns {React.LazyExoticComponent}
+ * @returns {React.ComponentType|null}
  */
 function importView(type, prefix, component, fallback) {
   if (!type || !prefix || !component) {
@@ -102,6 +102,7 @@ function importView(type, prefix, component, fallback) {
  */
 export const addComponent = (type, prefix, component, id, data, page, widget, fallback) => {
   const View = importView(type, prefix, component, fallback);
+  if (!View) return null;
   // widgets can be top level or nested
   // top level widgets usually get context from store
   // nested widgets get context from parent widget
@@ -114,12 +115,10 @@ export const addComponent = (type, prefix, component, id, data, page, widget, fa
 };
 
 export const CachedComponentsByZone = ({ type, zone, widgets, context }) => {
-  const componentsRef = React.useRef(new Map());
-
   if (!widgets || widgets.length === 0) {
     console.log('cached component by zone - widgets undefined: ', {type: type}, {zone: zone}, {context: context});
     if (zone === null || zone === 'content') {
-      return addComponent('content', 'auto', context.Type.toLowerCase(), `${type}-${zone}-err-${context.Id}`, null);
+      return context ? addComponent('content', 'auto', context.Type.toLowerCase(), `${type}-${zone}-err-${context.Id}`, null) : null;
     } else {
       return null;
     }
@@ -129,14 +128,12 @@ export const CachedComponentsByZone = ({ type, zone, widgets, context }) => {
   return (
     widgets.filter(pcnt => pcnt.PortletZone === zone).map((child) => { 
       const componentId = `${child.Id}`;
-      if (!componentsRef.current.has(componentId)) {
-        const isAuto = (child.ClientComponent === undefined || child.ClientComponent === null || child.ClientComponent === '');
-        const compoType = isAuto ? child.Type : child.ClientComponent;
-        const prefix = (isAuto) ? "auto" : "manual";
-        const element = addComponent(type, prefix, compoType.toLowerCase(), componentId, null, null, child);
-        componentsRef.current.set(componentId, element);
-      }
-      return componentsRef.current.get(componentId);
+      // Cache component definitions in importView, not elements with stale props.
+      // Stable keys preserve widget state while repository settings can change.
+      const isAuto = (child.ClientComponent === undefined || child.ClientComponent === null || child.ClientComponent === '');
+      const compoType = isAuto ? child.Type : child.ClientComponent;
+      const prefix = isAuto ? 'auto' : 'manual';
+      return addComponent(type, prefix, compoType.toLowerCase(), componentId, null, null, child);
     })
   );
 };

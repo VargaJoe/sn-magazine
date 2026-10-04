@@ -1,308 +1,149 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useRepository } from '@sensenet/hooks-react';
-import { addComponent, addLayout } from './utils/add-component';
 import { useLocation } from 'react-router-dom';
-import { useSnStore } from "./store/sn-store";
+import { addComponent, addLayout } from './utils/add-component';
+import { useSnStore } from './store/sn-store';
 import CommonHelmet from './layouts/partial-head';
+import PageStylesheets from '../presentation/page-stylesheets';
 import { maintenanceTemplate } from '../configuration';
-// import MaintenanceLayout from './layouts/page-maintenance';
-// import MaintenanceLeisureLayout from './layouts/page-maintenance-leisure';
 
-// Deep equality check for arrays/objects
-const deepEqual = (a, b) => {
-  if (a === b) return true;
-  if (a == null || b == null) return false;
-  if (Array.isArray(a) && Array.isArray(b)) {
-    if (a.length !== b.length) return false;
-    for (let i = 0; i < a.length; i++) {
-      if (!deepEqual(a[i], b[i])) return false;
-    }
-    return true;
-  }
-  if (typeof a === 'object' && typeof b === 'object') {
-    const keysA = Object.keys(a);
-    const keysB = Object.keys(b);
-    if (keysA.length !== keysB.length) return false;
-    for (let key of keysA) {
-      if (!deepEqual(a[key], b[key])) return false;
-    }
-    return true;
-  }
-  return false;
-};
+function isStylesheetsSchemaMissing(error) {
+  const status = error?.statusCode ?? error?.response?.status;
+  if (status !== undefined && status !== 400 && status !== 500) return false;
+  const message = error?.body?.error?.message?.value || error?.message || '';
+  return /\b(?:unknown|unrecognized|undefined|nonexistent)\s+(?:field|property)(?:\s+name)?\s*[:=]?\s*['"]?Stylesheets\b/i.test(message) ||
+    /\b(?:field|property)\s*['"]?Stylesheets['"]?\s+(?:does not exist|was not found|is not (?:found|defined)|not found|not defined)\b/i.test(message) ||
+    /\bStylesheets['"]?\s+(?:field|property)\s+(?:does not exist|was not found|is not (?:found|defined)|not found|not defined)\b/i.test(message);
+}
 
-const PageWrapper = React.memo((props) => {
+// Preserve the existing Context -> inherited Layout (Page) query resolution.
+function pageQuery(context, layoutContentType, widgetContentType) {
+  if (context.Type === layoutContentType) {
+    return `Path:'${context.Path}' OR TypeIs:${widgetContentType} AND InFolder:'${context.Path}' AND Hidden:0`;
+  }
+  const folders = [];
+  let path = '';
+  for (const part of context.Path.split('/').filter(Boolean)) {
+    path += `/${part}`;
+    folders.push(`'${path}/(layout)'`);
+  }
+  folders.reverse();
+  const base = `'${process.env.REACT_APP_PAGECONTAINER_PATH}'`;
+  if (!folders.includes(base)) folders.push(base);
+  return `
+    (
+      Name:This AND TypeIs:${layoutContentType} AND Path:'${context.Path}/(layout)/This'
+    )
+    OR
+    (
+      (
+        (Name:'${context.Type}' AND TypeIs:${layoutContentType})
+        OR TypeIs:${widgetContentType}
+      )
+      AND InTree:(${folders.join(' ')})
+      AND Hidden:0
+    )`;
+}
+
+const PageWrapper = React.memo(() => {
   const location = useLocation();
   const repo = useRepository();
-  const [wrappercompo, setCompo] = useState([]);
-  // const [context, setContext] = useState();
-  const { context, setContext, setLayout, setPage, setWidgets } = useSnStore();
-  const locationPath = location.pathname;
-  const loadingRefs = useRef(new Map());
-  const instanceId = useRef(Math.random().toString(36).substr(2, 8));
-  const renderCount = useRef(0);
-  renderCount.current += 1;
-  // --- End debug instance identity ---
+  const { setContext, setLayout, setPage, setWidgets } = useSnStore();
+  const [resolved, setResolved] = useState(null);
+  const requestGeneration = useRef(0);
+  const navigationKey = `${location.key}|${location.pathname}`;
+  // Gate rendering immediately, before the navigation effect starts its loads.
+  const current = resolved?.navigationKey === navigationKey && resolved?.repo === repo ? resolved : null;
+  const layoutContentType = process.env.REACT_APP_LAYOUT_TYPE || 'Layout';
+  const widgetContentType = process.env.REACT_APP_WIDGET_TYPE || 'Widget';
 
-  // --- Debug: track previous context and page for shallow equality ---
-  const prevContextRef = useRef();
-  const prevPageRef = useRef();
-  const [debugPage, setDebugPage] = useState(); // local page state for debug
+  useEffect(() => {
+    const generation = ++requestGeneration.current;
+    let cancelled = false;
+    const isCurrent = () => !cancelled && requestGeneration.current === generation;
+    setResolved(null);
+    setContext(null);
+    setPage(null);
+    setWidgets(null);
 
-  // Shallow equality check helper
-  function shallowEqual(objA, objB) {
-    if (objA === objB) return true;
-    if (!objA || !objB) return false;
-    const keysA = Object.keys(objA);
-    const keysB = Object.keys(objB);
-    if (keysA.length !== keysB.length) return false;
-    for (let key of keysA) {
-      if (objA[key] !== objB[key]) return false;
-    }
-    return true;
-  }
-
-  // Patch setPage to also update local debug state
-  const setPageDebug = useCallback((p) => {
-    setPage(p);
-    setDebugPage(p);
-  }, [setPage]);
-
-  const layoutContentType = process.env.REACT_APP_LAYOUT_TYPE || "Layout";
-  const widgetContentType = process.env.REACT_APP_WIDGET_TYPE || "Widget";
-
-  // refactor: filters should get from page fields
-  const loadPage = useCallback(async () => {
-    // console.log('%cloadPage for context', "font-size:14px;color:green", context?.Id);
-
-    const isLoading = loadingRefs.current.get(locationPath);
-    if (isLoading) {
-      // console.log('loadPage already in progress for locationPath', locationPath, 'skipping');
-      return;
-    }
-    loadingRefs.current.set(locationPath, true);
-    if (isLoading) {
-      // console.log('loadPage already in progress for context', context?.Id, 'skipping');
-      return;
-    }
-    loadingRefs.current.set(context?.Id, true);
-
-    // layoutPathList: return path list of possible layoutdeclarations
-    const layoutPathList = () => {
-      const splittedPath = context.Path.split('/').filter(element => element);
-      const basePath = process.env.REACT_APP_PAGECONTAINER_PATH;
-      const lpl = [];
-      var newPathName = "";
-      for (var i = 0; i < splittedPath.length; i++) {
-        newPathName += "/";
-        newPathName += splittedPath[i];
-        lpl[i] = `'${newPathName}/(layout)'`;
-      }
-      lpl.reverse();
-      if (!lpl.includes(`'${basePath}'`))
-      {
-        lpl[lpl.length]=`'${basePath}'`;
-      }
-      // console.log('LPL', lpl);
-      return lpl;
-    };
-
-    // pageQuery: return query to select effective layout declaration
-    const pageQuery = () => { 
-      let query="";
-      if (context.Type === layoutContentType) {
-        query = `Path:'${context.Path}' OR TypeIs:${widgetContentType} AND InFolder:'${context.Path}' AND Hidden:0`;
-      } else {
-        query =`
-        (
-          Name:This AND TypeIs:${layoutContentType} AND Path:'${context.Path}/(layout)/This'
-        )
-        OR
-        (
-          (
-            (Name:'${context.Type}' AND TypeIs:${layoutContentType})
-            OR 
-            TypeIs:${widgetContentType}
-          )
-          AND InTree:(
-            ${layoutPathList().join(' ')}
-            ) 
-          AND Hidden:0
-        )`
-      }  
-      // console.log('query to select layout', query);
-      return query;   
-    };
-
-    // console.log('context type', context.Type);
-    if (context !== null && context !== undefined && context.Type !== undefined) {
-      const query = pageQuery();
-      const queryPath = `/Root/Content`;
-      await repo.loadCollection({
-        path: queryPath,
-        oDataOptions: {
-          query: query,
-          expand: ['CustomRoot'],
-          orderby: ['Index'],
-          select: "all",      
-          enablelifespanfilter: "on",
-          enableautofilters: "off"
-        },
-      }).then(result => {
-        if (result?.d?.results && result?.d?.results.length > 0) {
-          const page = result.d.results.filter(pcnt => pcnt.Type === layoutContentType).sort((a, b) => a.Depth < b.Depth ? 1 : -1)[0];
-          const widgets = page?result.d.results?.filter(pcnt => pcnt.ParentId === page.Id):undefined;
-          // const layout = !page || page.PageTemplate === '' || page.PageTemplate === null ? "vanilla" : page.PageTemplate;
-
-          setPageDebug(page);
-          // Check if widgets changed before setting
-          const currentWidgets = useSnStore.getState().widgets;
-          if (!deepEqual(widgets, currentWidgets)) {
-            setWidgets(widgets);
-          }
-          // setLayout(layout);
-          // console.log('selected page:', page?.Name, 'widgets:', widgets?.length);
-          const addedComponent =  !page || page.PageTemplate === '' || page.PageTemplate === null ? 
-            addLayout(context, setLayout) :
-            addComponent('layouts', 'page', page.PageTemplate, `page-${page.PageTemplate}`, null, null, null);
-          // const addedComponent =  addComponent('layouts', 'page', page.PageTemplate, `page-${page.PageTemplate}`, null, null, null);
-          
-          if (wrappercompo.key !== addedComponent.key) {
-            // console.log('set page load useEffect then', { wrappercompo: wrappercompo }, { addedComponent: addedComponent });
-            setCompo(addedComponent);
-          } else {
-            // console.log('skip page load useEffect then');
-          }
-        } else {
-          console.warn('no page was found - else:', context.Type.toLowerCase());
-          
-          const addedComponent = addLayout(context, setLayout)
-          if (wrappercompo.key !== addedComponent.key) {
-            // console.log('set page load useEffect else', { wrappercompo: wrappercompo }, { addedComponent: addedComponent });
-            setCompo(addedComponent);
-          } else {
-            // console.log('skip page load useEffect else');
-          }          
+    const load = async () => {
+      let context;
+      try {
+        const path = location.pathname.replace(/\(/g, '%28').replace(/\)/g, '%29');
+        const result = await repo.load({
+          idOrPath: `${process.env.REACT_APP_DATA_PATH}/${path}`,
+          oDataOptions: { select: 'all', expand: 'Workspace' },
+        });
+        if (!isCurrent()) return;
+        context = result?.d;
+        if (!context?.Type || typeof context.Path !== 'string') {
+          throw new Error('No context was returned for the requested page');
         }
-      }).catch(error => {
+        setContext(context);
+      } catch (error) {
+        if (!isCurrent()) return;
+        console.error('Connection refused on loading page: ', error);
+        setResolved({ navigationKey, repo, context: null, page: null,
+          component: addComponent('layouts', 'page', maintenanceTemplate, 666) });
+        return;
+      }
+
+      let page = null;
+      let widgets;
+      try {
+        const options = {
+          path: '/Root/Content',
+          oDataOptions: {
+            query: pageQuery(context, layoutContentType, widgetContentType),
+            expand: ['CustomRoot', 'Stylesheets'],
+            orderby: ['Index'],
+            select: 'all',
+            enablelifespanfilter: 'on',
+            enableautofilters: 'off',
+          },
+        };
+        let result;
+        try {
+          result = await repo.loadCollection(options);
+        } catch (error) {
+          if (!isCurrent()) return;
+          if (!isStylesheetsSchemaMissing(error)) throw error;
+          // Existing repositories may still have the original Layout CTD.
+          result = await repo.loadCollection({ ...options,
+            oDataOptions: { ...options.oDataOptions, expand: ['CustomRoot'] } });
+        }
+        if (!isCurrent()) return;
+        const contents = Array.isArray(result?.d?.results) ? result.d.results : [];
+        page = contents.filter(content => content.Type === layoutContentType)
+          .sort((a, b) => a.Depth < b.Depth ? 1 : -1)[0] || null;
+        widgets = page ? contents.filter(content => content.ParentId === page.Id) : undefined;
+      } catch (error) {
+        if (!isCurrent()) return;
         console.error('error on loading page: ', error);
-        
-        // TODO: error page 
-        // setCompo(addComponent('layouts', 'page', "vanilla", `err-${context.Id}`, context)); 
-        const addedComponent = addLayout(context, setLayout)
-        if (wrappercompo.key !== addedComponent.key) {
-          // console.log('set page load useEffect catch', { wrappercompo: wrappercompo }, { addedComponent: addedComponent });
-          setCompo(addedComponent);
-        } else {
-          // console.log('skip page load useEffect catch');
-        }
-      })
-      .finally(() => {
-        loadingRefs.current.set(locationPath, false);
-      });
+      }
+      if (!isCurrent()) return;
+      setPage(page);
+      setWidgets(widgets);
+      const selected = !page?.PageTemplate ? null :
+        addComponent('layouts', 'page', page.PageTemplate, `page-${page.PageTemplate}`, null, null, null);
+      const component = selected || addLayout(context, setLayout);
+      setResolved({ navigationKey, repo, context, page, component });
     };
-  }, [context, layoutContentType, widgetContentType, repo, setLayout, setPageDebug, setWidgets]);
+    load();
+    return () => { cancelled = true; };
+  }, [repo, location.pathname, navigationKey, layoutContentType, widgetContentType, setContext, setLayout, setPage, setWidgets]);
 
-  const loadContent = useCallback(async () => {
-    // console.log("Load content for:", locationPath);
-    const locationPathWorkaround = locationPath.replace("(", "%28").replace(")", "%29");
-    await repo.load({
-      idOrPath: `${process.env.REACT_APP_DATA_PATH}/${locationPathWorkaround}`,
-      oDataOptions: {
-        select: 'all',
-        expand: 'Workspace'
-      },
-    }).then(result => {
-      if (result?.d?.Type) {
-        // console.log('First level context loaded:', result.d.Id);
-        setContext(result.d);
-      };
-    })
-    .catch(connectionrefused => {
-        console.error('Connection refused on loading page: ', connectionrefused);
-        // setCompo(addComponent('layouts', 'page', 'maintenance', 1));
-        
-        setCompo(addComponent('layouts', 'page', maintenanceTemplate, 666));
-
-
-        // // const addedComponent = addComponent('layouts', 'page', 'maintenance', `page-maintenance`, null, null, null);
-        // // setCompo(addedComponent);
-        // // if (maintenance) {
-        //   switch (maintenanceTemplate) {
-        //     case 'maintenance-leisure':
-        //        return <MaintenanceLeisureLayout />;
-        //     case 'maintenance':
-        //     default:
-        //       setCompo(addComponent('layouts', 'page', 'maintenance', 666));
-        //       // return <MaintenanceLayout />;
-        //   }
-        // }
-    })
-    .catch(error => {
-      console.error('error on loading content: ', error);
-      setCompo(addComponent('layouts', 'page', 'error', 1));
-    })
-    .finally(() => {
-    });
-  }, [locationPath, repo, setContext]);
-
-  useEffect(() => {
-    if (locationPath !== null && locationPath !== undefined) {
-      loadContent();
-    }
-  }, [locationPath, loadContent]);
-
-  useEffect(() => {
-    if (context != null && context !== undefined) {
-      loadPage();
-    }
-  }, [context]);
-
-  useEffect(() => {
-    // Log only on significant changes
-    const contextChanged = !shallowEqual(context, prevContextRef.current);
-    const pageChanged = !shallowEqual(debugPage, prevPageRef.current);
-    if (contextChanged || pageChanged || renderCount.current === 1) {
-      console.log('%c[PageWrapper] Render', 'color:orange;font-weight:bold', {
-        renderCount: renderCount.current,
-        locationPath,
-        contextId: context?.Id,
-        contextChanged,
-        pageChanged,
-        wrappercompoKey: wrappercompo?.key,
-      });
-    }
-    prevContextRef.current = context;
-    prevPageRef.current = debugPage;
-  });
-
-  if (wrappercompo === undefined || wrappercompo === null)
-    return null;
-
-  if (context === undefined || wrappercompo === undefined || wrappercompo === null)
-  return null;
-
-  return ( 
-    <React.Suspense>
-      <CommonHelmet
-        context={context}
-      />
-      {/* Debug info for layout node and wrappercompo */}
-      <div style={{display:'none'}} data-debug-pagewrapper={JSON.stringify({
-        instanceId: instanceId.current,
-        renderCount: renderCount.current,
-        locationPath,
-        contextType: context?.Type,
-        contextId: context?.Id,
-        contextPath: context?.Path,
-        wrappercompoKey: wrappercompo?.key,
-        wrappercompoType: wrappercompo?.type,
-        wrappercompoName: wrappercompo?.props?.name,
-        wrappercompoProps: wrappercompo?.props,
-      })} />
-      {wrappercompo}
-    </React.Suspense>
-  )
+  return (
+    <>
+      <PageStylesheets page={current?.page} repositoryUrl={process.env.REACT_APP_API_URL} />
+      {current && (
+        <React.Suspense fallback={null}>
+          {current.context && <CommonHelmet context={current.context} />}
+          {current.component}
+        </React.Suspense>
+      )}
+    </>
+  );
 });
 
 export default PageWrapper;

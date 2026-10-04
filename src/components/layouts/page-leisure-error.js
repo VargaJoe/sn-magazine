@@ -25,7 +25,7 @@ export const LeisureErrorLayout = (props) => {
 
   return (
     <div className="App w3-theme-l5">
-        <Helmet>
+        <Helmet defer={false}>
 					<meta charSet="utf-8" />
 					<title>{pageTitle}</title>
 				</Helmet>
