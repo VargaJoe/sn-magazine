@@ -24,7 +24,7 @@ const CommonHelmet = ({ context }) => {
   const description = "book movie tvseries manga anime games reviews hungarian"
 
   return (
-    <Helmet>
+    <Helmet defer={false}>
 
       <meta charset="utf-8" />
       <title>{pageTitle}</title>

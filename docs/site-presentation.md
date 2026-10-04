@@ -1,175 +1,92 @@
-# Repository-managed site presentation
+# Repository-managed Page stylesheets
 
-The React engine can load a public presentation manifest for each configured
-site. This separates CSS and widget-zone structure from site-specific React
-pages. It does not change FotelVándor or MANGAjánló's design or repository content.
+The renderer follows the existing SenseNet model:
 
-## Compatibility and activation
+URL + configured repository/base path → Context Content → resolved Layout (Page) →
+PageTemplate string → child Widget contents.
 
-- The site still comes from `REACT_APP_API_URL` and `REACT_APP_DATA_PATH`.
-- By default the app requests
-  `<site>/(structure)/Site/presentation.json` once when the site configuration
-  mounts. `REACT_APP_PRESENTATION_PATH` can override this with a site-relative
-  path or a full `/Root/...` repository path.
-- A missing file (404) leaves the existing CSS and page templates active. Invalid
-  JSON, an unsupported manifest, access errors, network errors, and an eight-second
-  timeout also preserve the built-in layout. These do not prevent content loading.
-- Existing `Layout.PageTemplate` values such as `leisure-simple` still select
-  their original React layouts. A manifest never automatically replaces them.
-- To select a declarative layout, set `Layout.PageTemplate` to
-  `repository:<name>`, for example `repository:magazine`. Layout inheritance and
-  widget selection continue to use the existing SenseNet queries.
-- An unavailable manifest or unknown declarative layout name falls back to
-  `leisure-simple`, including its existing `side` and `content` zones. Additional
-  zones are available only when their declarative layout is valid.
+A Layout currently combines Page metadata with the string that selects a bundled
+React PageTemplate. Different contexts can resolve different Pages and templates
+within the same site. This change adds CSS File references to that selected Page.
 
-The new manifest CSS applies to **all pages of that site**, including existing
-React layouts. Scope selectors to `.sn-site-layout` or a declared layout class
-if the stylesheet should affect only new layouts.
+## Native Content contract
 
-## Manifest version 1
+The public Layout CTD adds one optional field:
 
-Upload a normal File content named `presentation.json` to the site folder:
+    <Field name="Stylesheets" type="Reference">
+      <DisplayName>Page stylesheets</DisplayName>
+      <Configuration>
+        <AllowMultiple>true</AllowMultiple>
+        <AllowedTypes><Type>File</Type></AllowedTypes>
+      </Configuration>
+    </Field>
 
-```json
-{
-  "version": 1,
-  "stylesheets": ["skin.css"],
-  "layouts": {
-    "magazine": {
-      "className": "magazine-layout",
-      "zones": [
-        { "name": "header", "className": "magazine-header" },
-        { "name": "side", "className": "magazine-navigation" },
-        { "name": "content", "className": "magazine-content" },
-        { "name": "footer", "className": "magazine-footer" }
-      ]
-    },
-    "reading": {
-      "className": "reading-layout",
-      "zones": [
-        { "name": "content" },
-        { "name": "side" }
-      ]
-    }
-  }
-}
-```
+This uses the native [SenseNet Reference field](https://docs.sensenet.com/concepts/fields/09-reference/).
+Upload ordinary CSS File contents anywhere under /Root, then reference them from
+Layout.Stylesheets in the desired cascade order. Several Pages can reference the
+same files. The renderer expands Stylesheets alongside CustomRoot in the existing
+Page/widget query; it accepts expanded File contents with Path and Type fields.
 
-`stylesheets` and `layouts` can be omitted, so a CSS-only first step is possible.
-Stylesheets load in declaration order after the existing static head styles;
-duplicates are removed. Files must be on the configured repository origin and
-under `/Root/`. Relative stylesheet paths resolve next to the manifest; absolute
-repository paths such as `/Root/Skins/shared/base.css` are also supported.
+For example, a Page can reference these two Files:
 
-The manifest and its assets must be anonymously readable. The manifest uses
-`fetch` without credentials and a browser cache revalidation request. Cross-origin
-repositories must allow the site's origin via CORS. No OIDC bearer token is sent
-to CSS, font, image or manifest URLs.
+    /Root/Content/example/assets/base.css
+    /Root/Content/example/assets/article.css
 
-The manifest is revalidated on page reload; it is not polled while a page is
-open. CSS, images and fonts use the repository's own cache headers. If a cached
-stylesheet needs an immediate refresh, change its reference in the manifest,
-for example `skin.css?v=2`.
+PageTemplate remains a string such as leisure-simple or wide. Widget selection,
+PortletZone, Index and widget context binding keep their current meaning. CSS can
+change layout geometry within the selected template; new HTML structures and new
+widget business logic still require React code in this slice.
 
-Layout and zone names are case-sensitive identifiers: a letter followed by
-letters, digits, underscores or hyphens. Optional `className` values contain
-space-separated CSS class names following the same rule. Each layout must
-contain a `content` zone; zone names must be unique within it. Any invalid
-declaration rejects the whole manifest before applying its stylesheets.
+There is no separate site manifest or CSS inheritance mechanism. Existing Page
+resolution determines the Page; an inherited Page brings its own Stylesheets.
+CTD field inheritance is separate from the path-based Page lookup. The current
+query matches the context type name and does not implement a CTD-parent lookup.
 
-## Structure, styles and assets
+## Loading, fallback and assets
 
-The renderer produces a neutral wrapper and the ordered zone wrappers:
+Page CSS links are appended after the existing static head styles. The expanded
+reference order is preserved and duplicate URLs are removed. Only native File
+paths on the configured repository origin under /Root are accepted; external
+URLs, traversal outside /Root, encoded separators, queries and fragments are
+rejected. Links carry data-sn-page-stylesheet and data-sn-page for inspection.
 
-```html
-<div class="sn-site-layout magazine-layout" data-sn-layout="magazine">
-  <div class="sn-site-zone magazine-header" data-sn-zone="header">...</div>
-  <div class="sn-site-zone magazine-navigation" data-sn-zone="side">...</div>
-  <div class="sn-site-zone magazine-content" data-sn-zone="content">...</div>
-  <div class="sn-site-zone magazine-footer" data-sn-zone="footer">...</div>
-</div>
-```
+Navigation immediately removes the previous Page's links. Delayed responses from
+an earlier navigation cannot replace the current Page, widgets or styles. Missing
+Pages, missing context, failed requests and empty/invalid references leave the
+bundled CSS active. Older repositories without this field keep their existing
+rendering; only an explicit missing-Stylesheets schema error triggers a retry
+without that expansion.
 
-Each zone renders the selected Layout's widgets whose `PortletZone` exactly
-matches its name, preserving repository `Index` order. If there are no widgets
-at all, the existing content-type fallback still renders in `content`. Existing
-widget types and `ClientComponent` names keep their current behavior. Updated
-widget properties now reach the renderer even when a widget ID remains the same.
+Stylesheet Files and their assets must be readable by visitors for public sites.
+The browser loads link URLs directly, without the app's OIDC bearer token. Serve
+CSS with text/css. Normal repository/browser cache headers apply; CSS is not
+polled while a Page remains open. Revisit/reload the Page to fetch current metadata;
+use a new File path when immediate cache invalidation is needed.
 
-CSS owns columns, spans, responsive behavior, colors and spacing. For example:
+Relative asset URLs resolve beside the CSS File on the repository server:
 
-```css
-.magazine-layout {
-  display: grid;
-  grid-template-columns: 16rem minmax(0, 1fr);
-  gap: 1rem;
-}
-.magazine-header, .magazine-footer { grid-column: 1 / -1; }
-@media (max-width: 48rem) {
-  .magazine-layout { grid-template-columns: minmax(0, 1fr); }
-}
-```
+    @font-face { font-family: SiteText; src: url('./fonts/site-text.woff2'); }
+    .header { background-image: url('./images/header.svg'); }
 
-This is an illustrative structure, not either live site's design. A different
-site can use a different manifest and CSS with the same React engine. Several
-named layouts can coexist within one site for different page types.
-
-CSS assets resolve relative to the **CSS file**, using standard browser behavior:
-
-```css
-@font-face { font-family: SiteText; src: url('./fonts/site-text.woff2'); }
-.magazine-header { background-image: url('./images/header.svg'); }
-```
-
-Serve CSS with a CSS MIME type and images/fonts with their correct types. The
-manifest cannot load JavaScript or define new widget implementations; new widget
-behavior still requires a bundled React component. Static W3/App styles remain
-the compatibility base. Runtime host-to-site resolution and the SenseNet native
-application framework are separate future steps.
+Cross-origin fonts also require the repository's CORS policy to allow the app
+origin. The same permissions and correct MIME types apply to fonts/images.
 
 ## Verification and rollback
 
-```powershell
-$env:CI='true'; npm test -- --watchAll=false --runInBand
-$env:CI='false'; npm run build
-```
+Use the real [local SenseNet starter](../deploy/local/README.md) and its public
+sample to verify A → B → A, ordered CSS overrides, a Page without CSS, a different
+React template and a relative SVG asset. Private live-site exports are optional
+local fixtures and must remain ignored.
 
-For the local full-app browser fixture (no production writes):
+    $env:CI='true'; npm.cmd test -- --watchAll=false --runInBand
+    $env:CI='false'; npm.cmd run build
 
-```powershell
-$env:REACT_APP_API_URL='http://127.0.0.1:4179'
-$env:REACT_APP_DATA_PATH='/Root/Content/smoke'
-$env:REACT_APP_AUTH_URL='http://127.0.0.1:4179/auth'
-$env:REACT_APP_CLIENT_ID='presentation-smoke'
-$env:REACT_APP_SITE_HOST='http://127.0.0.1:4179'
-$env:REACT_APP_PRESENTATION_PATH='/(structure)/Site/presentation.json'
-$env:BUILD_PATH=Join-Path $env:TEMP 'sn-magazine-presentation-smoke'
-$env:CI='false'
-npm run build
-node scripts/presentation-smoke-server.cjs $env:BUILD_PATH
-```
+Clear a Page's Stylesheets references and revisit it to return to the bundled
+CSS. The PageTemplate field does not need to change. The field is optional and
+existing Page/widget content values do not require migration. Upgrade Layout by
+adding this field to the existing CTD; preserve any repository-specific fields.
 
-Open the local fixture links at `http://127.0.0.1:4179/__scenarios`. Verify:
-
-1. Alpha and Beta use the same application bundle but different repository CSS,
-   zone order and geometry, including a repository SVG asset.
-2. Open a child page and return home: content changes without losing site CSS.
-3. Legacy uses `leisure-simple` with no manifest. Broken JSON and an unknown
-   declarative template also render the existing side/content layout.
-4. Reload after changing a test manifest: it is revalidated rather than stored
-   in the content-binding cache.
-
-Before using a real repository, preview on a test Layout first. Restoring its
-previous `PageTemplate` rolls back structure; removing the manifest (or clearing
-its stylesheet list) rolls back site CSS on reload. Existing content-type
-definitions and deploy scripts need no change. This session does not upload
-assets, modify either live repository tree, or deploy an app.
-
-## Earlier R5 branch
-
-PR [#115](https://github.com/VargaJoe/sn-magazine/pull/115) remains a separate
-FotelVándor design experiment. Its automatic homepage switch and site-specific
-queries are not part of this engine feature. Neither its branch nor design
-references are removed. A future design can use this presentation capability
-without bringing that automatic switch into the shared engine.
+This feature does not redesign or deploy either live site. PR
+[#115](https://github.com/VargaJoe/sn-magazine/pull/115) remains a separate design
+experiment. Separate repository PageTemplate Content/HTML and the native SenseNet
+application framework remain future work.

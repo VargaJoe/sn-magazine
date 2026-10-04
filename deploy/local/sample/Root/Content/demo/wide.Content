@@ -1,0 +1,11 @@
+{
+  "ContentType": "Folder",
+  "ContentName": "wide",
+  "Fields": {
+    "DisplayName": "Sample wide",
+    "AllowedChildTypes": [
+      "Folder",
+      "Layout"
+    ]
+  }
+}

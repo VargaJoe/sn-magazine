@@ -59,6 +59,9 @@ jspm_packages/
 deploy/
 mangajanlo.docker/
 fotelvandor.docker/
+temp/
+deploy/local/runtime/
+logs/
 
 # Documentation
 docs/

@@ -1,0 +1,18 @@
+{
+  "ContentType": "WidgetContentCollection",
+  "ContentName": "Menu",
+  "Fields": {
+    "Title": "Sample pages",
+    "PortletZone": "side",
+    "Index": 0,
+    "ClientComponent": "list-menu",
+    "ContextBinding": [
+      "customroot"
+    ],
+    "CustomRoot": "/Root/Content/demo",
+    "ChildrenLevel": [
+      "deep"
+    ],
+    "ContentQuery": "InFolder:'/Root/Content/demo' AND Name:(a b legacy wide)"
+  }
+}

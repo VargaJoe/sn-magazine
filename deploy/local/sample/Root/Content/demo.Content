@@ -1,0 +1,28 @@
+{
+  "ContentType": "Workspace",
+  "ContentName": "demo",
+  "Fields": {
+    "DisplayName": "Local presentation sample",
+    "AllowedChildTypes": [
+      "Folder",
+      "SystemFolder",
+      "File",
+      "Layout",
+      "WidgetSimpleText",
+      "WidgetContentCollection"
+    ]
+  },
+  "Permissions": {
+    "IsInherited": true,
+    "Entries": [
+      {
+        "Identity": "/Root/IMS/BuiltIn/Portal/Visitor",
+        "LocalOnly": false,
+        "Permissions": {
+          "See": "allow",
+          "Open": "allow"
+        }
+      }
+    ]
+  }
+}

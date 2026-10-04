@@ -1,0 +1,11 @@
+{
+  "ContentType": "Folder",
+  "ContentName": "b",
+  "Fields": {
+    "DisplayName": "Sample b",
+    "AllowedChildTypes": [
+      "Folder",
+      "Layout"
+    ]
+  }
+}
