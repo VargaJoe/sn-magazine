@@ -1,0 +1,9 @@
+
+services:
+  app:
+    image: vargajoe/sn-magazine:preview
+    container_name: sn-magazine-example
+    env_file: .env
+    ports:
+      - "3000:3000"
+    restart: unless-stopped

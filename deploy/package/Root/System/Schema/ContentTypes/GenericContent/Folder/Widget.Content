@@ -1,0 +1,12 @@
+{
+  "ContentType": "ContentType",
+  "ContentName": "Widget",
+  "Fields": {
+    "HandlerName": "SenseNet.ContentRepository.Folder",
+    "ParentTypeName": "Folder",
+    "Binary": {
+      "Attachment": "Widget.xml"
+    },
+    "IsSystemType": false
+  }
+}
