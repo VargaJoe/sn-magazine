@@ -1,4 +1,4 @@
-// Requires Playwright (available via NODE_PATH in the Codex workspace runtime).
+// Requires Playwright with Chromium installed (or available via NODE_PATH).
 // --build optionally previews a local production build on the given origin in
 // this browser only. Repository/API requests still use the real site services.
 const assert = require('node:assert/strict');

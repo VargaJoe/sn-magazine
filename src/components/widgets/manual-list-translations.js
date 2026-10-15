@@ -17,9 +17,10 @@ export function TranslationListWidget(props) {
   const bindedContext = BindedContext(props, true);
  
  const loadContents = useCallback(async () => {
+    if (!process.env.REACT_APP_DATA_PATH) return;
     const ids = bindedContext.children.map(child => child.Id).join(' ');
     const result = await repo.loadCollection({
-      path: `/Root/Content/mangajanlo/manga`,
+      path: process.env.REACT_APP_DATA_PATH,
       oDataOptions: {
         query: `Translation:(${ids})`,
         select: 'all',

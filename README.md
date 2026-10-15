@@ -21,7 +21,7 @@ The other settings are not relevant for now, just go and set `apiUrl` first, it 
 Your settings will look something like this:
 ```json
 {
-	"apiUrl" : 				"https://sn12345678.sensenet.cloud",
+	"apiUrl" : 				"https://repository.example",
 	"dataPath" :			"/Root/Content/SampleWorkspace",
 	"pagecontainerPath": 	"/Root/Content/(layout)",
 	"layoutType": 			"Layout",

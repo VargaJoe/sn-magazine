@@ -57,8 +57,7 @@ jspm_packages/
 
 # Deployment folders
 deploy/
-mangajanlo.docker/
-fotelvandor.docker/
+*.docker/
 
 # Documentation
 docs/
