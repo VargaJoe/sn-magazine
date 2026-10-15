@@ -14,18 +14,18 @@ This guide explains how to set up Disqus comments for the sn-magazine project.
 2. Choose "Universal Code" (for custom React app)
 3. Fill in:
    - Website Name: e.g., "your-site-name"
-   - Website URL: https://your-site.com (full URL)
-   - Category: Culture (or Entertainment)
-   - Description: "Book and manga review blog"
+   - Website URL: https://site.example (full URL)
+   - Category: Choose the category appropriate for your site
+   - Description: Your site's description
    - Comment Policy Summary: "Users are responsible for their comments. Offensive content may be moderated or deleted."
-   - Language: Hungarian
+   - Language: Choose your site's language
    - Comment Settings: Balanced (allows images/links, moderates flagged/toxic comments)
 
 ## 3. Configuration
 
 1. After setup, note the shortname (e.g., "your-shortname") from the install code
 2. In Disqus admin > Settings > General:
-   - Add trusted domains: fotelvandor.hu, netlify.app (for previews)
+   - Add your production domain and any preview domains you control
    - Enable ads (required for free plan)
 3. In the app's `src/config.json`, add:
    ```json

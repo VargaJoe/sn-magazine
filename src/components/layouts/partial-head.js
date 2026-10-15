@@ -2,7 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 const defaultImage = require('../../images/logo.png');
 
-const CommonHelmet = ({ context }) => {
+const CommonHelmet = ({ context, pageTitle, pathname }) => {
   // TODO: get og:image dynamically
   const dataPath = process.env.REACT_APP_DATA_PATH;
   const apiUrl = process.env.REACT_APP_API_URL;
@@ -15,19 +15,14 @@ const CommonHelmet = ({ context }) => {
   const appId = process.env.REACT_APP_FB_APPID;
   const siteHost = process.env.REACT_APP_SITE_HOST;
   
-  // const pagePath = window.location.pathname; // url path
-  const pagePath = context?.Path.replace(dataPath, ''); // widget context content path
-  const pageUrl = siteHost + pagePath;    
-  const pageTitle = (context?.Id === context?.Workspace?.Id) ? `${context?.DisplayName}` : `${context?.Workspace?.DisplayName} - ${context?.DisplayName}`;
+  const pageUrl = new URL(pathname, siteHost || window.location.origin).href;
 
-  // TODO: get all currently static value (eg. description) dynamically to context
-  const description = "book movie tvseries manga anime games reviews hungarian"
+  const description = context.Description || context.Workspace?.Description || '';
 
   return (
-    <Helmet>
+    <Helmet defer={false}>
 
       <meta charset="utf-8" />
-      <title>{pageTitle}</title>
       <meta name="language" content="hu" />
       <meta name="description" content={description} />
       <link rel="canonical" href={pageUrl} />

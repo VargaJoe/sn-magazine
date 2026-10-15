@@ -1,23 +1,36 @@
-import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLayoutEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
+import CommonHelmet from './components/layouts/partial-head';
+import { buildPageTitle } from './page-meta';
 
-
-export default function AnalyticsTracker() {
+// PageWrapper supplies only the resolved context for the current navigation.
+// Keep this instance mounted while loading so StrictMode/re-renders cannot
+// replay a page view. A POP back to an earlier entry is still a new navigation.
+export default function AnalyticsTracker({ context }) {
   const location = useLocation();
+  const navigationState = useRef(null);
+  const navigation = JSON.stringify([location.key, location.pathname, location.search, location.hash]);
+  const title = buildPageTitle(context, process.env.REACT_APP_DATA_PATH);
 
+  useLayoutEffect(() => {
+    // Observe loading/failed navigations too: POP can reuse an earlier history
+    // key even when the intervening page never became ready to publish.
+    if (navigationState.current?.key !== navigation) {
+      navigationState.current = { key: navigation, published: false };
+    }
+    if (!title) return;
 
-  useEffect(() => {
-    // Avoid errors in environments where GTM is not loaded
-    if (!window.dataLayer) return;
-
-
+    // One synchronous operation: even dataLayer.push observers see this title.
+    document.title = title;
+    if (navigationState.current.published) return;
+    window.dataLayer = window.dataLayer || [];
+    navigationState.current.published = true;
     window.dataLayer.push({
-      event: "react_page_view",
+      event: 'react_page_view',
       page_title: document.title,
-      page_path: location.pathname + location.search,
+      page_path: location.pathname,
     });
-  }, [location]);
+  }, [navigation, location.pathname, title]);
 
-
-  return null;
+  return title ? <CommonHelmet context={context} pageTitle={title} pathname={location.pathname} /> : null;
 }

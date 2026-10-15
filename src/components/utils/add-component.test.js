@@ -1,5 +1,4 @@
-import { importView, addComponent, clearLazyComponentCache } from './add-component';
-import React from 'react';
+import { importView, clearLazyComponentCache } from './add-component';
 
 describe('Dynamic Component Resolution', () => {
   beforeEach(() => {
@@ -17,11 +16,20 @@ describe('Dynamic Component Resolution', () => {
     expect(Comp1).toBe(Comp2);
   });
 
-  it('should clear cache with clearLazyComponentCache', () => {
+  it('resolves updated module exports after clearing the lookup cache', () => {
+    const widgetModule = require('../widgets/auto-default');
+    const original = widgetModule.default;
     const Comp1 = importView('widgets', 'auto', 'default');
-    clearLazyComponentCache();
-    const Comp2 = importView('widgets', 'auto', 'default');
-    expect(Comp1).not.toBe(Comp2);
+    const RefreshedWidget = () => null;
+    try {
+      widgetModule.default = RefreshedWidget;
+      expect(importView('widgets', 'auto', 'default')).toBe(Comp1);
+      clearLazyComponentCache();
+      expect(importView('widgets', 'auto', 'default')).toBe(RefreshedWidget);
+    } finally {
+      widgetModule.default = original;
+      clearLazyComponentCache();
+    }
   });
 
   it('should support custom fallback', () => {

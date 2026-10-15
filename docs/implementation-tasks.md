@@ -153,7 +153,7 @@
 
 ### Technical Tasks - Docker Development Server Setup
   - [x] Refactored Dockerfile to use Node.js 16 base image and run npm start for development server instead of static build
-  - [x] Updated docker-compose.fotelvandor-prod.yml to load environment variables from .env.fotelvandor-prod file
+  - [x] Updated deployment Compose configuration to load environment variables from a private per-site environment file
   - [x] Reverted configuration.js to use process.env.REACT_APP_* variables directly for runtime configuration
   - [x] Fixed index.js to render app synchronously without async config loading
   - [x] Created .dockerignore to exclude sensitive .env files and unnecessary files from Docker builds
