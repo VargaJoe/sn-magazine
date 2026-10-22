@@ -23,7 +23,10 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "postbuild": "node scripts/prepare-netlify.mjs",
     "test": "react-scripts test",
+    "test:sitemap": "node --test tests/sitemap.test.mjs tests/repository-sitemap.test.mjs",
+    "sitemap:update": "node scripts/update-sitemap.mjs",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
