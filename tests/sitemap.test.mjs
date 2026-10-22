@@ -2,9 +2,9 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { test } from 'node:test';
-import { generateSitemap, handleRobots, handleSitemap } from '../netlify/lib/sitemap.mjs';
-import sitemapFunction from '../netlify/functions/sitemap.mjs';
-import robotsFunction from '../netlify/functions/robots.mjs';
+import { generateSitemap } from '../scripts/lib/sitemap.mjs';
+import { buildRouting } from '../scripts/lib/build-routing.mjs';
+import { readSiteSettings } from '../scripts/lib/site-settings.mjs';
 
 const ROOT = '/Root/Content/Magazine';
 const ENV = {
@@ -49,34 +49,6 @@ function urls(xml) {
 function xmlEntries(xml) {
   return new Map([...xml.matchAll(/<url><loc>([^<]*)<\/loc>(.*?)<\/url>/g)]
     .map(match => [match[1], match[2]]));
-}
-
-function assertNotCached(response) {
-  assert.equal(response.headers.get('Cache-Control'), 'no-store');
-  assert.equal(response.headers.get('Netlify-CDN-Cache-Control'), 'no-store');
-}
-
-async function assertUnavailable(response, { head = false } = {}) {
-  assert.equal(response.status, 503);
-  assertNotCached(response);
-  assert.equal(response.headers.get('Retry-After'), '300');
-  assert.equal(response.headers.get('Content-Type'), 'text/plain; charset=utf-8');
-  assert.equal(await response.text(), head ? '' : 'Sitemap temporarily unavailable\n');
-}
-
-function installEnvironment(t, values) {
-  const names = [...Object.keys(ENV), 'REACT_APP_WIDGET_TYPE'];
-  const previous = Object.fromEntries(names.map(name => [name, process.env[name]]));
-  for (const name of names) {
-    if (values[name] === undefined) delete process.env[name];
-    else process.env[name] = values[name];
-  }
-  t.after(() => {
-    for (const name of names) {
-      if (previous[name] === undefined) delete process.env[name];
-      else process.env[name] = previous[name];
-    }
-  });
 }
 
 test('maps only the configured site subtree, includes its root and deduplicates sorted URLs', async () => {
@@ -173,17 +145,10 @@ test('lastmod uses article source timestamps, including .NET dates, and omits fo
   }
 });
 
-test('sitemap and robots use the configured canonical origin independently of request URL or Host', async () => {
-  const request = new Request('https://preview.example/sitemap.xml', { headers: { Host: 'attacker.example' } });
-  const api = repository([page([entry('/article')])]);
-  const response = await handleSitemap(request, ENV, api.fetchImpl);
-  assert.equal(response.status, 200);
-  assert.deepEqual(urls(await response.text()), ['https://magazine.example/article']);
-  const robots = handleRobots(new Request('https://preview.example/robots.txt', {
-    headers: { Host: 'attacker.example' },
-  }), ENV);
-  assert.equal(robots.status, 200);
-  assert.equal(await robots.text(), 'User-agent: *\nDisallow:\n\nSitemap: https://magazine.example/sitemap.xml\n');
+test('omits the configured uploaded sitemap even if the repository labels it as a page', async () => {
+  const api = repository([page([entry('/article'), entry('/seo/public.xml')])]);
+  const xml = await generateSitemap({ ...ENV, REACT_APP_SITEMAP_PATH: '/seo/public.xml' }, api.fetchImpl);
+  assert.deepEqual(urls(xml), ['https://magazine.example/article']);
 });
 
 test('real HTTP fetch remains anonymous and reads every server-capped page through the empty terminator', async t => {
@@ -206,11 +171,8 @@ test('real HTTP fetch remains anonymous and reads every server-capped page throu
     server.closeAllConnections();
   }));
   const env = { ...ENV, REACT_APP_API_URL: `http://127.0.0.1:${server.address().port}/repository` };
-  const response = await handleSitemap(new Request('https://preview.example/sitemap.xml', {
-    headers: { Authorization: 'Bearer fixture-only', Cookie: 'session=fixture-only', Host: 'spoofed.example' },
-  }), env);
-  assert.equal(response.status, 200);
-  assert.deepEqual(urls(await response.text()), [
+  const xml = await generateSitemap({ ...env, SENSENET_API_KEY: 'private-fixture-only' });
+  assert.deepEqual(urls(xml), [
     'https://magazine.example/', 'https://magazine.example/four',
     'https://magazine.example/one', 'https://magazine.example/three', 'https://magazine.example/two',
   ]);
@@ -221,6 +183,7 @@ test('real HTTP fetch remains anonymous and reads every server-capped page throu
     assert.equal(request.url.pathname, '/repository/OData.svc/Root/Content');
     assert.equal(request.headers.authorization, undefined);
     assert.equal(request.headers.cookie, undefined);
+    assert.equal(request.headers.apikey, undefined);
     assert.equal(request.headers.accept, 'application/json');
     assert.equal(request.url.searchParams.get('$select'), 'Id,Path,Type,Hidden,IsFolder,ModificationDate');
     assert.equal(request.url.searchParams.get('$inlinecount'), 'allpages');
@@ -263,8 +226,7 @@ test('continues paging without a count and despite changing advertised counts', 
   assert.deepEqual(api.calls.map(({ url }) => /\.SKIP:(\d+)/.exec(url.searchParams.get('query'))[1]), ['0', '1', '2', '3']);
 });
 
-test('returns 503 with no caching or partial XML for upstream failures and malformed responses', async t => {
-  t.mock.method(console, 'error', () => {});
+test('rejects upstream failures and malformed or incomplete responses instead of returning partial XML', async t => {
   const cases = [
     ['transport error', [new Error('fixture network failure')]],
     ['repository rejects anonymous access', [new Response('denied', { status: 403 })]],
@@ -285,24 +247,21 @@ test('returns 503 with no caching or partial XML for upstream failures and malfo
   for (const [name, pages] of cases) {
     await t.test(name, async () => {
       const api = repository(pages);
-      await assertUnavailable(await handleSitemap(new Request('https://magazine.example/sitemap.xml'), ENV, api.fetchImpl));
+      await assert.rejects(generateSitemap(ENV, api.fetchImpl));
     });
   }
 });
 
-test('a failed request cannot return or cache the partial XML from an earlier successful request', async t => {
-  t.mock.method(console, 'error', () => {});
-  const request = new Request('https://magazine.example/sitemap.xml');
+test('a failed generation cannot return partial XML or reuse an earlier result', async () => {
   const success = repository([page([entry('/previous-success')])]);
-  assert.equal((await handleSitemap(request, ENV, success.fetchImpl)).status, 200);
+  assert.deepEqual(urls(await generateSitemap(ENV, success.fetchImpl)), ['https://magazine.example/previous-success']);
   const failure = repository([page([entry('/partial')]), new Error('fixture failure')]);
-  await assertUnavailable(await handleSitemap(request, ENV, failure.fetchImpl));
+  await assert.rejects(generateSitemap(ENV, failure.fetchImpl), /fixture failure/);
   const recovered = repository([page([entry('/recovered')])]);
-  assert.deepEqual(urls(await (await handleSitemap(request, ENV, recovered.fetchImpl)).text()), ['https://magazine.example/recovered']);
+  assert.deepEqual(urls(await generateSitemap(ENV, recovered.fetchImpl)), ['https://magazine.example/recovered']);
 });
 
-test('invalid configuration returns an uncached 503 before contacting the repository', async t => {
-  t.mock.method(console, 'error', () => {});
+test('invalid configuration fails before contacting the repository', async t => {
   const cases = [
     ['missing API', { REACT_APP_API_URL: undefined }],
     ['insecure remote API', { REACT_APP_API_URL: 'http://repository.example' }],
@@ -328,88 +287,80 @@ test('invalid configuration returns an uncached 503 before contacting the reposi
   for (const [name, overrides] of cases) {
     await t.test(name, async () => {
       const api = repository([page([entry('/should-not-be-fetched')])]);
-      await assertUnavailable(await handleSitemap(new Request('https://preview.example/sitemap.xml'), { ...ENV, ...overrides }, api.fetchImpl));
+      await assert.rejects(generateSitemap({ ...ENV, ...overrides }, api.fetchImpl));
       assert.equal(api.calls.length, 0);
     });
   }
 });
 
-test('successful GET and HEAD advertise XML and CDN caching, with no HEAD body', async () => {
-  for (const method of ['GET', 'HEAD']) {
-    const api = repository([page([entry('/article')])]);
-    const response = await handleSitemap(new Request('https://magazine.example/sitemap.xml', { method }), ENV, api.fetchImpl);
-    assert.equal(response.status, 200);
-    assert.equal(response.headers.get('Content-Type'), 'application/xml; charset=utf-8');
-    assert.equal(response.headers.get('Cache-Control'), 'public, max-age=0, must-revalidate');
-    assert.equal(response.headers.get('Netlify-CDN-Cache-Control'), 'public, durable, max-age=86400, must-revalidate');
-    if (method === 'HEAD') assert.equal(await response.text(), '');
-    else assert.deepEqual(urls(await response.text()), ['https://magazine.example/article']);
+test('build routing is disabled without the optional sitemap path and requires no other new configuration', () => {
+  const redirects = '# existing routing\n/*  /index.html  200\n';
+  const robots = 'User-agent: *\nDisallow:\n';
+  for (const env of [{}, { REACT_APP_SITEMAP_PATH: '' }, { REACT_APP_SITEMAP_PATH: '   ' }]) {
+    assert.deepEqual(buildRouting(env, redirects, robots), { redirects, robots });
   }
 });
 
-test('HEAD failures remain bodyless and uncached', async t => {
-  t.mock.method(console, 'error', () => {});
-  const api = repository([new Error('fixture failure')]);
-  await assertUnavailable(await handleSitemap(new Request('https://magazine.example/sitemap.xml', { method: 'HEAD' }), ENV, api.fetchImpl), { head: true });
-  const robots = handleRobots(new Request('https://magazine.example/robots.txt', { method: 'HEAD' }), {});
-  assert.equal(robots.status, 503);
-  assertNotCached(robots);
-  assert.equal(await robots.text(), '');
+test('build routing writes a fixed escaped external 200! proxy ahead of SPA routing and a canonical robots URL', t => {
+  const network = t.mock.method(globalThis, 'fetch', () => { throw new Error('build must not use the network'); });
+  const redirects = '/old  /new  301\n/*  /index.html  200\n';
+  const robots = '# static file\nUser-agent: *\nDisallow:\n';
+  const generated = buildRouting({
+    ...ENV,
+    REACT_APP_API_URL: 'https://repository.example/service',
+    REACT_APP_DATA_PATH: '/Root/Content/Árvíz Magazine',
+    REACT_APP_SITEMAP_PATH: '/SEO files/it\'s & <public>.xml',
+    SENSENET_API_KEY: 'private-fixture-key',
+    SENSENET_ACCESS_TOKEN: 'private-fixture-token',
+  }, redirects, robots);
+  assert.equal(generated.redirects,
+    '/sitemap.xml  https://repository.example/service/Root/Content/%C3%81rv%C3%ADz%20Magazine/SEO%20files/it%27s%20%26%20%3Cpublic%3E.xml  200!\n' + redirects);
+  assert.equal(generated.robots, '# static file\nUser-agent: *\nDisallow:\n\nSitemap: https://magazine.example/sitemap.xml\n');
+  assert.doesNotMatch(JSON.stringify(generated), /private-fixture|apikey|Authorization|\.netlify\/functions|:splat/);
+  assert.equal(network.mock.callCount(), 0);
 });
 
-test('unsupported methods receive 405 and Allow without fetching repository data', async () => {
-  for (const method of ['POST', 'PUT', 'DELETE', 'OPTIONS']) {
-    const api = repository([]);
-    const request = new Request('https://magazine.example/sitemap.xml', { method });
-    for (const response of [await handleSitemap(request, ENV, api.fetchImpl), handleRobots(request, ENV)]) {
-      assert.equal(response.status, 405);
-      assert.equal(response.headers.get('Allow'), 'GET, HEAD');
-      assertNotCached(response);
-      assert.equal(await response.text(), 'Method not allowed\n');
-    }
-    assert.equal(api.calls.length, 0);
+test('sitemap settings combine only a raw site-relative XML path with the exact configured content root', () => {
+  const settings = readSiteSettings({ ...ENV, REACT_APP_SITEMAP_PATH: '/SEO maps/public.xml' }, { requireSitemap: true });
+  assert.equal(settings.repositoryPath, `${ROOT}/SEO maps/public.xml`);
+  assert.equal(settings.sitemapUrl, 'https://repository.example/Root/Content/Magazine/SEO%20maps/public.xml');
+  assert.equal(settings.origin, 'https://magazine.example');
+  assert.equal(readSiteSettings(ENV).repositoryPath, null);
+  assert.throws(() => readSiteSettings(ENV, { requireSitemap: true }), /SITEMAP_PATH is required/);
+});
+
+test('build routing rejects invalid or ambiguous paths and incomplete opt-in configuration', async t => {
+  const cases = [
+    ['absolute URL', 'https://other.example/sitemap.xml'],
+    ['protocol-relative URL', '//other.example/sitemap.xml'],
+    ['missing leading slash', 'sitemap.xml'],
+    ['parent traversal', '/../sitemap.xml'],
+    ['dot traversal', '/seo/./sitemap.xml'],
+    ['double slash', '/seo//sitemap.xml'],
+    ['backslash', '/seo\\sitemap.xml'],
+    ['query', '/sitemap.xml?draft=true'],
+    ['fragment', '/sitemap.xml#draft'],
+    ['encoded traversal', '/%2e%2e/sitemap.xml'],
+    ['already escaped path', '/SEO%20maps/sitemap.xml'],
+    ['control character', '/seo\n/sitemap.xml'],
+    ['wrong extension', '/sitemap.json'],
+  ];
+  for (const [name, path] of cases) {
+    await t.test(name, () => assert.throws(() => buildRouting({ ...ENV, REACT_APP_SITEMAP_PATH: path }, '/* /index.html 200\n', 'User-agent: *\n')));
   }
-});
-
-test('robots GET/HEAD use matching cache headers and reject invalid canonical configuration', async () => {
-  for (const method of ['GET', 'HEAD']) {
-    const response = handleRobots(new Request('https://preview.example/robots.txt', { method }), ENV);
-    assert.equal(response.status, 200);
-    assert.equal(response.headers.get('Content-Type'), 'text/plain; charset=utf-8');
-    assert.equal(response.headers.get('Cache-Control'), 'public, max-age=0, must-revalidate');
-    assert.equal(response.headers.get('Netlify-CDN-Cache-Control'), 'public, durable, max-age=86400, must-revalidate');
-    assert.equal(await response.text(), method === 'HEAD' ? '' : 'User-agent: *\nDisallow:\n\nSitemap: https://magazine.example/sitemap.xml\n');
+  for (const name of ['REACT_APP_API_URL', 'REACT_APP_DATA_PATH', 'REACT_APP_SITE_HOST']) {
+    await t.test(`missing ${name}`, () => assert.throws(() => buildRouting({ ...ENV, [name]: undefined, REACT_APP_SITEMAP_PATH: '/sitemap.xml' }, '', '')));
   }
-  const invalid = handleRobots(new Request('https://magazine.example/robots.txt'), {
-    ...ENV, REACT_APP_SITE_HOST: 'https://magazine.example/not-an-origin',
-  });
-  assert.equal(invalid.status, 503);
-  assertNotCached(invalid);
-  assert.equal(await invalid.text(), 'Robots configuration temporarily unavailable\n');
+  assert.throws(() => buildRouting({ ...ENV, REACT_APP_SITEMAP_PATH: '/sitemap.xml' }, '/sitemap.xml /old.xml 200\n/* /index.html 200\n', ''), /already contain a sitemap rule/);
 });
 
-test('actual Netlify function entry points use deployment environment and request objects', async t => {
-  installEnvironment(t, ENV);
-  const api = repository([page([entry('/routed')])]);
-  t.mock.method(globalThis, 'fetch', api.fetchImpl);
-  const response = await sitemapFunction(new Request('https://preview.example/.netlify/functions/sitemap'));
-  assert.equal(response.status, 200);
-  assert.deepEqual(urls(await response.text()), ['https://magazine.example/routed']);
-  assert.equal(api.calls[0].url.origin, ENV.REACT_APP_API_URL);
-  const robots = await robotsFunction(new Request('https://preview.example/.netlify/functions/robots'));
-  assert.equal(robots.status, 200);
-  assert.match(await robots.text(), /Sitemap: https:\/\/magazine\.example\/sitemap\.xml\n$/);
-});
-
-test('public sitemap and robots rewrites are forced before the SPA fallback', async () => {
-  const redirects = await readFile(new URL('../public/_redirects', import.meta.url), 'utf8');
-  const rules = redirects.split(/\r?\n/).map(line => line.trim()).filter(line => line && !line.startsWith('#'))
-    .map(line => line.split(/\s+/));
-  const fallbackIndex = rules.findIndex(([from, to]) => from === '/*' && to === '/index.html');
-  assert.notEqual(fallbackIndex, -1);
-  for (const [route, target] of [['/sitemap.xml', '/.netlify/functions/sitemap'], ['/robots.txt', '/.netlify/functions/robots']]) {
-    const index = rules.findIndex(([from]) => from === route);
-    assert.ok(index >= 0 && index < fallbackIndex, `${route} must precede the SPA fallback`);
-    assert.deepEqual(rules[index], [route, target, '200!']);
-  }
+test('checked-in static routes and robots do not depend on Functions or a configured sitemap', async () => {
+  const [redirects, robots] = await Promise.all([
+    readFile(new URL('../public/_redirects', import.meta.url), 'utf8'),
+    readFile(new URL('../public/robots.txt', import.meta.url), 'utf8'),
+  ]);
+  assert.match(redirects, /^\/\*\s+\/index\.html\s+200\s*$/m);
+  assert.doesNotMatch(redirects, /\.netlify\/functions|^\/sitemap\.xml\s/m);
+  assert.doesNotMatch(robots, /Sitemap:/);
+  assert.deepEqual(buildRouting({}, redirects, robots), { redirects, robots });
 });

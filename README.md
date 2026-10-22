@@ -158,4 +158,4 @@ See [docs/dynamic-component-resolution.md](docs/dynamic-component-resolution.md)
 - widget = formerly known as pagecomponent or portlet
 
 - [State Management Best Practices (zustand)](docs/state-management-best-practices.md)
-- [Dynamic, per-site Netlify sitemap](docs/dynamic-sitemap.md)
+- [Repository sitemap and Netlify proxy](docs/repository-sitemap.md)

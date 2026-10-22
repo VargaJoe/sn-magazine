@@ -1,55 +1,23 @@
+import { encodeSegment, readSiteSettings } from './site-settings.mjs';
+
 const PAGE_SIZE = 500;
 const MAX_URLS = 50000;
-// Leave room for the function response envelope within Netlify's payload limit.
-const MAX_XML_BYTES = 5 * 1024 * 1024;
-const CACHE_HEADERS = {
-  'Cache-Control': 'public, max-age=0, must-revalidate',
-  'Netlify-CDN-Cache-Control': 'public, durable, max-age=86400, must-revalidate',
-};
-
-function configuredUrl(value) {
-  const url = new URL(value);
-  const local = ['localhost', '127.0.0.1', '[::1]'].includes(url.hostname);
-  if ((url.protocol !== 'https:' && !(local && url.protocol === 'http:')) ||
-      url.username || url.password || url.search || url.hash) {
-    throw new Error('Invalid site configuration');
-  }
-  return url;
-}
-
-export function siteOrigin(env) {
-  const url = configuredUrl(env.REACT_APP_SITE_HOST);
-  if (url.pathname !== '/') throw new Error('Expected a site origin');
-  return url.origin;
-}
-
-function readConfiguration(env) {
-  const api = configuredUrl(env.REACT_APP_API_URL);
-  const root = env.REACT_APP_DATA_PATH?.trim().replace(/\/+$/, '');
-  if (!root || !/^\/Root\/Content(?:\/|$)/.test(root) ||
-      /[\\\x00-\x1f?#]/.test(root) || root.split('/').some(x => x === '.' || x === '..')) {
-    throw new Error('Invalid content root');
-  }
-  const widgetType = env.REACT_APP_WIDGET_TYPE || 'Widget';
-  if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(widgetType)) throw new Error('Invalid widget type');
-  return { api: api.href.replace(/\/$/, ''), root, origin: siteOrigin(env), widgetType };
-}
+const MAX_XML_BYTES = 50 * 1024 * 1024;
 
 function xmlEscape(value) {
   return value.replace(/[&<>"']/g, x => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;' }[x]));
 }
 
-function contentUrl(content, { root, origin, widgetType }) {
+function contentUrl(content, { root, origin, widgetType, repositoryPath }) {
   const path = content.Path;
   if (typeof path !== 'string' || (path !== root && !path.startsWith(`${root}/`)) ||
-      content.Hidden === true || content.Hidden === 1 || content.Hidden === 'true' ||
+      path === repositoryPath || content.Hidden === true || content.Hidden === 1 || content.Hidden === 'true' ||
       ['File', 'Image', 'SystemFolder', widgetType].includes(content.Type)) return null;
   const relative = path.slice(root.length);
   const segments = relative.split('/').slice(1);
   // Parenthesized folders are the engine's repository configuration/asset branches.
   if (segments.some(x => !x || x.startsWith('(') || x === '.' || x === '..' || /[\\\x00-\x1f]/.test(x))) return null;
-  const encoded = segments.map(x => encodeURIComponent(x).replace(/[!'()*]/g,
-    char => `%${char.charCodeAt(0).toString(16).toUpperCase()}`)).join('/');
+  const encoded = segments.map(encodeSegment).join('/');
   return `${origin}/${encoded}`;
 }
 
@@ -79,8 +47,12 @@ async function loadContents(configuration, fetchImpl, signal) {
       headers: { Accept: 'application/json' },
       credentials: 'omit', redirect: 'error', signal,
     });
-    if (!response.ok) throw new Error(`Repository returned ${response.status}`);
-    const body = await response.json();
+    if (!response.ok) {
+      response.body?.cancel().catch(() => {});
+      throw new Error(`Repository returned ${response.status}`);
+    }
+    let body;
+    try { body = await response.json(); } catch { throw new Error('Invalid repository response'); }
     const results = body?.d?.results;
     if (!Array.isArray(results)) throw new Error('Invalid repository response');
     if (results.length === 0) {
@@ -99,8 +71,8 @@ async function loadContents(configuration, fetchImpl, signal) {
 }
 
 export async function generateSitemap(env, fetchImpl = fetch) {
-  const configuration = readConfiguration(env);
-  const contents = await loadContents(configuration, fetchImpl, AbortSignal.timeout(25000));
+  const configuration = readSiteSettings(env);
+  const contents = await loadContents(configuration, fetchImpl, AbortSignal.timeout(120000));
   const entries = new Map();
   for (const content of contents) {
     const url = contentUrl(content, configuration);
@@ -114,36 +86,4 @@ export async function generateSitemap(env, fetchImpl = fetch) {
     '\n</urlset>\n';
   if (Buffer.byteLength(xml) > MAX_XML_BYTES) throw new Error('Sitemap needs partitioning');
   return xml;
-}
-
-export async function handleSitemap(request, env = process.env, fetchImpl = fetch) {
-  if (!['GET', 'HEAD'].includes(request.method)) return unavailable(405, 'Method not allowed', { Allow: 'GET, HEAD' });
-  try {
-    const xml = await generateSitemap(env, fetchImpl);
-    return new Response(request.method === 'HEAD' ? null : xml, {
-      headers: { ...CACHE_HEADERS, 'Content-Type': 'application/xml; charset=utf-8' },
-    });
-  } catch (error) {
-    console.error('Sitemap generation failed:', error.message);
-    return unavailable(503, 'Sitemap temporarily unavailable', { 'Retry-After': '300' }, request.method === 'HEAD');
-  }
-}
-
-function unavailable(status, message, headers = {}, head = false) {
-  return new Response(head ? null : `${message}\n`, {
-    status, headers: { 'Content-Type': 'text/plain; charset=utf-8',
-      'Cache-Control': 'no-store', 'Netlify-CDN-Cache-Control': 'no-store', ...headers },
-  });
-}
-
-export function handleRobots(request, env = process.env) {
-  if (!['GET', 'HEAD'].includes(request.method)) return unavailable(405, 'Method not allowed', { Allow: 'GET, HEAD' });
-  try {
-    const text = `User-agent: *\nDisallow:\n\nSitemap: ${siteOrigin(env)}/sitemap.xml\n`;
-    return new Response(request.method === 'HEAD' ? null : text, {
-      headers: { ...CACHE_HEADERS, 'Content-Type': 'text/plain; charset=utf-8' },
-    });
-  } catch {
-    return unavailable(503, 'Robots configuration temporarily unavailable', {}, request.method === 'HEAD');
-  }
 }
