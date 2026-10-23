@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
-import { maintenanceSiteName, maintenanceTitle, maintenanceText, maintenanceEmail } from '../../configuration';
+import { maintenanceSiteName, maintenanceTitle, maintenanceText, maintenanceEmail, retryLabel } from '../../configuration';
 
 export const LeisureMaintenanceTemplate = (props) => {
+  const data = props.data || {};
   return (
     <div className="App w3-theme-l5">
       <div className="w3-top w3-theme-d2 w3-margin-bottom">
@@ -17,7 +18,7 @@ export const LeisureMaintenanceTemplate = (props) => {
             to={"/"}
             className="w3-bar-item w3-button w3-padding-large w3-theme-d4"
           >
-            <i className="fa fa-home w3-margin-right"></i>{maintenanceSiteName}
+            <i className="fa fa-home w3-margin-right"></i>{data.siteName || maintenanceSiteName}
           </Link>
           
           {maintenanceEmail && maintenanceEmail.trim() ? (
@@ -64,6 +65,7 @@ export const LeisureMaintenanceTemplate = (props) => {
                         <div className="w3-container w3-padding article-full" style={{textAlign: 'center'}}>
                             <h1>{maintenanceTitle}</h1>
                             <div dangerouslySetInnerHTML={{__html: maintenanceText}} />
+                            {data.onRetry && <p><button type="button" className="w3-button w3-theme" onClick={data.onRetry}>{data.retryLabel || retryLabel}</button></p>}
                         </div>
                         </div>
                     </div>
