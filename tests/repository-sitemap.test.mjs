@@ -83,6 +83,34 @@ function assertNoWrites(api) {
   assert.equal(api.state.calls.some(({ request }) => !['GET', 'HEAD'].includes(request.method || 'GET')), false);
 }
 
+test('failed profile link discovery prevents upload and every discovery request stays anonymous', async t => {
+  const category = { Id: 2, Path: `${ROOT}/Creators`, Type: 'LeisureCategory', DisplayZone: ['menuitem'], Hidden: false };
+  const bio = { Id: 3, Path: `${category.Path}/Creator`, Type: 'LeisureMangakaBio', Hidden: false };
+  const layout = { Id: 100, Path: '/Root/Content/(layout)/LeisureCategory', Name: 'LeisureCategory', Type: 'Layout', PageTemplate: 'wide' };
+  const widget = { Id: 101, Path: `${layout.Path}/List`, Type: 'Widget', ClientComponent: 'list-review', PortletZone: 'content' };
+  for (const failure of ['layouts', 'links']) await t.test(failure, async () => {
+    const api = fixture({ overrides: { source: ({ url, request, headers }) => {
+      assert.equal(headers.has('apikey'), false);
+      assert.equal(headers.has('authorization'), false);
+      assert.equal(request.credentials, 'omit');
+      const query = url.searchParams.get('query');
+      const select = url.searchParams.get('$select');
+      const skip = Number(/\.SKIP:(\d+)/.exec(query)[1]);
+      let results = [ROWS[0], category, bio];
+      if (query.includes('+Hidden:1')) results = [];
+      else if (select.includes('PageTemplate')) {
+        if (failure === 'layouts') return new Response('failed', { status: 503 });
+        results = [layout];
+      } else if (select.includes('ClientComponent')) results = [widget];
+      else if (query.includes('+Id:')) return new Response('failed', { status: 503 });
+      return Response.json({ d: { results: results.slice(skip), __count: String(results.length) } });
+    } } });
+    await assert.rejects(updateRepositorySitemap({ ...ENV, REACT_APP_PAGECONTAINER_PATH: '/Root/Content/(layout)' }, api.fetchImpl), /Repository returned 503/);
+    assertNoWrites(api);
+    assert.ok(api.state.calls.some(call => call.url.searchParams.get('$select')?.includes('PageTemplate')));
+  });
+});
+
 function assertSafeTransport(api, { token = false } = {}) {
   for (const { kind, request, headers } of api.state.calls) {
     assert.equal(request.credentials, 'omit', kind);

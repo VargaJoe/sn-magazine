@@ -114,6 +114,26 @@ widgets link to them independently. An unmarked, undated Folder/Layout/test page
 does not qualify merely because its direct URL can render. Choice labels such as
 `Menu item` and substring matches are not stored choice tokens.
 
+Undated `LeisureMangakaBio` author biographies have one additional inclusion
+path: a rendered list on an eligible home/menu page must actually return them.
+Discovery resolves the existing inherited Layout and its displayed widget zones,
+then checks the list's effective ContentQuery against candidate profile IDs.
+It supports the internal generic cards in `list-review`, `list-news` and
+`list-news-third`, with ordinary current-context or expanded custom-root child
+collections inside this site. There are no per-site profile paths or IDs in code.
+The report records the referring page in `linkedFrom`. Missing PublishDate alone
+does not disqualify a linked biography; hidden ancestry, invalid/future dates and
+the other exclusion rules still take precedence. Other undated articles remain
+excluded unless they independently qualify as navigation.
+
+Discovery declines ambiguous equal-depth Layout choices, unsupported views or
+templates, deep/Workspace/relative/SmartFolder bindings and windowed queries
+(`.TOP`/`.SKIP`), rather than guessing that they expose a profile. Needed metadata
+or query failures abort generation before uploading. Discovery is anonymous,
+paged and shares the same deadline and record bound as the inventory; it can
+read shared Layout metadata outside the site root, but eligible URLs and profile
+result checks remain restricted to the configured site.
+
 `Hidden` values true/1/"true"/"1" exclude a record and every descendant within the
 configured site subtree. A second anonymous, paged query reads public hidden-node
 metadata without type-family exclusions, so a hidden SystemFolder/Widget ancestor
@@ -133,8 +153,8 @@ query. The engine supports custom roots, deep queries and SmartFolders, so an
 article is not required to sit below a menu category. Published entries without
 an eligible navigation ancestor are listed as review warnings rather than
 silently dropped. A hidden ancestor takes precedence over menu or publication
-eligibility, including on nested descendants and the home page. No site names,
-article type allowlist or second site registry is used.
+eligibility, including on nested descendants and the home page. No site names
+or second site registry is used.
 
 Paging uses stable Id ordering and continues to an empty page even if the server
 caps page size. Failed/malformed/repeated/incomplete responses, empty eligible
@@ -145,8 +165,8 @@ partitioning, and are never silently truncated.
 
 Entries are encoded, XML escaped, deduplicated and sorted. `lastmod` is the valid
 source `ModificationDate` (ISO or legacy .NET date), never generation time.
-Published article/detail content receives it even when SenseNet reports
-`IsFolder=true`: articles can contain assets. Undated folder/navigation collection
+Published article/detail content and linked author biographies receive it even
+when SenseNet reports `IsFolder=true`: articles can contain assets. Undated folder/navigation collection
 timestamps remain omitted because they may not describe their child listings.
 Missing, malformed and DateTime.MinValue modification dates are omitted too.
 

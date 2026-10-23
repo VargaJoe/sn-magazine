@@ -1,4 +1,5 @@
 import { encodeSegment, readSiteSettings } from './site-settings.mjs';
+import { discoverProfileLinks } from './sitemap-profile-links.mjs';
 
 const PAGE_SIZE = 500;
 const MAX_URLS = 50000;
@@ -54,7 +55,7 @@ function isNavigation(content) {
   return zones.some(zone => zone === 'menuitem' || zone === 'menuicon');
 }
 
-function visibility(content, root, now, hiddenPaths) {
+function visibility(content, root, now, hiddenPaths, profileLinks = new Map()) {
   if (isHidden(content.Hidden) || hiddenPaths.has(content.Path)) return { reason: 'hidden' };
   for (let path = content.Path.slice(0, content.Path.lastIndexOf('/')); path; path = path.slice(0, path.lastIndexOf('/'))) {
     if (hiddenPaths.has(path)) return { reason: 'hidden-ancestor' };
@@ -69,32 +70,36 @@ function visibility(content, root, now, hiddenPaths) {
   // DateTime.MinValue is the repository's unset-date representation, not a release.
   const published = parsed === UNSET_DATE ? null : parsed;
   if (published !== null && published > now) return { reason: 'future-publish-date' };
-  if (content.Path === root) return { included: true, reason: 'home', published: false };
-  if (published !== null) return { included: true, reason: 'published-content', published: true };
-  if (isNavigation(content)) return { included: true, reason: 'navigation', published: false };
+  if (content.Path === root) return { included: true, reason: 'home', detail: false };
+  if (published !== null) return { included: true, reason: 'published-content', detail: true };
+  if (isNavigation(content)) return { included: true, reason: 'navigation', detail: false };
+  if (content.Type === 'LeisureMangakaBio' && profileLinks.has(content.Path)) {
+    return { included: true, reason: 'linked-author-profile', detail: true };
+  }
   return { reason: 'not-navigation-or-published-content' };
 }
 
-function lastModified(content, published) {
+function lastModified(content, detail) {
   // Editorial content can be a SenseNet folder; navigation collections still lack
   // a reliable timestamp for their changing child listings.
-  if (!published && content.IsFolder !== false) return '';
+  if (!detail && content.IsFolder !== false) return '';
   const time = repositoryDate(content.ModificationDate);
   return time === null || time === UNSET_DATE ? '' : new Date(time).toISOString();
 }
 
-async function loadContents(configuration, fetchImpl, signal, hiddenOnly = false) {
+async function loadContents(configuration, fetchImpl, signal, hiddenOnly = false, custom = {}) {
   const { api, root, widgetType } = configuration;
   const contents = [];
   const pages = new Set();
   while (true) {
     const url = new URL(`${api}/OData.svc/Root/Content`);
     const selection = hiddenOnly ? '+Hidden:1' : `+Hidden:0 -TypeIs:File -TypeIs:SystemFolder -TypeIs:${widgetType}`;
-    url.searchParams.set('query', `+InTree:${JSON.stringify(root)} ${selection} .SORT:Id .TOP:${PAGE_SIZE} .SKIP:${contents.length}`);
-    url.searchParams.set('$select', hiddenOnly ? 'Id,Path,Type,Hidden,IsFolder' : 'Id,Path,Type,Hidden,IsFolder,ModificationDate,PublishDate,DisplayZone,Url');
+    url.searchParams.set('query', `${custom.query ?? `+InTree:${JSON.stringify(root)} ${selection}`} .SORT:Id .TOP:${PAGE_SIZE} .SKIP:${contents.length}`);
+    url.searchParams.set('$select', custom.select ?? (hiddenOnly ? 'Id,Path,Type,Hidden,IsFolder' : 'Id,Path,Type,Hidden,IsFolder,ModificationDate,PublishDate,DisplayZone,Url'));
+    if (custom.expand) url.searchParams.set('$expand', custom.expand);
     url.searchParams.set('$inlinecount', 'allpages');
     url.searchParams.set('metadata', 'no');
-    url.searchParams.set('enableautofilters', hiddenOnly ? 'false' : 'true');
+    url.searchParams.set('enableautofilters', hiddenOnly || custom.query ? 'false' : 'true');
     url.searchParams.set('enablelifespanfilter', hiddenOnly ? 'false' : 'true');
     const response = await fetchImpl(url, {
       headers: { Accept: 'application/json' },
@@ -142,6 +147,17 @@ export async function generateSitemapReport(env, fetchImpl = fetch, { now } = {}
   if (contents.length > MAX_URLS) throw new Error('Sitemap needs partitioning');
   const hiddenPaths = new Set([...visible, ...hidden].filter(content => isHidden(content.Hidden) && typeof content.Path === 'string' &&
     (content.Path === configuration.root || content.Path.startsWith(`${configuration.root}/`))).map(content => content.Path));
+  const candidates = visible.filter(content => content.Type === 'LeisureMangakaBio' && contentCandidate(content, configuration).url &&
+    visibility(content, configuration.root, instant, hiddenPaths).reason === 'not-navigation-or-published-content');
+  const contexts = candidates.length ? visible.filter(content => contentCandidate(content, configuration).url &&
+    (content.Path === configuration.root || isNavigation(content)) && visibility(content, configuration.root, instant, hiddenPaths).included) : [];
+  let discovered = 0;
+  const profileLinks = await discoverProfileLinks({ env, configuration, contexts, candidates, hiddenPaths }, async (query, select, expand) => {
+    const results = await loadContents(configuration, fetchImpl, signal, false, { query, select, expand });
+    discovered += results.length;
+    if (discovered > MAX_URLS) throw new Error('Profile link discovery needs partitioning');
+    return results;
+  });
   const entries = new Map();
   const excluded = [];
   for (const content of contents) {
@@ -152,10 +168,11 @@ export async function generateSitemapReport(env, fetchImpl = fetch, { now } = {}
       excluded.push(record);
       continue;
     }
-    const selected = visibility(content, configuration.root, instant, hiddenPaths);
+    const selected = visibility(content, configuration.root, instant, hiddenPaths, profileLinks);
     if (!selected.included) { excluded.push({ ...record, reason: selected.reason }); continue; }
     if (entries.has(candidate.url)) { excluded.push({ ...record, reason: 'duplicate-url' }); continue; }
-    entries.set(candidate.url, { ...record, reason: selected.reason, lastmod: lastModified(content, selected.published) });
+    entries.set(candidate.url, { ...record, reason: selected.reason, lastmod: lastModified(content, selected.detail),
+      ...(selected.reason === 'linked-author-profile' ? { linkedFrom: [...profileLinks.get(content.Path)].sort() } : {}) });
   }
   if (entries.size === 0) throw new Error('No public pages found');
   const sorted = [...entries.values()].sort((a, b) => a.url < b.url ? -1 : a.url > b.url ? 1 : 0);
