@@ -85,8 +85,11 @@ node --env-file=.env.site-private scripts/update-sitemap.mjs
 
 `npm run sitemap:update` is the same uploader, using CRA's production dotenv
 files or already-set shell variables. Run it after publishing, materially updating,
-renaming or withdrawing content. It regenerates the full list rather than keeping
-a second URL inventory. No automatic update hook is installed.
+renaming or withdrawing content. For scheduled articles, run it when the
+PublishDate is reached as well: the stored XML cannot acquire a new URL just
+because time passed, and a frontend deploy does not regenerate it. It regenerates
+the full list rather than keeping a second URL inventory. No automatic update
+hook is installed.
 
 Before writing, the tool inspects the destination and checks current-user
 `Open,Save` on an existing File or `Open,AddNew` on its parent when creating one.
@@ -163,12 +166,18 @@ inventory fetches share a two-minute deadline. The single-file implementation
 supports at most 50,000 page/hidden records and 50 MiB of XML; larger sites require
 partitioning, and are never silently truncated.
 
-Entries are encoded, XML escaped, deduplicated and sorted. `lastmod` is the valid
-source `ModificationDate` (ISO or legacy .NET date), never generation time.
+Entries are encoded, XML escaped, deduplicated and sorted. `lastmod` is the later
+valid source date of `PublishDate` and `ModificationDate` (ISO or legacy .NET),
+never generation time. For an article prepared in October and scheduled for
+December, it remains excluded until publication; the first run at/after release
+uses its December publication date. A later edit advances lastmod to the later
+modification date, while rerunning with unchanged source data preserves it.
 Published article/detail content and linked author biographies receive it even
 when SenseNet reports `IsFolder=true`: articles can contain assets. Undated folder/navigation collection
 timestamps remain omitted because they may not describe their child listings.
-Missing, malformed and DateTime.MinValue modification dates are omitted too.
+Missing, malformed and DateTime.MinValue source dates are ignored; if one date is
+usable it is used, and if neither is usable lastmod is omitted. This fallback
+does not bypass the invalid/future PublishDate exclusion rule.
 
 The lifespan filter covers `ValidFrom`/`ValidTill`; it does not replace the
 explicit PublishDate gate. Anonymous reads retain SenseNet's permission and

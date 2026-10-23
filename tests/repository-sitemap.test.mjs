@@ -237,6 +237,21 @@ test('repository upload contains eligible navigation and published folder detail
   assertSafeTransport(api);
 });
 
+test('upload preserves first-publication lastmod until a later source edit', async () => {
+  const detail = { Id: 3, Path: `${ROOT}/scheduled-detail`, Type: 'LeisureArticle', IsFolder: true,
+    Hidden: false, PublishDate: '2025-12-01T10:00:00Z', ModificationDate: '2025-10-23T07:00:00Z' };
+  const api = fixture({ rows: [ROWS[0], detail] });
+  const first = await updateRepositorySitemap(ENV, api.fetchImpl);
+  assert.equal(first.updated, true);
+  assert.match(api.state.publicXml, /<lastmod>2025-12-01T10:00:00\.000Z<\/lastmod>/);
+  assert.equal((await updateRepositorySitemap(ENV, api.fetchImpl)).updated, false);
+  detail.ModificationDate = '2025-12-02T14:30:00Z';
+  assert.equal((await updateRepositorySitemap(ENV, api.fetchImpl)).updated, true);
+  assert.match(api.state.publicXml, /<lastmod>2025-12-02T14:30:00\.000Z<\/lastmod>/);
+  assert.equal(api.state.uploads.length, 2);
+  assertSafeTransport(api);
+});
+
 test('accepts a private access token while source collection and public reads remain anonymous', async () => {
   const api = fixture();
   await updateRepositorySitemap({ ...ENV, SENSENET_API_KEY: undefined, SENSENET_ACCESS_TOKEN: 'private-fixture-token' }, api.fetchImpl);

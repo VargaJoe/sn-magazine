@@ -83,8 +83,11 @@ function lastModified(content, detail) {
   // Editorial content can be a SenseNet folder; navigation collections still lack
   // a reliable timestamp for their changing child listings.
   if (!detail && content.IsFolder !== false) return '';
-  const time = repositoryDate(content.ModificationDate);
-  return time === null || time === UNSET_DATE ? '' : new Date(time).toISOString();
+  // An article prepared earlier first becomes public at PublishDate. A later
+  // edit supersedes that date; sitemap regeneration itself does not.
+  const times = [content.PublishDate, content.ModificationDate].map(repositoryDate)
+    .filter(time => time !== null && time !== UNSET_DATE);
+  return times.length ? new Date(Math.max(...times)).toISOString() : '';
 }
 
 async function loadContents(configuration, fetchImpl, signal, hiddenOnly = false, custom = {}) {

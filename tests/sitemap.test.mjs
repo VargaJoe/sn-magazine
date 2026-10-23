@@ -132,7 +132,7 @@ test('uses the configured custom widget type in both filtering and the repositor
   assert.match(api.calls[0].url.searchParams.get('query'), /-TypeIs:MagazineWidget(?:\s|$)/);
 });
 
-test('lastmod uses source timestamps for leaves and published folder details, but omits undated collections or invalid dates', async () => {
+test('lastmod uses valid source dates for leaves and published folder details, but omits undated collections or invalid dates', async () => {
   const timestamp = Date.parse('2025-04-05T06:07:08.123Z');
   const api = repository([page([
     entry('/source', { ModificationDate: '2024-03-02T13:14:15+02:00' }),
@@ -153,6 +153,46 @@ test('lastmod uses source timestamps for leaves and published folder details, bu
   for (const name of ['folder', 'unknown-folder-status', 'bad-date', 'missing-date', 'impossible-date']) {
     assert.equal(entries.get(`https://magazine.example/${name}`), '', name);
   }
+});
+
+test('scheduled articles enter at publication with that lastmod, then advance only on a later edit', async () => {
+  const PublishDate = '2026-12-01T10:00:00Z';
+  const article = entry('/scheduled', { Type: 'LeisureArticle', IsFolder: true, DisplayZone: [],
+    PublishDate, ModificationDate: '2026-10-23T07:00:00Z' });
+  const run = (now, changes = {}) => generateSitemapReport(ENV, repository([page([
+    entry('', { Type: 'Workspace', IsFolder: true, DisplayZone: [] }), { ...article, ...changes },
+  ])]).fetchImpl, { now });
+  for (const now of ['2026-10-23T12:00:00Z', '2026-12-01T09:59:59.999Z']) {
+    const report = await run(now);
+    assert.equal(report.entries.some(item => item.path === article.Path), false);
+    assert.equal(report.excluded.find(item => item.path === article.Path).reason, 'future-publish-date');
+  }
+  for (const now of [PublishDate, '2027-02-01T00:00:00Z']) {
+    const report = await run(now);
+    assert.equal(report.entries.find(item => item.path === article.Path).lastmod, '2026-12-01T10:00:00.000Z');
+  }
+  const edited = await run('2026-12-03T12:00:00Z', { ModificationDate: '2026-12-02T14:30:00Z' });
+  assert.equal(edited.entries.find(item => item.path === article.Path).lastmod, '2026-12-02T14:30:00.000Z');
+});
+
+test('lastmod compares actual instants and falls back to whichever valid non-sentinel source date is available', async t => {
+  const publication = '2026-01-02T06:00:00.000Z';
+  const modified = '2026-01-02T06:30:00.000Z';
+  for (const [label, PublishDate, ModificationDate, expected] of [
+    ['publication is later', publication, '2025-10-23T07:00:00Z', publication],
+    ['modification is later despite offset clock', '2026-01-02T08:00:00+02:00', modified, modified],
+    ['.NET publication', `/Date(${Date.parse(publication)})/`, '2025-10-23T07:00:00Z', publication],
+    ['.NET modification', publication, `/Date(${Date.parse(modified)})/`, modified],
+    ['invalid modification', publication, 'invalid', publication],
+    ['missing modification', publication, undefined, publication],
+    ['unset modification', publication, '/Date(-62135596800000)/', publication],
+    ['unset publication', '0001-01-01T00:00:00Z', modified, modified],
+    ['both unset', '0001-01-01T00:00:00Z', undefined, ''],
+  ]) await t.test(label, async () => {
+    const api = repository([page([entry('/detail', { PublishDate, ModificationDate })])]);
+    const report = await generateSitemapReport(ENV, api.fetchImpl, { now: '2026-10-23T12:00:00Z' });
+    assert.equal(report.entries[0].lastmod, expected);
+  });
 });
 
 test('selects homepage, menu pages and published content independently of menu membership or folder status', async () => {
@@ -196,7 +236,7 @@ test('selects homepage, menu pages and published content independently of menu m
     assert.ok(urls(report.xml).includes(item.url));
   }
   assert.equal(included.get(`${ROOT}/article`).type, 'LeisureArticle');
-  assert.equal(included.get(`${ROOT}/article`).lastmod, '2026-10-18T10:20:30.000Z');
+  assert.equal(included.get(`${ROOT}/article`).lastmod, '2026-10-22T10:00:00.000Z');
   assert.equal(included.get(ROOT).lastmod, '');
   assert.deepEqual(new Map(report.excluded.map(item => [item.path, item.reason])), new Map([
     [`${ROOT}/hidden-parent`, 'hidden'],
@@ -350,8 +390,10 @@ test('treats ISO and .NET DateTime.MinValue as unset publication and modificatio
   ])]);
   const report = await generateSitemapReport(ENV, api.fetchImpl, { now: '2026-10-23T12:00:00Z' });
   assert.deepEqual(urls(report.xml), ['', 'navigation', 'published-dotnet-modification', 'published-iso-modification'].map(name => `https://magazine.example/${name}`));
-  assert.doesNotMatch(report.xml, /<lastmod>|0001-01-01/);
-  for (const item of report.entries) assert.equal(item.lastmod, '');
+  assert.doesNotMatch(report.xml, /0001-01-01/);
+  for (const item of report.entries) {
+    assert.equal(item.lastmod, item.reason === 'published-content' ? '2025-01-01T00:00:00.000Z' : '');
+  }
   assert.deepEqual(new Map(report.excluded.map(item => [item.path, item.reason])), new Map([
     [`${ROOT}/unmarked-iso`, 'not-navigation-or-published-content'],
     [`${ROOT}/unmarked-dotnet`, 'not-navigation-or-published-content'],
