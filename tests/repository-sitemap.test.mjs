@@ -17,7 +17,7 @@ const ENV = {
 };
 const ROWS = [
   { Id: 1, Path: ROOT, Type: 'Folder', IsFolder: true, Hidden: false },
-  { Id: 2, Path: `${ROOT}/Árvíz tér`, Type: 'Article', IsFolder: false, Hidden: false, ModificationDate: '2026-10-18T10:20:30Z' },
+  { Id: 2, Path: `${ROOT}/Árvíz tér`, Type: 'Article', IsFolder: false, Hidden: false, DisplayZone: ['menuitem'], ModificationDate: '2026-10-18T10:20:30Z' },
 ];
 const EXPECTED_XML = '<?xml version="1.0" encoding="UTF-8"?>\n' +
   '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
@@ -66,7 +66,8 @@ function fixture(options = {}) {
         return next instanceof Response ? next.clone() : Response.json(next);
       }
       const skip = Number(/\.SKIP:(\d+)/.exec(url.searchParams.get('query'))[1]);
-      return Response.json({ d: { results: ROWS.slice(skip, skip + 1), __count: String(ROWS.length) } });
+      const rows = url.searchParams.get('query').includes('+Hidden:1') ? options.hiddenRows || [] : options.rows || ROWS;
+      return Response.json({ d: { results: rows.slice(skip, skip + 1), __count: String(rows.length) } });
     }
     if (kind === 'upload') {
       state.publicXml = await request.body.get('sitemap.xml').text();
@@ -81,6 +82,34 @@ function assertNoWrites(api) {
   assert.equal(api.state.uploads.length, 0);
   assert.equal(api.state.calls.some(({ request }) => !['GET', 'HEAD'].includes(request.method || 'GET')), false);
 }
+
+test('failed profile link discovery prevents upload and every discovery request stays anonymous', async t => {
+  const category = { Id: 2, Path: `${ROOT}/Creators`, Type: 'LeisureCategory', DisplayZone: ['menuitem'], Hidden: false };
+  const bio = { Id: 3, Path: `${category.Path}/Creator`, Type: 'LeisureMangakaBio', Hidden: false };
+  const layout = { Id: 100, Path: '/Root/Content/(layout)/LeisureCategory', Name: 'LeisureCategory', Type: 'Layout', PageTemplate: 'wide' };
+  const widget = { Id: 101, Path: `${layout.Path}/List`, Type: 'Widget', ClientComponent: 'list-review', PortletZone: 'content' };
+  for (const failure of ['layouts', 'links']) await t.test(failure, async () => {
+    const api = fixture({ overrides: { source: ({ url, request, headers }) => {
+      assert.equal(headers.has('apikey'), false);
+      assert.equal(headers.has('authorization'), false);
+      assert.equal(request.credentials, 'omit');
+      const query = url.searchParams.get('query');
+      const select = url.searchParams.get('$select');
+      const skip = Number(/\.SKIP:(\d+)/.exec(query)[1]);
+      let results = [ROWS[0], category, bio];
+      if (query.includes('+Hidden:1')) results = [];
+      else if (select.includes('PageTemplate')) {
+        if (failure === 'layouts') return new Response('failed', { status: 503 });
+        results = [layout];
+      } else if (select.includes('ClientComponent')) results = [widget];
+      else if (query.includes('+Id:')) return new Response('failed', { status: 503 });
+      return Response.json({ d: { results: results.slice(skip), __count: String(results.length) } });
+    } } });
+    await assert.rejects(updateRepositorySitemap({ ...ENV, REACT_APP_PAGECONTAINER_PATH: '/Root/Content/(layout)' }, api.fetchImpl), /Repository returned 503/);
+    assertNoWrites(api);
+    assert.ok(api.state.calls.some(call => call.url.searchParams.get('$select')?.includes('PageTemplate')));
+  });
+});
 
 function assertSafeTransport(api, { token = false } = {}) {
   for (const { kind, request, headers } of api.state.calls) {
@@ -140,7 +169,7 @@ test('existing File preflight requires Open,Save and uploads one complete overwr
   const result = await updateRepositorySitemap(ENV, api.fetchImpl);
   assert.deepEqual(result, { updated: true, urls: 2, bytes: Buffer.byteLength(EXPECTED_XML, 'utf8') });
   assert.deepEqual(api.state.calls.map(({ kind }) => kind), [
-    'target', 'permission', 'public', 'source', 'source', 'source', 'upload', 'public',
+    'target', 'permission', 'public', 'source', 'source', 'source', 'source', 'upload', 'public',
   ]);
   const permission = api.state.calls.find(({ kind }) => kind === 'permission');
   assert.equal(decodeURIComponent(permission.url.pathname), `${TARGET_ITEM}/HasPermission`);
@@ -179,10 +208,66 @@ test('new target checks its existing parent and Open,AddNew before creating the 
   assertSafeTransport(api);
 });
 
+test('repository upload contains eligible navigation and published folder details without hidden, future or link records', async () => {
+  const rows = [
+    ...ROWS,
+    { Id: 3, Path: `${ROOT}/published-detail`, Type: 'LeisureArticle', IsFolder: true, Hidden: false,
+      DisplayZone: [], PublishDate: '2025-01-01T00:00:00Z', ModificationDate: '2025-02-03T04:05:06Z' },
+    { Id: 4, Path: `${ROOT}/test-folder`, Type: 'Folder', IsFolder: true, Hidden: false, DisplayZone: [] },
+    { Id: 5, Path: `${ROOT}/future`, Type: 'LeisureArticle', IsFolder: true, Hidden: false,
+      DisplayZone: ['menuitem'], PublishDate: '2099-01-01T00:00:00Z' },
+    { Id: 6, Path: `${ROOT}/hidden`, Type: 'Article', Hidden: '1', DisplayZone: ['menuitem'] },
+    { Id: 7, Path: `${ROOT}/external`, Type: 'SoftLink', Hidden: false, DisplayZone: ['menuitem'],
+      PublishDate: '2025-01-01T00:00:00Z', Url: 'https://external.example/page' },
+    { Id: 8, Path: `${ROOT}/unset-publication-iso`, Type: 'Article', Hidden: false, DisplayZone: [],
+      PublishDate: '0001-01-01T00:00:00Z' },
+    { Id: 9, Path: `${ROOT}/unset-publication-dotnet`, Type: 'Article', Hidden: false, DisplayZone: [],
+      PublishDate: '/Date(-62135596800000)/' },
+  ];
+  const api = fixture({ sourcePages: [{ d: { results: rows, __count: String(rows.length) } }, { d: { results: [] } }] });
+  const result = await updateRepositorySitemap(ENV, api.fetchImpl);
+  assert.equal(result.updated, true);
+  assert.equal(result.urls, 3);
+  assert.equal(api.state.uploads.length, 1);
+  const xml = await api.state.uploads[0].request.body.get('sitemap.xml').text();
+  assert.equal(xml, EXPECTED_XML.replace('</urlset>',
+    '  <url><loc>https://magazine.example/published-detail</loc><lastmod>2025-02-03T04:05:06.000Z</lastmod></url>\n</urlset>'));
+  assert.doesNotMatch(xml, /test-folder|\/future|\/hidden|\/external|unset-publication/);
+  assert.equal(api.state.publicXml, xml);
+  assertSafeTransport(api);
+});
+
+test('upload preserves first-publication lastmod until a later source edit', async () => {
+  const detail = { Id: 3, Path: `${ROOT}/scheduled-detail`, Type: 'LeisureArticle', IsFolder: true,
+    Hidden: false, PublishDate: '2025-12-01T10:00:00Z', ModificationDate: '2025-10-23T07:00:00Z' };
+  const api = fixture({ rows: [ROWS[0], detail] });
+  const first = await updateRepositorySitemap(ENV, api.fetchImpl);
+  assert.equal(first.updated, true);
+  assert.match(api.state.publicXml, /<lastmod>2025-12-01T10:00:00\.000Z<\/lastmod>/);
+  assert.equal((await updateRepositorySitemap(ENV, api.fetchImpl)).updated, false);
+  detail.ModificationDate = '2025-12-02T14:30:00Z';
+  assert.equal((await updateRepositorySitemap(ENV, api.fetchImpl)).updated, true);
+  assert.match(api.state.publicXml, /<lastmod>2025-12-02T14:30:00\.000Z<\/lastmod>/);
+  assert.equal(api.state.uploads.length, 2);
+  assertSafeTransport(api);
+});
+
 test('accepts a private access token while source collection and public reads remain anonymous', async () => {
   const api = fixture();
   await updateRepositorySitemap({ ...ENV, SENSENET_API_KEY: undefined, SENSENET_ACCESS_TOKEN: 'private-fixture-token' }, api.fetchImpl);
   assertSafeTransport(api, { token: true });
+});
+
+test('repository upload excludes published descendants of hidden technical ancestors found only in the second inventory', async () => {
+  const api = fixture({
+    rows: [...ROWS, { Id: 3, Path: `${ROOT}/private/published`, Type: 'Article', Hidden: false,
+      DisplayZone: [], PublishDate: '2025-01-01T00:00:00Z' }],
+    hiddenRows: [{ Id: 4, Path: `${ROOT}/private`, Type: 'SystemFolder', Hidden: true, IsFolder: true }],
+  });
+  const result = await updateRepositorySitemap(ENV, api.fetchImpl);
+  assert.equal(result.urls, 2);
+  assert.equal(api.state.publicXml, EXPECTED_XML);
+  assertSafeTransport(api);
 });
 
 test('accepts wrapped true for HasPermission compatibility', async () => {
@@ -281,6 +366,7 @@ test('generation failures never replace the existing public file or submit a mul
     ['later HTTP failure', [firstPage, new Response('failed', { status: 500 })]],
     ['repeating source page', [firstPage, firstPage]],
     ['incomplete source', [firstPage, { d: { results: [], __count: '2' } }]],
+    ['hidden inventory failure', [{ d: { results: ROWS, __count: '2' } }, { d: { results: [] } }, new Error('hidden inventory unavailable')]],
   ];
   for (const [name, sourcePages] of cases) {
     await t.test(name, async () => {
@@ -298,7 +384,7 @@ test('skips an unchanged public sitemap after full anonymous generation', async 
     updated: false, urls: 2, bytes: Buffer.byteLength(EXPECTED_XML, 'utf8'),
   });
   assertNoWrites(api);
-  assert.equal(api.state.sourceReads, 3);
+  assert.equal(api.state.sourceReads, 4);
   assert.equal(api.state.publicReads, 1);
   assertSafeTransport(api);
 });
@@ -351,7 +437,8 @@ test('real HTTP transport sends a complete UTF-8 multipart overwrite, verifies i
       }
       if (path === '/OData.svc/Root/Content') {
         const skip = Number(/\.SKIP:(\d+)/.exec(url.searchParams.get('query'))[1]);
-        return sendJson({ d: { results: ROWS.slice(skip, skip + 1), __count: '2' } });
+        const rows = url.searchParams.get('query').includes('+Hidden:1') ? [] : ROWS;
+        return sendJson({ d: { results: rows.slice(skip, skip + 1), __count: String(rows.length) } });
       }
       if (path === `${PARENT_ITEM}/Upload`) {
         assert.equal(request.method, 'POST');
