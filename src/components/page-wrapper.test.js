@@ -323,10 +323,17 @@ describe('PageWrapper navigation lifecycle', () => {
     expect([...window.dataLayer]).toEqual([{ event: 'react_page_view', page_path: '/missing',
       page_title: 'Independent Site - Az oldal nem található', page_type: 'not_found' }]);
     expect(observedTitles).toEqual(['Independent Site - Az oldal nem található']);
+    expect(document.querySelector('link[rel="canonical"]')).toBeNull();
     await act(async () => navigate('/'));
     expect(document.title).toBe('Independent Site');
     expect(document.querySelector('meta[name="robots"]')).toBeNull();
     expect(window.dataLayer.map(event => event.page_type)).toEqual(['not_found', 'content']);
+    expect(document.querySelectorAll('link[rel="canonical"]')).toHaveLength(1);
+    expect(new URL(document.querySelector('link[rel="canonical"]').href).pathname).toBe('/');
+    await act(async () => navigate(-1));
+    expect(document.querySelector('link[rel="canonical"]')).toBeNull();
+    expect(document.querySelector('meta[name="robots"]').content).toBe('noindex');
+    expect(window.dataLayer.map(event => event.page_type)).toEqual(['not_found', 'content', 'not_found']);
   });
 
   it.each([new TypeError('Failed to fetch'), { statusCode: 503 }, { response: { status: 500 } },

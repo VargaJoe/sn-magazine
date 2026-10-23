@@ -83,6 +83,8 @@ describe('resolved page analytics', () => {
     expect(observedTitles).toEqual([title]);
     expect(document.title).toBe(title);
     expect(document.querySelector('meta[property="og:title"]').content).toBe(title);
+    expect(document.querySelectorAll('link[rel="canonical"]')).toHaveLength(1);
+    expect(new URL(document.querySelector('link[rel="canonical"]').href).pathname).toBe(path);
   });
 
   it('waits for context and emits once across StrictMode, rerenders, and refreshed content', async () => {

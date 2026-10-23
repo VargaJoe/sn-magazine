@@ -2,7 +2,7 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 const defaultImage = require('../../images/logo.png');
 
-const CommonHelmet = ({ context, pageTitle, pathname, noindex }) => {
+const CommonHelmet = ({ context, pageTitle, pathname, noindex, includeCanonical = true }) => {
   // TODO: get og:image dynamically
   const dataPath = process.env.REACT_APP_DATA_PATH;
   const apiUrl = process.env.REACT_APP_API_URL;
@@ -26,7 +26,7 @@ const CommonHelmet = ({ context, pageTitle, pathname, noindex }) => {
       <meta name="language" content="hu" />
       <meta name="description" content={description} />
       {noindex && <meta name="robots" content="noindex" />}
-      <link rel="canonical" href={pageUrl} />
+      {includeCanonical && <link rel="canonical" href={pageUrl} />}
       <meta property="fb:app_id" content={appId} />
       <meta property="og:title" content={pageTitle} />
       <meta property="og:description" content={description} />
