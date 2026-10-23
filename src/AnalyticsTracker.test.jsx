@@ -79,7 +79,7 @@ describe('resolved page analytics', () => {
   ])('sets the direct %s title before dataLayer observers run', async (_, context, path, title) => {
     await render(context, path);
 
-    expect([...window.dataLayer]).toEqual([{ event: 'react_page_view', page_title: title, page_path: path }]);
+    expect([...window.dataLayer]).toEqual([{ event: 'react_page_view', page_title: title, page_path: path, page_type: 'content' }]);
     expect(observedTitles).toEqual([title]);
     expect(document.title).toBe(title);
     expect(document.querySelector('meta[property="og:title"]').content).toBe(title);
@@ -103,7 +103,7 @@ describe('resolved page analytics', () => {
     delete window.dataLayer;
     await render(article);
     expect(window.dataLayer).toEqual([{
-      event: 'react_page_view', page_title: 'Leisure Magazin - Árnyék és fény', page_path: '/books/review',
+      event: 'react_page_view', page_title: 'Leisure Magazin - Árnyék és fény', page_path: '/books/review', page_type: 'content',
     }]);
   });
 

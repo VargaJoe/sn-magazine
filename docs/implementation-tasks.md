@@ -171,3 +171,9 @@
   - [x] Built and published vargajoe/sn-magazine:preview as multi-architecture image supporting both platforms
   - [x] Verified Raspberry Pi (ARM64) can successfully pull and run the multi-architecture image
   - [x] Updated documentation for multi-architecture deployment options
+
+### Bugfix - Content Not Found versus Backend Failure
+  - [x] Resolve empty/404 route contexts to a dedicated configurable not-found view with dynamic site branding and main-section links.
+  - [x] Keep maintenance/retry for backend errors, bound context loads and cancel abandoned requests.
+  - [x] Add managed noindex metadata and one ordered react_page_view per navigation with page_type content/not_found/error.
+  - [x] Retain HTTP 200 SPA fallback (option B): the manually generated sitemap is not an authoritative route registry; sitemap/robots output is unchanged.

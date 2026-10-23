@@ -12,6 +12,12 @@ const maintenanceSiteName = process.env.REACT_APP_MAINTENANCE_SITE_NAME || "Logo
 const maintenanceTitle = process.env.REACT_APP_MAINTENANCE_TITLE || "Site Under Maintenance";
 const maintenanceText = process.env.REACT_APP_MAINTENANCE_TEXT || "<p>The site is currently undergoing maintenance. Please try again later.</p><p>If the problem persists, contact support.</p>";
 const maintenanceEmail = process.env.REACT_APP_MAINTENANCE_EMAIL;
+// Error UI uses the same per-site environment configuration as maintenance.
+export const notFoundTitle = process.env.REACT_APP_NOT_FOUND_TITLE || "Az oldal nem található";
+export const notFoundText = process.env.REACT_APP_NOT_FOUND_TEXT || "<p>A keresett oldal nem létezik, vagy már nem érhető el.</p>";
+export const homeLabel = process.env.REACT_APP_HOME_LABEL || "Vissza a főoldalra";
+export const sectionsLabel = process.env.REACT_APP_SECTIONS_LABEL || "Fő rovatok";
+export const retryLabel = process.env.REACT_APP_RETRY_LABEL || "Újrapróbálás";
 
 console.log('Configuration loaded from env');
 
