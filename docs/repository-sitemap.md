@@ -103,22 +103,90 @@ It does not retry a write whose outcome is unknown.
 
 Queries stay in the exact `REACT_APP_DATA_PATH` subtree, with automatic system and
 lifespan filters enabled and `Hidden:0`. File, SystemFolder and the configured
-Widget type families are excluded. A Layout at an ordinary public route remains
-eligible, because Layout content can itself be a page in this engine.
-Parenthesized configuration branches, unsafe/sibling paths and the sitemap file
-itself are rejected. Keep non-page data in technical branches or mark it Hidden;
-the engine's other public content routes are otherwise treated as pages.
+Widget type families are excluded. Parenthesized configuration branches,
+unsafe/sibling paths and the sitemap file itself are rejected.
+
+Within that inventory, an internal page qualifies when it is the home page, has
+an exact stored `DisplayZone` choice `menuitem` or `menuicon`, or has a valid
+`PublishDate` at/before the generation cutoff. The cutoff is captured once before
+paging. Published articles/reviews stay eligible without menu choices: list
+widgets link to them independently. An unmarked, undated Folder/Layout/test page
+does not qualify merely because its direct URL can render. Choice labels such as
+`Menu item` and substring matches are not stored choice tokens.
+
+`Hidden` values true/1/"true"/"1" exclude a record and every descendant within the
+configured site subtree. A second anonymous, paged query reads public hidden-node
+metadata without type-family exclusions, so a hidden SystemFolder/Widget ancestor
+cannot be missed. This metadata query disables system/lifespan filtering for ancestor
+flags while retaining anonymous permission checks; page eligibility still uses the normal filtered query. Both
+queries share the same two-minute deadline and stop on incomplete responses.
+A non-empty invalid
+or future PublishDate excludes even a navigation item; ISO timestamps with an
+explicit timezone and legacy .NET dates are supported. Null/blank dates and
+DateTime.MinValue (`0001-01-01T00:00:00Z`) mean unset, so they do not qualify an
+unmarked article as published. Link-only records (`SoftLink`, `Banner` or a
+non-empty `Url`) are omitted: their linked destination is not their repository
+record's own canonical page.
+
+This is an explicit inclusion policy, not a crawl of every configured widget
+query. The engine supports custom roots, deep queries and SmartFolders, so an
+article is not required to sit below a menu category. Published entries without
+an eligible navigation ancestor are listed as review warnings rather than
+silently dropped. A hidden ancestor takes precedence over menu or publication
+eligibility, including on nested descendants and the home page. No site names,
+article type allowlist or second site registry is used.
 
 Paging uses stable Id ordering and continues to an empty page even if the server
 caps page size. Failed/malformed/repeated/incomplete responses, empty eligible
 results and size overflow stop generation before uploading. Requests are bounded;
 inventory fetches share a two-minute deadline. The single-file implementation
-supports at most 50,000 queried records and 50 MiB of XML; larger sites require
+supports at most 50,000 page/hidden records and 50 MiB of XML; larger sites require
 partitioning, and are never silently truncated.
 
 Entries are encoded, XML escaped, deduplicated and sorted. `lastmod` is the valid
-non-folder `ModificationDate` (ISO or legacy .NET date), never generation time.
-Folder timestamps are omitted because they may not describe their child listings.
+source `ModificationDate` (ISO or legacy .NET date), never generation time.
+Published article/detail content receives it even when SenseNet reports
+`IsFolder=true`: articles can contain assets. Undated folder/navigation collection
+timestamps remain omitted because they may not describe their child listings.
+Missing, malformed and DateTime.MinValue modification dates are omitted too.
+
+The lifespan filter covers `ValidFrom`/`ValidTill`; it does not replace the
+explicit PublishDate gate. Anonymous reads retain SenseNet's permission and
+published-version visibility. Omitting an entry from a sitemap does not block
+direct page access or search indexing. The frontend's route resolver has no
+equivalent Hidden/PublishDate guard; a separate noindex/access decision is needed
+if direct URLs must be unindexable or inaccessible.
+
+## Review changes before uploading
+
+Compare against the current public repository File without writing to it:
+
+```powershell
+node --env-file=.env.site-private scripts/compare-sitemap.mjs --output temp/sitemap-review
+```
+
+If the stored File was removed or moved, supply a previously saved generator XML
+instead. The command fails on an unavailable default baseline; it never treats a
+404 as an empty sitemap or automatically falls back to an old snapshot.
+
+```powershell
+node --env-file=.env.site-private scripts/compare-sitemap.mjs --baseline temp/saved-sitemap.xml --output temp/sitemap-review
+```
+
+`sitemap:compare` is the equivalent npm script with CRA production dotenv loading.
+The output directory contains `proposed.xml`, a `comparison.json` with full
+retained/removed/added entries, reasons and review warnings, and `changes.csv`.
+The summary separates URL changes from retained-page lastmod changes. When a URL
+is absent from the anonymous inventory, the reason is `not-in-public-inventory`;
+the tool does not guess whether it was hidden, deleted, unpublished or denied.
+The baseline reader accepts the plain urlset format emitted by this generator,
+rejects other-site/duplicate/unsupported entries, and does not process DTDs or
+external entities. CSV cells are escaped and formula-leading text neutralized.
+
+All comparison requests are anonymous GETs, including when local writer
+credentials exist. Outputs contain real site URLs and paths: keep them in a
+private ignored directory, review them, then explicitly run the uploader when
+the selection is accepted. Comparison never uploads, changes ACLs or deploys.
 
 ## Caching and free-plan usage
 
@@ -175,4 +243,7 @@ Live CDN cache behavior still requires a deployed URL.
 References: [Netlify proxy rewrites](https://docs.netlify.com/manage/routing/redirects/rewrites-proxies/),
 [Netlify caching](https://docs.netlify.com/build/caching/caching-overview/),
 [SenseNet upload](https://docs.sensenet.com/api-docs/content-management/04-upload/),
-[SenseNet API keys](https://docs.sensenet.com/tutorials/authentication/how-to-authenticate-apikey/).
+[SenseNet API keys](https://docs.sensenet.com/tutorials/authentication/how-to-authenticate-apikey/),
+[SenseNet date/lifespan queries](https://docs.sensenet.com/api-docs/querying/04-date/),
+[Sitemap lastmod](https://www.sitemaps.org/protocol.html),
+[Search indexing controls](https://developers.google.com/search/docs/crawling-indexing/block-indexing).
