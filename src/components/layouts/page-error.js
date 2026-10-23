@@ -1,9 +1,11 @@
 import { addComponent } from '../utils/add-component';
+import { useSnStore } from "../store/sn-store";
+import React from 'react';
 
-export const ErrorLayout = (props) => {
-  console.log('pagetemplate: wide');
-  console.log(props);
-  const context = props.context;
+export const ErrorLayout = React.memo((props) => {
+  // const context = props.context;
+  const {context, layout, widgets} = useSnStore((state) => state);
+  console.log('%error layout', "font-size:16px;color:green", { props: props }, { context: context}, { layout: layout}, { widgets: widgets });
   
   return (
     <div className="App w3-theme-l5">
@@ -12,6 +14,7 @@ export const ErrorLayout = (props) => {
           <a
             href="/"
             className="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-theme-d2"
+            aria-label="Menu"
           >
             <i className="fa fa-bars"></i>
           </a>
@@ -25,6 +28,7 @@ export const ErrorLayout = (props) => {
             href="/"
             className="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white"
             title="News"
+            aria-label="News"
           >
             <i className="fa fa-globe"></i>
           </a>
@@ -39,6 +43,7 @@ export const ErrorLayout = (props) => {
             href="/"
             className="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white"
             title="Messages"
+            aria-label="Messages"
           >
             <i className="fa fa-envelope"></i>
           </a>
@@ -96,12 +101,12 @@ export const ErrorLayout = (props) => {
                 <div className="w3-col m12">
                   <div className="w3-card w3-round w3-white">
                     <div className="w3-container w3-padding">
-                      <b>WIDE</b>
+                      <b>ERROR</b>
                     </div>
                   </div>
                 </div>
               </div>
-             {addComponent('content', 'auto', 'missing', 1, context)}
+             {addComponent('content', 'auto', 'missing', 1, null)}
           </div>
           {/* End Middle Column */}
 
@@ -116,10 +121,6 @@ export const ErrorLayout = (props) => {
       {/* End Page Container */}
 
       {/* Footer */}
-      <footer className="w3-container w3-theme-d3 w3-padding-16">
-        <h5>Footer</h5>
-      </footer>
-
       <footer className="w3-container w3-theme-d5">
         <p>
           Powered by{" "}
@@ -131,6 +132,6 @@ export const ErrorLayout = (props) => {
       {/* End Footer */}
     </div>
   );
-}
+});
 
 export default ErrorLayout;

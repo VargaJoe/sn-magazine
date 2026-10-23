@@ -1,44 +1,57 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { useSnStore } from "../store/sn-store";
+import { clearLazyComponentCache } from './add-component';
 
-const ShowDebugInfo = (title, context, currentPage, widget, bindedContext) => {
-  const [showDebug, setDebug] = useState(false);
+const DEBUG_KEY = 'sn-debug-enabled';
+
+function ShowDebugInfo({ title, context, currentPage, widget }) {
+  const [showDebug, setShowDebug] = useState(false);
+  const store = useSnStore();
+  const layout = store.layout;
+  const location = useLocation();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const debugParam = params.get('debug');
+    if (debugParam === 'true') {
+      localStorage.setItem(DEBUG_KEY, 'true');
+    } else if (debugParam === 'false') {
+      localStorage.removeItem(DEBUG_KEY);
+    }
+  }, [location.search]);
+
   const handleToggle = () => {
-    setDebug(!showDebug);
+    setShowDebug(!showDebug);
   };
 
-  function useQuery() {
-    const { search } = useLocation();
+  const isDebug =
+    (process.env.NODE_ENV === 'development' && localStorage.getItem(DEBUG_KEY) === 'true');
 
-    return React.useMemo(() => new URLSearchParams(search), [search]);
-  }
-  const query = useQuery();
-  const isDebug = query.get("debug");
-
-  if (!isDebug || isDebug !== "true") return;
+  if (!isDebug) return null;
 
   function showContextInfo(context) {
     if (context !== undefined) {
       return (
         <ul>
         <li>
-            Content Name: <span>{context.Name}</span>
+            Content Name: <span>{context?.Name}</span>
           </li>
           <li>
-            Content Type: <span>{context.Type}</span>
+            Content Type: <span>{context?.Type}</span>
           </li>
           <li>
-            Content Path: <span>{context.Path}</span>
+            Content Path: <span>{context?.Path}</span>
           </li>
           <li>
             Content Lifespan:{" "}
-            <span>{context.EnableLifespan ? "true" : "false"}</span>
+            <span>{context?.EnableLifespan ? "true" : "false"}</span>
           </li>
           <li>
-            Content ValidFrom: <span>{context.ValidFrom}</span>
+            Content ValidFrom: <span>{context?.ValidFrom}</span>
           </li>
           <li>
-            Content ValidTill: <span>{context.ValidTill}</span>
+            Content ValidTill: <span>{context?.ValidTill}</span>
           </li>
           <li>
             <hr />
@@ -55,17 +68,17 @@ const ShowDebugInfo = (title, context, currentPage, widget, bindedContext) => {
           <li>
             Current Workspace Name:{" "}
             <span>
-              {context.Type === "Workspace"
-                ? context.Name
-                : context.Workspace.Name}
+              {context?.Type === "Workspace"
+                ? context?.Name
+                : context?.Workspace?.Name}
             </span>
           </li>
           <li>
             Current Workspace Path:{" "}
             <span>
-              {context.Type === "Workspace"
-                ? context.Path
-                : context.Workspace.Path}
+              {context?.Type === "Workspace"
+                ? context?.Path
+                : context?.Workspace?.Path}
             </span>
           </li>
           <li>
@@ -76,7 +89,7 @@ const ShowDebugInfo = (title, context, currentPage, widget, bindedContext) => {
     }
   }
 
-  function showPageInfo(currentPage) {
+  function showPageInfo(currentPage, layout) {
     if (currentPage !== undefined) {
       return (
         <ul>
@@ -88,6 +101,9 @@ const ShowDebugInfo = (title, context, currentPage, widget, bindedContext) => {
           </li>
           <li>
             Page Path: <span>{currentPage?.Path}</span>
+          </li>
+          <li>
+            Layout: <span>{layout}</span>
           </li>
           <li>
             <hr />
@@ -136,6 +152,15 @@ const ShowDebugInfo = (title, context, currentPage, widget, bindedContext) => {
         <button title="show" onClick={handleToggle}>
           show
         </button>
+        {process.env.NODE_ENV === 'development' && (
+          <button
+            title="Clear dynamic component cache"
+            style={{ marginLeft: 8 }}
+            onClick={clearLazyComponentCache}
+          >
+            clear cache
+          </button>
+        )}
       </div>
       <div
         className={`debug-info-details w3-left  ${showDebug ? "" : "hidden"}`}
@@ -148,11 +173,11 @@ const ShowDebugInfo = (title, context, currentPage, widget, bindedContext) => {
         <hr/>
         {showContextInfo(context)}
         {showWorkspaceInfo(context)}
-        {showPageInfo(currentPage)}
+        {showPageInfo(currentPage, layout)}
         {showWidgetInfo(widget)}
       </div>
     </div>
   );
-};
+}
 
 export default ShowDebugInfo;

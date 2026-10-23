@@ -10,9 +10,13 @@
 
 # production
 /build
+/.netlify/
 
 # misc
 .DS_Store
+.env
+.env.*
+!.env.example
 .env.local
 .env.development.local
 .env.test.local
@@ -21,6 +25,16 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-src/config*.json
+src/config?*.json
+src/configuration?*.js
 
-src/configuration*.js
+# deploy
+deploy/logs
+deploy/tools
+/temp/
+/deploy/local/runtime/
+
+# modules cleanup
+node_modulesx
+.github/*.md
+.vscode/*
