@@ -56,7 +56,8 @@ async function main() {
       await page.waitForFunction(expected => window.__errorPageViews.length >= expected, count, { timeout: 40000 });
       await page.waitForTimeout(200);
       const state = await page.evaluate(() => ({ title: document.title, path: location.pathname,
-        views: window.__errorPageViews, robots: document.querySelector('meta[name="robots"]')?.content }));
+        views: window.__errorPageViews, robots: document.querySelector('meta[name="robots"]')?.content,
+        canonical: document.querySelector('link[rel="canonical"]')?.href }));
       assert.equal(state.views.length, count, `${mode}: one event per navigation`);
       const event = state.views.at(-1);
       assert.equal(event.page_type, type);
@@ -64,6 +65,7 @@ async function main() {
       assert.equal(event.page_path, state.path);
       if (title) assert.equal(state.title, title);
       assert.equal(state.robots, type === 'content' ? undefined : 'noindex');
+      assert.equal(state.canonical, type === 'not_found' ? undefined : origin + state.path);
       checks.push({ mode, type, views: count });
     }
 

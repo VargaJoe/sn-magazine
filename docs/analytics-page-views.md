@@ -31,6 +31,8 @@ visits are separate navigations; `page_path` deliberately contains only the path
 Completed not-found and error navigations use `page_type: 'not_found'` and `'error'`.
 Their title is set before the same single event, and both add a managed
 `<meta name="robots" content="noindex">`. Returning to content removes it.
+Not-found views omit the canonical link; returning to content restores its route's
+canonical. Maintenance canonical behavior is unchanged.
 Retry updates the current view/title without counting another navigation; a new
 navigation after recovery emits a content event. Context requests have a 15-second
 timeout and are aborted when the user leaves or retries.

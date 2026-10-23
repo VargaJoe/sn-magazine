@@ -33,5 +33,6 @@ export default function AnalyticsTracker({ context, pageType = 'content', pageTi
     });
   }, [navigation, location.pathname, title, pageType]);
 
-  return title ? <CommonHelmet context={context} pageTitle={title} pathname={location.pathname} noindex={pageType !== 'content'} /> : null;
+  return title ? <CommonHelmet context={context} pageTitle={title} pathname={location.pathname}
+    noindex={pageType !== 'content'} includeCanonical={pageType !== 'not_found'} /> : null;
 }
