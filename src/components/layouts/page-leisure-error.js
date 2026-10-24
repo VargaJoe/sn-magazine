@@ -1,5 +1,4 @@
 import { addComponent } from '../utils/add-component';
-import { Helmet } from 'react-helmet-async';
 import { useSnStore } from "../store/sn-store";
 const defaultImage = require('../../images/logo.png');
 
@@ -19,18 +18,8 @@ export const LeisureErrorLayout = (props) => {
 		if (logoPath === undefined || logoUrl === apiUrl) {
 			logoUrl = defaultImage;
 		}
-
-  // const pageTitle = (context.Id === context.Workspace.Id) ? `${context.DisplayName}` : `${context.Workspace.DisplayName} - ${context.DisplayName}`;
-  const pageTitle = 'Not found';
-
   return (
     <div className="App w3-theme-l5">
-        <Helmet defer={false}>
-					<meta charSet="utf-8" />
-					<title>{pageTitle}</title>
-				</Helmet>
-
-      
       {/* Page Container */}
       <div className="w3-container w3-content w3-content-custom pagetemplate-custom">
         {/* The Grid */}

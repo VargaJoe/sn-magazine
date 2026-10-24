@@ -27,7 +27,7 @@ The other settings are not relevant for now, just go and set `apiUrl` first, it 
 Your settings will look something like this:
 ```json
 {
-	"apiUrl" : 				"https://sn12345678.sensenet.cloud",
+	"apiUrl" : 				"https://repository.example",
 	"dataPath" :			"/Root/Content/SampleWorkspace",
 	"pagecontainerPath": 	"/Root/Content/(layout)",
 	"layoutType": 			"Layout",
@@ -164,3 +164,4 @@ See [docs/dynamic-component-resolution.md](docs/dynamic-component-resolution.md)
 - widget = formerly known as pagecomponent or portlet
 
 - [State Management Best Practices (zustand)](docs/state-management-best-practices.md)
+- [Repository sitemap and Netlify proxy](docs/repository-sitemap.md)

@@ -153,7 +153,7 @@
 
 ### Technical Tasks - Docker Development Server Setup
   - [x] Refactored Dockerfile to use Node.js 16 base image and run npm start for development server instead of static build
-  - [x] Updated docker-compose.fotelvandor-prod.yml to load environment variables from .env.fotelvandor-prod file
+  - [x] Updated deployment Compose configuration to load environment variables from a private per-site environment file
   - [x] Reverted configuration.js to use process.env.REACT_APP_* variables directly for runtime configuration
   - [x] Fixed index.js to render app synchronously without async config loading
   - [x] Created .dockerignore to exclude sensitive .env files and unnecessary files from Docker builds
@@ -171,3 +171,10 @@
   - [x] Built and published vargajoe/sn-magazine:preview as multi-architecture image supporting both platforms
   - [x] Verified Raspberry Pi (ARM64) can successfully pull and run the multi-architecture image
   - [x] Updated documentation for multi-architecture deployment options
+
+### Bugfix - Content Not Found versus Backend Failure
+  - [x] Resolve empty/404 route contexts to a dedicated configurable not-found view with dynamic site branding and main-section links.
+  - [x] Keep maintenance/retry for backend errors, bound context loads and cancel abandoned requests.
+  - [x] Add managed noindex metadata and one ordered react_page_view per navigation with page_type content/not_found/error.
+  - [x] Omit canonical links on not-found views and restore the content canonical on navigation back to a valid page.
+  - [x] Retain HTTP 200 SPA fallback (option B): the manually generated sitemap is not an authoritative route registry; sitemap/robots output is unchanged.

@@ -1,287 +1,434 @@
-import React from 'react';
-import { act } from 'react-dom/test-utils';
+import React, { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { act } from 'react-dom/test-utils';
 import { HelmetProvider } from 'react-helmet-async';
 import { MemoryRouter, useNavigate } from 'react-router-dom';
+import { RepositoryContext } from '@sensenet/hooks-react';
 import PageWrapper from './page-wrapper';
 import { useSnStore } from './store/sn-store';
-import { CachedComponentsByZone } from './utils/add-component';
+import { clearLazyComponentCache } from './utils/add-component';
 
-const mockRepository = { load: jest.fn(), loadCollection: jest.fn() };
-jest.mock('@sensenet/hooks-react', () => ({ useRepository: () => mockRepository }));
-jest.mock('../configuration', () => ({ maintenanceTemplate: 'maintenance' }));
-jest.mock('./widgets/auto-widgetsimpletext', () => ({
-  __esModule: true,
-  default: ({ widget }) => <p>{widget.Title}</p>,
+jest.mock('@sensenet/hooks-react', () => {
+  const React = require('react');
+  const RepositoryContext = React.createContext(null);
+  return { RepositoryContext, useRepository: () => React.useContext(RepositoryContext) };
+});
+
+jest.mock('../configuration', () => ({
+  maintenanceTemplate: 'maintenance',
+  maintenanceSiteName: 'Maintenance site',
+  maintenanceTitle: 'Temporarily unavailable',
+  maintenanceText: '<p>Please try again later.</p>',
+  maintenanceEmail: '',
+  notFoundTitle: 'Az oldal nem található',
+  notFoundText: '<p>Missing page description</p>',
+  homeLabel: 'Back home',
+  sectionsLabel: 'Main sections',
+  retryLabel: 'Retry',
 }));
-jest.mock('./layouts/page-wide', () => ({ __esModule: true, default: () => <p>Automatic layout</p> }));
-jest.mock('./layouts/page-maintenance', () => ({ __esModule: true, default: () => <p>Maintenance</p> }));
 
-const repository = 'https://repo.example';
-const site = '/Root/Content/site';
-const stylesheet = name => ({ Type: 'File', Path: `/Root/Skins/${name}.css` });
-const context = name => ({ Id: name === 'a' ? 1 : 2, Type: 'Article', Path: `${site}/${name}`,
-  DisplayName: name, IsFolder: false, Workspace: { Id: 9, DisplayName: 'Site' } });
-const pageResult = (name, Stylesheets = { results: [stylesheet(name)] }) => {
-  const Id = name === 'a' ? 101 : 202;
-  return { d: { results: [
-    { Id: 99, Type: 'Layout', Depth: 3, PageTemplate: 'leisure-simple', Stylesheets: [stylesheet('ancestor')] },
-    { Id, Type: 'Layout', Depth: 6, PageTemplate: 'leisure-simple', Stylesheets },
-    { Id: 10, ParentId: Id, Type: 'WidgetSimpleText', PortletZone: 'content', Title: `${name} story` },
-  ] } };
-};
+const workspace = { Id: 1, DisplayName: 'Leisure Magazin' };
+const contextFor = (name = 'Review', overrides = {}) => ({
+  Id: 3, Type: 'Article', Path: `/Root/Content/Magazine/${name}`, DisplayName: name,
+  Workspace: workspace, IsFolder: false, ...overrides,
+});
+const layoutResult = (label = 'Article widget') => ({ d: { results: [
+  { Id: 700, Type: 'Layout', Depth: 4, PageTemplate: 'leisure-simple' },
+  { Id: 701, Type: 'WidgetSimpleText', ParentId: 700, PortletZone: 'content',
+    Title: label, ComponentContent: '<p>Resolved widget content</p>' },
+] } });
 const deferred = () => {
-  let resolve, reject;
-  const promise = new Promise((yes, no) => { resolve = yes; reject = no; });
+  let resolve;
+  let reject;
+  const promise = new Promise((resolvePromise, rejectPromise) => {
+    resolve = resolvePromise;
+    reject = rejectPromise;
+  });
   return { promise, resolve, reject };
 };
-let container, root, navigate, staticLink, previousEnvironment;
-function Navigation() { navigate = useNavigate(); return null; }
-const flushHead = async () => act(async () => { jest.runOnlyPendingTimers(); });
-const start = async () => {
-  await act(async () => root.render(
-    <HelmetProvider><MemoryRouter initialEntries={['/a']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <Navigation /><PageWrapper />
-    </MemoryRouter></HelmetProvider>,
-  ));
-  await flushHead();
-};
-const go = async path => { await act(async () => navigate(path)); await flushHead(); };
-const urls = () => [...document.head.querySelectorAll('[data-sn-page-stylesheet]')].map(link => link.href);
 
-beforeEach(() => {
-  jest.useFakeTimers();
-  jest.spyOn(console, 'error').mockImplementation(() => {});
-  jest.spyOn(console, 'log').mockImplementation(() => {});
-  jest.spyOn(console, 'warn').mockImplementation(() => {});
-  previousEnvironment = { ...process.env };
-  process.env.REACT_APP_API_URL = repository;
-  process.env.REACT_APP_DATA_PATH = site;
-  process.env.REACT_APP_PAGECONTAINER_PATH = `${site}/(layout)`;
-  process.env.REACT_APP_LAYOUT_TYPE = 'Layout';
-  process.env.REACT_APP_WIDGET_TYPE = 'Widget';
-  useSnStore.setState({ context: null, page: null, widgets: null, layout: 'vanilla' });
-  mockRepository.load.mockReset().mockImplementation(({ idOrPath }) => Promise.resolve({ d: context(idOrPath.endsWith('/b') ? 'b' : 'a') }));
-  mockRepository.loadCollection.mockReset().mockImplementation(({ oDataOptions }) => Promise.resolve(
-    pageResult(oDataOptions.query.includes(`${site}/b/(layout)`) ? 'b' : 'a'),
-  ));
-  container = document.createElement('div');
-  document.body.appendChild(container);
-  root = createRoot(container);
-  staticLink = document.createElement('link');
-  staticLink.rel = 'stylesheet';
-  staticLink.href = '/legacy.css';
-  document.head.appendChild(staticLink);
-});
-afterEach(async () => {
-  await act(async () => root.unmount());
-  jest.runOnlyPendingTimers();
-  jest.useRealTimers();
-  jest.restoreAllMocks();
-  process.env = previousEnvironment;
-  container.remove();
-  staticLink.remove();
-});
+describe('PageWrapper navigation lifecycle', () => {
+  let root;
+  let container;
+  let navigate;
+  let observedTitles;
+  let repository;
+  let initialPath;
+  let strict;
+  const originalEnv = {
+    REACT_APP_DATA_PATH: process.env.REACT_APP_DATA_PATH,
+    REACT_APP_PAGECONTAINER_PATH: process.env.REACT_APP_PAGECONTAINER_PATH,
+    REACT_APP_LAYOUT_TYPE: process.env.REACT_APP_LAYOUT_TYPE,
+    REACT_APP_WIDGET_TYPE: process.env.REACT_APP_WIDGET_TYPE,
+  };
+  const originalActEnvironment = global.IS_REACT_ACT_ENVIRONMENT;
 
-it('uses the resolved Page CSS with unchanged templates and widgets across A -> B -> A', async () => {
-  mockRepository.loadCollection.mockImplementation(({ oDataOptions }) => Promise.resolve(
-    oDataOptions.query.includes(`${site}/b/(layout)`) ? pageResult('b', { results: [stylesheet('b'), stylesheet('shared')] }) :
-      pageResult('a', { results: [stylesheet('shared'), stylesheet('a')] }),
-  ));
-  await start();
-  expect(urls()).toEqual([`${repository}/Root/Skins/shared.css`, `${repository}/Root/Skins/a.css`]);
-  expect(container.querySelector('.layout-middle').textContent).toContain('a story');
-  expect(mockRepository.loadCollection.mock.calls[0][0].oDataOptions.expand).toEqual(['CustomRoot', 'Stylesheets']);
-  expect(mockRepository.loadCollection.mock.calls[0][0].oDataOptions.orderby).toEqual(['Index']);
-  await go('/b');
-  expect(urls()).toEqual([`${repository}/Root/Skins/b.css`, `${repository}/Root/Skins/shared.css`]);
-  expect(container.querySelector('.layout-middle').textContent).toContain('b story');
-  await go('/a');
-  expect(urls()).toEqual([`${repository}/Root/Skins/shared.css`, `${repository}/Root/Skins/a.css`]);
-  expect(useSnStore.getState().page.Id).toBe(101);
-  expect(document.head.contains(staticLink)).toBe(true);
-});
+  function NavigationControl() {
+    navigate = useNavigate();
+    return null;
+  }
 
-it('removes previous CSS immediately while the next context is pending', async () => {
-  await start();
-  const pending = deferred();
-  mockRepository.load.mockReturnValueOnce(pending.promise);
-  await act(async () => navigate('/b'));
-  expect(urls()).toEqual([]);
-  expect(container.textContent).toBe('');
-  expect(useSnStore.getState().page).toBeNull();
-  await act(async () => pending.resolve({ d: context('b') }));
-  await flushHead();
-  expect(urls()).toEqual([`${repository}/Root/Skins/b.css`]);
-});
+  async function render(nextRepository = repository) {
+    repository = nextRepository;
+    const tree = (
+      <HelmetProvider>
+        <RepositoryContext.Provider value={repository}>
+          <MemoryRouter initialEntries={[initialPath]} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+            <NavigationControl />
+            <PageWrapper />
+          </MemoryRouter>
+        </RepositoryContext.Provider>
+      </HelmetProvider>
+    );
+    await act(async () => root.render(strict ? <StrictMode>{tree}</StrictMode> : tree));
+  }
 
-it.each([
-  ['leisure-simple', 'Site - a', 'Site - b'],
-  ['leisure-error', 'Not found', 'Not found'],
-])('commits %s Page CSS and head metadata without waiting for animation frames', async (template, titleA, titleB) => {
-  mockRepository.loadCollection.mockImplementation(({ oDataOptions }) => {
-    const name = oDataOptions.query.includes(`${site}/b/(layout)`) ? 'b' : 'a';
-    const result = pageResult(name);
-    result.d.results[1].PageTemplate = template;
-    return Promise.resolve(result);
+  async function resolve(request, value) {
+    await act(async () => request.resolve(value));
+  }
+
+  beforeEach(() => {
+    global.IS_REACT_ACT_ENVIRONMENT = true;
+    process.env.REACT_APP_DATA_PATH = '/Root/Content/Magazine';
+    process.env.REACT_APP_PAGECONTAINER_PATH = '/Root/Content/Magazine/(layout)';
+    process.env.REACT_APP_LAYOUT_TYPE = 'Layout';
+    process.env.REACT_APP_WIDGET_TYPE = 'Widget';
+    useSnStore.setState({ context: null, page: null, widgets: null, layout: 'vanilla' });
+    clearLazyComponentCache();
+    jest.spyOn(console, 'log').mockImplementation(() => {});
+    document.title = 'Initial title';
+    observedTitles = [];
+    window.dataLayer = [];
+    jest.spyOn(window.dataLayer, 'push').mockImplementation(event => {
+      observedTitles.push(document.title);
+      return Array.prototype.push.call(window.dataLayer, event);
+    });
+    container = document.createElement('div');
+    document.body.appendChild(container);
+    root = createRoot(container);
+    repository = {
+      load: jest.fn().mockResolvedValue({ d: contextFor() }),
+      loadCollection: jest.fn().mockResolvedValue(layoutResult()),
+    };
+    initialPath = '/review';
+    strict = false;
   });
-  await act(async () => root.render(
-    <HelmetProvider><MemoryRouter initialEntries={['/a']} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <Navigation /><PageWrapper />
-    </MemoryRouter></HelmetProvider>,
-  ));
-  expect(urls()).toEqual([`${repository}/Root/Skins/a.css`]);
-  expect(document.title).toBe(titleA);
-  await act(async () => navigate('/b'));
-  expect(urls()).toEqual([`${repository}/Root/Skins/b.css`]);
-  expect(document.title).toBe(titleB);
-});
 
-it.each(['missing', 'failed'])('keeps prior CSS removed for a %s context', async mode => {
-  await start();
-  if (mode === 'missing') mockRepository.load.mockResolvedValueOnce({ d: {} });
-  else mockRepository.load.mockRejectedValueOnce(new Error('offline'));
-  await go('/b');
-  expect(urls()).toEqual([]);
-  expect(useSnStore.getState().context).toBeNull();
-  expect(useSnStore.getState().page).toBeNull();
-  expect(container.textContent).toBe('Maintenance');
-});
+  afterEach(async () => {
+    await act(async () => root.unmount());
+    container.remove();
+    delete window.dataLayer;
+    jest.restoreAllMocks();
+  });
 
-it.each(['missing', 'failed'])('uses the automatic layout without prior CSS for a %s Page', async mode => {
-  await start();
-  if (mode === 'missing') mockRepository.loadCollection.mockResolvedValueOnce({ d: { results: [] } });
-  else mockRepository.loadCollection.mockRejectedValueOnce(new Error('offline'));
-  await go('/b');
-  expect(urls()).toEqual([]);
-  expect(useSnStore.getState().page).toBeNull();
-  expect(container.textContent).toBe('Automatic layout');
-  expect(mockRepository.loadCollection).toHaveBeenCalledTimes(2);
-});
+  afterAll(() => {
+    global.IS_REACT_ACT_ENVIRONMENT = originalActEnvironment;
+    Object.entries(originalEnv).forEach(([key, value]) => {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    });
+  });
 
-it('retries only the legacy expand when Layout has no Stylesheets field', async () => {
-  const result = pageResult('a');
-  delete result.d.results[1].Stylesheets;
-  mockRepository.loadCollection.mockRejectedValueOnce(Object.assign(new Error('Bad Request'), {
-    statusCode: 400, body: { error: { message: { value: "Unknown field: 'Stylesheets'" } } },
-  })).mockResolvedValueOnce(result);
-  await start();
-  expect(mockRepository.loadCollection).toHaveBeenCalledTimes(2);
-  const [initial, retry] = mockRepository.loadCollection.mock.calls.map(([options]) => options);
-  expect(initial.oDataOptions.expand).toEqual(['CustomRoot', 'Stylesheets']);
-  expect(retry).toEqual({ ...initial, oDataOptions: { ...initial.oDataOptions, expand: ['CustomRoot'] } });
-  expect(urls()).toEqual([]);
-  expect(container.textContent).toContain('a story');
-});
+  it('waits for both context and inherited layout before publishing a view and rendering real widgets', async () => {
+    const contextRequest = deferred();
+    const layoutRequest = deferred();
+    repository.load.mockReturnValue(contextRequest.promise);
+    repository.loadCollection.mockReturnValue(layoutRequest.promise);
 
-it.each([
-  Object.assign(new Error('Unknown field: Stylesheets'), { statusCode: 403 }),
-  Object.assign(new Error('Unknown field: OtherField'), { statusCode: 400 }),
-  Object.assign(new Error('Stylesheets File was not found'), { statusCode: 400 }),
-])('does not mask other errors with a legacy retry: %s', async error => {
-  mockRepository.loadCollection.mockRejectedValueOnce(error);
-  await start();
-  expect(mockRepository.loadCollection).toHaveBeenCalledTimes(1);
-  expect(urls()).toEqual([]);
-  expect(container.textContent).toBe('Automatic layout');
-});
+    await render();
+    expect(window.dataLayer).toHaveLength(0);
+    expect(repository.load).toHaveBeenCalledWith(expect.objectContaining({
+      oDataOptions: { select: 'all', expand: 'Workspace' },
+    }));
+    await resolve(contextRequest, { d: contextFor() });
+    expect(repository.loadCollection).toHaveBeenCalledTimes(1);
+    expect(repository.loadCollection.mock.calls[0][0].oDataOptions.query).toContain("'/Root/Content/Magazine/Review/(layout)'");
+    expect(window.dataLayer).toHaveLength(0);
+    expect(document.title).toBe('Initial title');
+    expect(container.textContent).not.toContain('Leisure Simple Layout');
 
-it('does not retry an old missing-field response after navigation', async () => {
-  const old = deferred();
-  mockRepository.loadCollection.mockReturnValueOnce(old.promise);
-  await start();
-  await go('/b');
-  await act(async () => old.reject(Object.assign(new Error('Unknown field: Stylesheets'), { statusCode: 400 })));
-  await flushHead();
-  expect(mockRepository.loadCollection).toHaveBeenCalledTimes(2);
-  expect(urls()).toEqual([`${repository}/Root/Skins/b.css`]);
-});
+    await resolve(layoutRequest, layoutResult());
+    expect(container.textContent).toContain('Leisure Simple Layout');
+    expect(container.querySelector('.widget-simpletext h1').textContent).toBe('Article widget');
+    expect([...window.dataLayer]).toEqual([{
+      event: 'react_page_view', page_title: 'Leisure Magazin - Review', page_path: '/review', page_type: 'content',
+    }]);
+    expect(observedTitles).toEqual(['Leisure Magazin - Review']);
+  });
 
-it('keeps the existing layout and widgets for empty or bad stylesheet references', async () => {
-  mockRepository.loadCollection.mockResolvedValueOnce(pageResult('a', { results: [] }))
-    .mockResolvedValueOnce(pageResult('b', { results: [{ Type: 'File', Path: 'https://other.example/Root/b.css' }] }));
-  await start();
-  expect(urls()).toEqual([]);
-  expect(container.textContent).toContain('a story');
-  await go('/b');
-  expect(urls()).toEqual([]);
-  expect(container.textContent).toContain('b story');
-  expect(document.head.contains(staticLink)).toBe(true);
-});
+  it.each([
+    ['home', '/', contextFor('Leisure Magazin', { Id: 1 }), 'Leisure Magazin'],
+    ['root with no Workspace', '/', contextFor('Leisure Magazin', {
+      Path: '/Root/Content/Magazine', Workspace: null,
+    }), 'Leisure Magazin'],
+    ['section', '/books', contextFor('Könyvek', { Type: 'Folder', IsFolder: true }), 'Leisure Magazin - Könyvek'],
+    ['article', '/books/review', contextFor('Árnyék és fény'), 'Leisure Magazin - Árnyék és fény'],
+  ])('publishes the direct %s context title', async (_, path, context, title) => {
+    initialPath = path;
+    repository.load.mockResolvedValue({ d: context });
+    await render();
+    expect([...window.dataLayer]).toEqual([{ event: 'react_page_view', page_title: title, page_path: path, page_type: 'content' }]);
+    expect(observedTitles).toEqual([title]);
+    expect(container.querySelector('.widget-simpletext')).not.toBeNull();
+  });
 
-it.each([undefined, 'unknown-template'])('preserves automatic fallback for PageTemplate %s', async template => {
-  const result = pageResult('a');
-  result.d.results[1].PageTemplate = template;
-  mockRepository.loadCollection.mockResolvedValueOnce(result);
-  await start();
-  expect(container.textContent).toBe('Automatic layout');
-  expect(urls()).toEqual([`${repository}/Root/Skins/a.css`]);
-});
+  it('publishes once under StrictMode, rerenders, and repository provider refresh', async () => {
+    strict = true;
+    await render();
+    await render();
+    const refreshedRepository = {
+      load: jest.fn().mockResolvedValue({ d: contextFor('Updated review') }),
+      loadCollection: jest.fn().mockResolvedValue(layoutResult('Refreshed widget')),
+    };
+    await render(refreshedRepository);
 
-it('preserves direct Layout context selection and expands its File references', async () => {
-  const selected = { ...context('a'), Type: 'Layout', Path: `${site}/(layout)/This` };
-  mockRepository.load.mockResolvedValueOnce({ d: selected });
-  await start();
-  const { query, expand } = mockRepository.loadCollection.mock.calls[0][0].oDataOptions;
-  expect(query).toBe(`Path:'${selected.Path}' OR TypeIs:Widget AND InFolder:'${selected.Path}' AND Hidden:0`);
-  expect(expand).toEqual(['CustomRoot', 'Stylesheets']);
-  expect(urls()).toEqual([`${repository}/Root/Skins/a.css`]);
-});
+    expect(refreshedRepository.load).toHaveBeenCalledTimes(1);
+    expect(document.title).toBe('Leisure Magazin - Updated review');
+    expect(container.textContent).toContain('Refreshed widget');
+    expect(window.dataLayer).toHaveLength(1);
+    expect(observedTitles).toEqual(['Leisure Magazin - Review']);
+  });
 
-it('ignores a stale context response after revisiting the same URL', async () => {
-  const old = deferred();
-  mockRepository.load.mockReturnValueOnce(old.promise);
-  await start();
-  await go('/b');
-  await go('/a');
-  const count = mockRepository.loadCollection.mock.calls.length;
-  await act(async () => old.resolve({ d: context('b') }));
-  await flushHead();
-  expect(mockRepository.loadCollection).toHaveBeenCalledTimes(count);
-  expect(urls()).toEqual([`${repository}/Root/Skins/a.css`]);
-  expect(useSnStore.getState().context.Id).toBe(1);
-});
+  it('publishes one view for each query, hash, same-URL push, back, and forward navigation', async () => {
+    await render();
+    for (const destination of ['/review?q=one', '/review?q=one#details', '/review?q=one#details', -1, 1]) {
+      await act(async () => navigate(destination));
+    }
+    expect(repository.load).toHaveBeenCalledTimes(6);
+    expect(repository.loadCollection).toHaveBeenCalledTimes(6);
+    expect(window.dataLayer).toHaveLength(6);
+    expect(window.dataLayer.map(event => event.page_path)).toEqual(Array(6).fill('/review'));
+    expect(observedTitles).toEqual(Array(6).fill('Leisure Magazin - Review'));
+  });
 
-it('ignores a stale Page response after A -> B -> A', async () => {
-  const old = deferred();
-  mockRepository.loadCollection.mockReturnValueOnce(old.promise);
-  await start();
-  await go('/b');
-  await go('/a');
-  await act(async () => old.resolve(pageResult('b')));
-  await flushHead();
-  expect(urls()).toEqual([`${repository}/Root/Skins/a.css`]);
-  expect(useSnStore.getState().page.Id).toBe(101);
-  expect(container.textContent).toContain('a story');
-});
+  it('ignores an old context response after a faster navigation completes', async () => {
+    const oldContext = deferred();
+    repository.load.mockReturnValueOnce(oldContext.promise)
+      .mockResolvedValueOnce({ d: contextFor('Current review') });
+    await render();
+    await act(async () => navigate('/current'));
+    await resolve(oldContext, { d: contextFor('Obsolete review') });
 
-it('removes owned links on unmount and ignores an outstanding Page result', async () => {
-  await start();
-  const pending = deferred();
-  mockRepository.loadCollection.mockReturnValueOnce(pending.promise);
-  await go('/b');
-  await act(async () => root.unmount());
-  expect(urls()).toEqual([]);
-  await act(async () => pending.resolve(pageResult('b')));
-  expect(useSnStore.getState().page).toBeNull();
-  expect(document.head.contains(staticLink)).toBe(true);
-});
+    expect(repository.loadCollection).toHaveBeenCalledTimes(1);
+    expect(useSnStore.getState().context.DisplayName).toBe('Current review');
+    expect([...window.dataLayer]).toEqual([{
+      event: 'react_page_view', page_title: 'Leisure Magazin - Current review', page_path: '/current', page_type: 'content',
+    }]);
+    expect(document.title).toBe('Leisure Magazin - Current review');
+  });
 
-it('removes a resolved Page stylesheet when PageWrapper unmounts', async () => {
-  await start();
-  expect(urls()).toEqual([`${repository}/Root/Skins/a.css`]);
-  await act(async () => root.unmount());
-  expect(urls()).toEqual([]);
-  expect(document.head.contains(staticLink)).toBe(true);
-});
+  it('ignores an old layout response and never publishes the old navigation', async () => {
+    const oldLayout = deferred();
+    repository.loadCollection.mockReturnValueOnce(oldLayout.promise)
+      .mockResolvedValueOnce(layoutResult('Current widget'));
+    repository.load.mockResolvedValueOnce({ d: contextFor('Obsolete review') })
+      .mockResolvedValueOnce({ d: contextFor('Current review') });
+    await render();
+    expect(window.dataLayer).toHaveLength(0);
+    await act(async () => navigate('/current'));
+    await resolve(oldLayout, layoutResult('Obsolete widget'));
 
-it('delivers updated widget props while preserving its repository ID', async () => {
-  const widget = { Id: 10, Type: 'WidgetSimpleText', PortletZone: 'content', Title: 'Original' };
-  const render = async widgets => act(async () => root.render(
-    <CachedComponentsByZone type="widgets" zone="content" widgets={widgets} context={context('a')} />,
-  ));
-  await render([widget]);
-  expect(container.textContent).toBe('Original');
-  await render([{ ...widget, Title: 'Updated' }]);
-  expect(container.textContent).toBe('Updated');
+    expect(container.textContent).toContain('Current widget');
+    expect(container.textContent).not.toContain('Obsolete widget');
+    expect(useSnStore.getState().context.DisplayName).toBe('Current review');
+    expect(window.dataLayer).toHaveLength(1);
+    expect(observedTitles).toEqual(['Leisure Magazin - Current review']);
+  });
+
+  it('shows maintenance with its own page view when the next context load fails', async () => {
+    const failure = deferred();
+    const errorLog = jest.spyOn(console, 'error').mockImplementation(() => {});
+    repository.load.mockResolvedValueOnce({ d: contextFor() }).mockReturnValueOnce(failure.promise);
+    await render();
+    await act(async () => navigate('/unavailable'));
+    expect(container.querySelector('.widget-simpletext')).toBeNull();
+    await act(async () => failure.reject(new Error('Offline')));
+
+    expect(container.textContent).toContain('Temporarily unavailable');
+    expect(useSnStore.getState().context).toBeNull();
+    expect(window.dataLayer).toHaveLength(2);
+    expect(window.dataLayer[1]).toEqual({ event: 'react_page_view', page_path: '/unavailable',
+      page_title: 'Leisure Magazin - Temporarily unavailable', page_type: 'error' });
+    expect(observedTitles[1]).toBe('Leisure Magazin - Temporarily unavailable');
+    expect(document.querySelector('meta[name="robots"]').content).toBe('noindex');
+    expect(errorLog).toHaveBeenCalled();
+  });
+
+  it.each(['pending', 'failed'])('counts returning to a previous entry after a %s navigation', async status => {
+    const interrupted = deferred();
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+    repository.load.mockResolvedValueOnce({ d: contextFor() }).mockReturnValueOnce(interrupted.promise);
+    await render();
+    await act(async () => navigate('/unavailable'));
+    if (status === 'failed') {
+      await act(async () => interrupted.reject(new Error('Offline')));
+      expect(container.textContent).toContain('Temporarily unavailable');
+    }
+    expect(window.dataLayer).toHaveLength(status === 'failed' ? 2 : 1);
+
+    await act(async () => navigate(-1));
+    if (status === 'pending') await resolve(interrupted, { d: contextFor('Obsolete review') });
+
+    expect(window.dataLayer).toHaveLength(status === 'failed' ? 3 : 2);
+    expect(window.dataLayer.map(event => event.page_type)).toEqual(status === 'failed' ? ['content', 'error', 'content'] : ['content', 'content']);
+    expect(observedTitles.at(-1)).toBe('Leisure Magazin - Review');
+    expect(document.querySelector('meta[name="robots"]')).toBeNull();
+    expect(container.querySelector('.widget-simpletext')).not.toBeNull();
+  });
+
+  it('keeps the automatic layout fallback and correct title on layout load failure', async () => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+    repository.loadCollection.mockRejectedValue(new Error('Layout unavailable'));
+    await render();
+    expect(useSnStore.getState().layout).toBe('wide');
+    expect(container.textContent).toContain('Loading layout...');
+    expect(observedTitles).toEqual(['Leisure Magazin - Review']);
+    expect(window.dataLayer).toHaveLength(1);
+  });
+
+  const siteRoot = (title = 'Independent Site') => ({
+    ...workspace, Type: 'Workspace', Path: '/Root/Content/Magazine', DisplayName: title,
+    Children: [
+      { Path: '/Root/Content/Magazine/books', DisplayName: 'Books', DisplayZone: ['menuitem'], Hidden: false },
+      { Path: '/Root/Content/Magazine/hidden', DisplayName: 'Hidden', DisplayZone: ['menuitem'], Hidden: true },
+      { Path: '/Root/Content/Magazine/internal', DisplayName: 'Internal', DisplayZone: [] },
+    ],
+  });
+
+  it.each([
+    ['SenseNet 404', { error: { statusCode: 404 } }],
+    ['response 404', { error: { response: { status: 404 } } }],
+    ['null result', { result: { d: null } }],
+    ['empty result', { result: { d: { results: [] } } }],
+    ['empty object', { result: { d: {} } }],
+    ['empty array', { result: { d: [] } }],
+    ['absent result', { result: undefined }],
+  ])('renders a dedicated dynamic not-found page for %s', async (_, response) => {
+    strict = true;
+    initialPath = '/missing';
+    repository.load.mockImplementation(({ idOrPath }) => {
+      if (idOrPath === '/Root/Content/Magazine') return Promise.resolve({ d: siteRoot() });
+      return response.error ? Promise.reject(response.error) : Promise.resolve(response.result);
+    });
+    await render();
+    await render();
+    expect(container.querySelector('h1').textContent).toBe('Az oldal nem található');
+    expect(container.textContent).toContain('Missing page description');
+    expect(container.querySelector('a[href="/books"]').textContent).toBe('Books');
+    expect(container.querySelector('a[href="/hidden"]')).toBeNull();
+    expect(container.querySelector('a[href="/internal"]')).toBeNull();
+    expect(container.querySelector('a[href="/"]')).not.toBeNull();
+    expect(repository.loadCollection).not.toHaveBeenCalled();
+    expect(document.querySelector('meta[name="robots"]').content).toBe('noindex');
+    expect([...window.dataLayer]).toEqual([{ event: 'react_page_view', page_path: '/missing',
+      page_title: 'Independent Site - Az oldal nem található', page_type: 'not_found' }]);
+    expect(observedTitles).toEqual(['Independent Site - Az oldal nem található']);
+    expect(document.querySelector('link[rel="canonical"]')).toBeNull();
+    await act(async () => navigate('/'));
+    expect(document.title).toBe('Independent Site');
+    expect(document.querySelector('meta[name="robots"]')).toBeNull();
+    expect(window.dataLayer.map(event => event.page_type)).toEqual(['not_found', 'content']);
+    expect(document.querySelectorAll('link[rel="canonical"]')).toHaveLength(1);
+    expect(new URL(document.querySelector('link[rel="canonical"]').href).pathname).toBe('/');
+    await act(async () => navigate(-1));
+    expect(document.querySelector('link[rel="canonical"]')).toBeNull();
+    expect(document.querySelector('meta[name="robots"]').content).toBe('noindex');
+    expect(window.dataLayer.map(event => event.page_type)).toEqual(['not_found', 'content', 'not_found']);
+  });
+
+  it.each([new TypeError('Failed to fetch'), { statusCode: 503 }, { response: { status: 500 } },
+    { statusCode: 401 }, { statusCode: 403 }, { d: 'malformed' }])('publishes an error page using offline configuration for %p', async failure => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+    if (failure.d) repository.load.mockResolvedValue(failure);
+    else repository.load.mockRejectedValue(failure);
+    strict = true;
+    await render();
+    expect(container.textContent).toContain('Temporarily unavailable');
+    expect(container.querySelector('button').textContent).toBe('Retry');
+    expect(document.querySelector('meta[name="robots"]').content).toBe('noindex');
+    expect(window.dataLayer).toHaveLength(1);
+    expect(window.dataLayer[0]).toMatchObject({ page_type: 'error', page_title: 'Maintenance site - Temporarily unavailable' });
+    expect(observedTitles).toEqual(['Maintenance site - Temporarily unavailable']);
+  });
+
+  it('retries in place, removes noindex on recovery and does not duplicate a navigation event', async () => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+    repository.load.mockRejectedValueOnce(new TypeError('Offline'));
+    await render();
+    expect(window.dataLayer).toHaveLength(1);
+    await act(async () => container.querySelector('button').click());
+    expect(container.querySelector('.widget-simpletext')).not.toBeNull();
+    expect(document.title).toBe('Leisure Magazin - Review');
+    expect(document.querySelector('meta[name="robots"]')).toBeNull();
+    expect(window.dataLayer).toHaveLength(1);
+    await act(async () => navigate('/review'));
+    expect(window.dataLayer).toHaveLength(2);
+    expect(window.dataLayer[1].page_type).toBe('content');
+  });
+
+  it('ignores late not-found branding after navigating away', async () => {
+    const oldSite = deferred();
+    repository.load.mockRejectedValueOnce({ statusCode: 404 }).mockReturnValueOnce(oldSite.promise)
+      .mockResolvedValue({ d: contextFor() });
+    await render();
+    expect(window.dataLayer).toHaveLength(0);
+    await act(async () => navigate('/review'));
+    await resolve(oldSite, { d: siteRoot('Obsolete Site') });
+    expect(window.dataLayer).toHaveLength(1);
+    expect(window.dataLayer[0].page_type).toBe('content');
+    expect(document.title).toBe('Leisure Magazin - Review');
+    expect(document.querySelector('meta[name="robots"]')).toBeNull();
+  });
+
+  it('keeps the proven 404 when its branding request fails', async () => {
+    repository.load.mockRejectedValueOnce({ statusCode: 404 }).mockRejectedValueOnce(new TypeError('Offline'));
+    await render();
+    expect(window.dataLayer[0].page_type).toBe('not_found');
+    expect(document.title).toBe('Maintenance site - Az oldal nem található');
+  });
+
+  it('ignores malformed and unsafe optional menu entries without losing the 404 view', async () => {
+    const home = siteRoot();
+    home.Children.push(null, 'bad child', { Url: 42 },
+      { Path: '/Root/Content/Magazine/external', DisplayName: 'External', DisplayZone: ['menuitem'], Url: 'https://outside.example' },
+      { Path: '/Root/Content/Other/escape', DisplayName: 'Other site', DisplayZone: ['menuitem'] },
+      { Path: '/Root/Content/Magazine/(structure)/internal', DisplayName: 'Structure', DisplayZone: ['menuitem'] },
+      { Path: '/Root/Content/Magazine/../escape', DisplayName: 'Traversal', DisplayZone: ['menuitem'] });
+    repository.load.mockRejectedValueOnce({ statusCode: 404 }).mockResolvedValueOnce({ d: home });
+    await render();
+    expect([...container.querySelectorAll('main nav a')].map(link => link.textContent)).toEqual(['Books']);
+    expect(window.dataLayer).toHaveLength(1);
+    expect(window.dataLayer[0].page_type).toBe('not_found');
+    expect(document.querySelector('meta[name="robots"]').content).toBe('noindex');
+  });
+
+  it('times out a hanging context request and supports retry', async () => {
+    jest.useFakeTimers();
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+    try {
+      repository.load.mockReturnValueOnce(new Promise(() => {}));
+      await render();
+      expect(window.dataLayer).toHaveLength(0);
+      await act(async () => jest.advanceTimersByTime(15000));
+      expect(container.querySelector('button')).not.toBeNull();
+      expect(window.dataLayer[0].page_type).toBe('error');
+      expect(repository.load.mock.calls[0][0].requestInit.signal.aborted).toBe(true);
+      await act(async () => container.querySelector('button').click());
+      expect(document.querySelector('meta[name="robots"]')).toBeNull();
+      expect(document.title).toBe('Leisure Magazin - Review');
+      expect(window.dataLayer).toHaveLength(1);
+    } finally { jest.useRealTimers(); }
+  });
+
+  it.each([
+    ['missing Workspace', { Workspace: null }],
+    ['invalid site name', { Workspace: { ...workspace, DisplayName: 'undefined' } }],
+    ['invalid article title', { DisplayName: 'W3.CSS Template' }],
+  ])('renders resolved content without an analytics event for %s', async (_, overrides) => {
+    repository.load.mockResolvedValue({ d: contextFor('Review', overrides) });
+    await render();
+    expect(container.querySelector('.widget-simpletext')).not.toBeNull();
+    expect(window.dataLayer).toHaveLength(0);
+    expect(document.title).toBe('Initial title');
+  });
 });

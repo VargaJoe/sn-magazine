@@ -15,8 +15,9 @@ export function LeisureMangaTranslationContent(props) {
   console.log('leisure manga translation content', props, context);
 
   const loadContents = useCallback(async () => {
+    if (!process.env.REACT_APP_DATA_PATH) return;
     const result = await repo.loadCollection({
-      path: `/Root/Content/mangajanlo/manga`,
+      path: process.env.REACT_APP_DATA_PATH,
       oDataOptions: {
         query: `Translation:('${context.Id}')`,
         expand: 'Translation',

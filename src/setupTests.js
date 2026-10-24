@@ -1,3 +1,2 @@
-// Tests use Jest's built-in assertions and React's act helper. No extra DOM
-// matcher package is required (jest-dom was never declared in package.json).
+// Tests use Jest's built-in matchers and React's act() helpers.
 global.IS_REACT_ACT_ENVIRONMENT = true;

@@ -17,12 +17,20 @@ describe('Dynamic Component Resolution', () => {
     expect(Comp1).toBe(Comp2);
   });
 
-  it('can resolve the same module after clearing its own cache', () => {
+  it('resolves updated module exports after clearing the lookup cache', () => {
+    const widgetModule = require('../widgets/auto-default');
+    const original = widgetModule.default;
     const Comp1 = importView('widgets', 'auto', 'default');
-    clearLazyComponentCache();
-    const Comp2 = importView('widgets', 'auto', 'default');
-    // Clearing our lookup cache does not invalidate Webpack's module cache.
-    expect(Comp2).toBe(Comp1);
+    const RefreshedWidget = () => null;
+    try {
+      widgetModule.default = RefreshedWidget;
+      expect(importView('widgets', 'auto', 'default')).toBe(Comp1);
+      clearLazyComponentCache();
+      expect(importView('widgets', 'auto', 'default')).toBe(RefreshedWidget);
+    } finally {
+      widgetModule.default = original;
+      clearLazyComponentCache();
+    }
   });
 
   it('should support custom fallback', () => {
