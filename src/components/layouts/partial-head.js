@@ -2,6 +2,15 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 const defaultImage = require('../../images/logo.png');
 
+// Helmet reconciles only its data-rh tags. Hosting may inject an unmarked
+// description into the initial HTML; retire it once Helmet has written the
+// resolved description, before the parent publishes its page view.
+const replaceStaticDescription = () => {
+  if (!document.head.querySelector('meta[name="description"][data-rh]')) return;
+  document.head.querySelectorAll('meta[name="description" i]:not([data-rh])')
+    .forEach(node => node.remove());
+};
+
 const CommonHelmet = ({ description, robots, pageTitle, pathname, noindex, includeCanonical = true }) => {
   // TODO: get og:image dynamically
   const dataPath = process.env.REACT_APP_DATA_PATH;
@@ -20,7 +29,7 @@ const CommonHelmet = ({ description, robots, pageTitle, pathname, noindex, inclu
   const robotsValue = noindex ? 'noindex' : robots;
 
   return (
-    <Helmet defer={false}>
+    <Helmet defer={false} onChangeClientState={replaceStaticDescription}>
 
       <meta charset="utf-8" />
       <meta name="language" content="hu" />
