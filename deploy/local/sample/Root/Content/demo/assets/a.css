@@ -1,0 +1,6 @@
+/* Sample font: Open Sans from google/fonts, SIL OFL; see fonts/OFL.txt. */
+@font-face { font-family: LocalSampleText; src: url(./fonts/open-sans.ttf) format("truetype"); }
+body { --sn-page-sample: page-a; }
+.widget-simpletext { border-left: 4px solid #315d95; background-image: url(./marker.svg); background-repeat: no-repeat; background-position: right top; }
+
+.widget-simpletext { font-family: LocalSampleText, sans-serif; }

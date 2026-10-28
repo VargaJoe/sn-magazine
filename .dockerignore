@@ -58,6 +58,9 @@ jspm_packages/
 # Deployment folders
 deploy/
 *.docker/
+temp/
+deploy/local/runtime/
+logs/
 
 # Documentation
 docs/

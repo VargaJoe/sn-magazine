@@ -1,0 +1,8 @@
+{
+  "ContentType": "Layout",
+  "ContentName": "This",
+  "Fields": {
+    "PageTemplate": "leisure-simple",
+    "Stylesheets": []
+  }
+}

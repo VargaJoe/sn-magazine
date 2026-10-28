@@ -1,0 +1,10 @@
+{
+  "ContentType": "Layout",
+  "ContentName": "This",
+  "Fields": {
+    "PageTemplate": "leisure-simple",
+    "Stylesheets": [
+      "/Root/Content/demo/assets/a-assets.css"
+    ]
+  }
+}

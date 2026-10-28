@@ -34,6 +34,11 @@ deploy/tools
 /temp/
 /deploy/local/runtime/
 
+# Private live-site exports and local import configuration
+/temp/
+/deploy/local/runtime/
+/logs/
+
 # modules cleanup
 node_modulesx
 .github/*.md

@@ -1,0 +1,66 @@
+name: sn-magazine-local
+services:
+  sql:
+    image: mcr.microsoft.com/mssql/server:2022-CU21-ubuntu-22.04
+    environment:
+      ACCEPT_EULA: Y
+      MSSQL_PID: Developer
+      MSSQL_SA_PASSWORD: ${SQL_PASSWORD:?Run start.ps1 first}
+      SN_LOCAL_API_KEY: ${LOCAL_API_KEY:?Run start.ps1 first}
+    volumes:
+      - sql-data:/var/opt/mssql
+      - ./bootstrap-key.sh:/local/bootstrap-key.sh:ro
+    healthcheck:
+      test: [CMD-SHELL, 'SQLCMDPASSWORD="$$MSSQL_SA_PASSWORD" /opt/mssql-tools18/bin/sqlcmd -C -S localhost -U sa -Q "SELECT 1" -b -o /dev/null']
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    restart: unless-stopped
+  create-database:
+    image: mcr.microsoft.com/mssql/server:2022-CU21-ubuntu-22.04
+    depends_on:
+      sql:
+        condition: service_healthy
+    environment:
+      SQLCMDPASSWORD: ${SQL_PASSWORD}
+    entrypoint: /bin/bash
+    command: ['-c', '/opt/mssql-tools18/bin/sqlcmd -C -S sql -U sa -b -Q "IF DB_ID(''SnMagazineLocal'') IS NULL CREATE DATABASE [SnMagazineLocal]"']
+  repository:
+    image: sensenetcsp/sn-api-sql@sha256:45cbdf96a3663c3f9c84dfa1b113c00ca45225b7f1b075a6d2e5622b1ece97b3
+    depends_on:
+      create-database:
+        condition: service_completed_successfully
+    ports:
+      - '127.0.0.1:${REPOSITORY_PORT:-51016}:80'
+    environment:
+      ASPNETCORE_URLS: http://+:80
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__SnCrMsSql: 'Data Source=sql;Initial Catalog=SnMagazineLocal;User ID=sa;Password=${SQL_PASSWORD};TrustServerCertificate=true'
+      sensenet__authentication__authServerType: IdentityServer
+      sensenet__authentication__authority: http://localhost:${AUTH_PORT:-51017}
+      sensenet__authentication__metadatahost: http://identity
+      sensenet__authentication__repositoryUrl: http://localhost:${REPOSITORY_PORT:-51016}
+      sensenet__identityManagement__UserProfilesEnabled: 'false'
+      sensenet__apikeys__healthcheckeruser: ${LOCAL_HEALTH_KEY}
+    volumes:
+      - repository-data:/app/App_Data
+    restart: unless-stopped
+  identity:
+    image: sensenetcsp/sn-identityserver@sha256:34e610bd4d6d26b803b3140ac518908ea5e8b2bf42ed5cd283429eaee7d7f7be
+    ports:
+      - '127.0.0.1:${AUTH_PORT:-51017}:80'
+    environment:
+      ASPNETCORE_URLS: http://+:80
+      ASPNETCORE_ENVIRONMENT: Development
+      IdentityServer__IssuerUri: http://localhost:${AUTH_PORT:-51017}
+      sensenet__authentication__setDefaultClients: 'true'
+      sensenet__Clients__adminui__RepositoryHosts__0__PublicHost: http://localhost:${REPOSITORY_PORT:-51016}
+      sensenet__Clients__adminui__RepositoryHosts__0__InternalHost: http://repository
+      sensenet__Clients__spa__RepositoryHosts__0__PublicHost: http://localhost:${REPOSITORY_PORT:-51016}
+      sensenet__Clients__spa__RepositoryHosts__0__InternalHost: http://repository
+      sensenet__Clients__client__RepositoryHosts__0__PublicHost: http://localhost:${REPOSITORY_PORT:-51016}
+      sensenet__Clients__client__RepositoryHosts__0__InternalHost: http://repository
+    restart: unless-stopped
+volumes:
+  sql-data:
+  repository-data:

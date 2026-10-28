@@ -4,9 +4,19 @@ import { useLocation } from 'react-router-dom';
 import { addComponent, addLayout } from './utils/add-component';
 import { useSnStore } from './store/sn-store';
 import AnalyticsTracker from '../AnalyticsTracker';
+import PageStylesheets from '../presentation/page-stylesheets';
 import { maintenanceTemplate } from '../configuration';
 import { loadWithTimeout, pageTypeForError } from '../page-load';
 import { errorPageData, siteForContext } from '../error-page';
+
+function isStylesheetsSchemaMissing(error) {
+  const status = error?.statusCode ?? error?.response?.status;
+  if (status !== undefined && status !== 400 && status !== 500) return false;
+  const message = error?.body?.error?.message?.value || error?.message || '';
+  return /\b(?:unknown|unrecognized|undefined|nonexistent)\s+(?:field|property)(?:\s+name)?\s*[:=]?\s*['"]?Stylesheets\b/i.test(message) ||
+    /\b(?:field|property)\s*['"]?Stylesheets['"]?\s+(?:does not exist|was not found|is not (?:found|defined)|not found|not defined)\b/i.test(message) ||
+    /\bStylesheets['"]?\s+(?:field|property)\s+(?:does not exist|was not found|is not (?:found|defined)|not found|not defined)\b/i.test(message);
+}
 
 // Preserve the existing Context -> inherited Layout (Page) query resolution.
 function pageQuery(context, layoutContentType, widgetContentType) {
@@ -127,14 +137,23 @@ const PageWrapper = React.memo(() => {
           path: '/Root/Content',
           oDataOptions: {
             query: pageQuery(context, layoutContentType, widgetContentType),
-            expand: ['CustomRoot'],
+            expand: ['CustomRoot', 'Stylesheets'],
             orderby: ['Index'],
             select: 'all',
             enablelifespanfilter: 'on',
             enableautofilters: 'off',
           },
         };
-        const result = await repo.loadCollection(options);
+        let result;
+        try {
+          result = await repo.loadCollection(options);
+        } catch (error) {
+          if (!isCurrent()) return;
+          if (!isStylesheetsSchemaMissing(error)) throw error;
+          // Existing repositories may still have the original Layout CTD.
+          result = await repo.loadCollection({ ...options,
+            oDataOptions: { ...options.oDataOptions, expand: ['CustomRoot'] } });
+        }
         if (!isCurrent()) return;
         const contents = Array.isArray(result?.d?.results) ? result.d.results : [];
         page = contents.filter(content => content.Type === layoutContentType)
@@ -158,6 +177,7 @@ const PageWrapper = React.memo(() => {
 
   return (
     <>
+      <PageStylesheets page={current?.page} repositoryUrl={process.env.REACT_APP_API_URL} />
       <AnalyticsTracker context={current?.context} page={current?.page}
         pageType={current?.pageType} pageTitle={current?.pageTitle} />
       {current && (

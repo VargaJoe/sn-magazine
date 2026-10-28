@@ -1,0 +1,11 @@
+{
+  "ContentType": "Layout",
+  "ContentName": "This",
+  "Fields": {
+    "PageTemplate": "leisure-simple",
+    "Stylesheets": [
+      "/Root/Content/demo/assets/b.css",
+      "/Root/Content/demo/assets/b-override.css"
+    ]
+  }
+}
