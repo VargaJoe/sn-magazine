@@ -108,6 +108,33 @@ it('uses the resolved Page CSS with unchanged templates and widgets across A -> 
   expect(document.head.contains(staticLink)).toBe(true);
 });
 
+it('switches Page CSS and Layout SEO metadata together without duplicate descriptions', async () => {
+  const description = document.createElement('meta');
+  description.name = 'description';
+  description.content = 'Static fallback';
+  document.head.appendChild(description);
+  mockRepository.loadCollection.mockImplementation(({ oDataOptions }) => {
+    const name = oDataOptions.query.includes(`${site}/b/(layout)`) ? 'b' : 'a';
+    const result = pageResult(name);
+    Object.assign(result.d.results[1], {
+      MetaTitle: `Page ${name}`,
+      MetaDescription: `<p>Description ${name}</p>`,
+    });
+    return Promise.resolve(result);
+  });
+  await start();
+  expect(document.title).toBe('Page a');
+  expect(urls()).toEqual([`${repository}/Root/Skins/a.css`]);
+  expect(document.querySelectorAll('meta[name="description"]')).toHaveLength(1);
+  expect(document.querySelector('meta[name="description"]').content).toBe('Description a');
+  await go('/b');
+  expect(document.title).toBe('Page b');
+  expect(urls()).toEqual([`${repository}/Root/Skins/b.css`]);
+  expect(document.querySelectorAll('meta[name="description"]')).toHaveLength(1);
+  expect(document.querySelector('meta[name="description"]').content).toBe('Description b');
+  description.remove();
+});
+
 it('removes previous CSS immediately while the next context is pending', async () => {
   await start();
   const pending = deferred();

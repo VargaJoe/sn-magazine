@@ -18,6 +18,7 @@ describe('resolved page analytics', () => {
   let root;
   let navigate;
   let observedTitles;
+  let observedDescriptions;
   const originalDataPath = process.env.REACT_APP_DATA_PATH;
   const originalActEnvironment = global.IS_REACT_ACT_ENVIRONMENT;
 
@@ -26,14 +27,14 @@ describe('resolved page analytics', () => {
     return null;
   }
 
-  async function render(context, path = '/books/review') {
+  async function render(context, path = '/books/review', options = {}) {
     await act(async () => {
       root.render(
         <StrictMode>
           <HelmetProvider>
             <MemoryRouter initialEntries={[path]} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
               <NavigationControl />
-              <AnalyticsTracker context={context} />
+              <AnalyticsTracker context={context} {...options} />
             </MemoryRouter>
           </HelmetProvider>
         </StrictMode>,
@@ -49,9 +50,11 @@ describe('resolved page analytics', () => {
     document.body.appendChild(container);
     root = createRoot(container);
     observedTitles = [];
+    observedDescriptions = [];
     window.dataLayer = [];
     jest.spyOn(window.dataLayer, 'push').mockImplementation(event => {
       observedTitles.push(document.title);
+      observedDescriptions.push([...document.head.querySelectorAll('meta[name="description" i]')].map(node => node.content));
       return Array.prototype.push.call(window.dataLayer, event);
     });
   });
@@ -85,6 +88,88 @@ describe('resolved page analytics', () => {
     expect(document.querySelector('meta[property="og:title"]').content).toBe(title);
     expect(document.querySelectorAll('link[rel="canonical"]')).toHaveLength(1);
     expect(new URL(document.querySelector('link[rel="canonical"]').href).pathname).toBe(path);
+  });
+
+  it('uses the same resolved SEO title for the browser, Open Graph and analytics', async () => {
+    await render({ ...article, MetaTitle: 'Unique article title', MetaDescription: '<p>&nbsp;</p>' },
+      '/books/review', { page: {
+        MetaTitle: 'Shared title', MetaDescription: '<p>Shared &amp; readable description</p>',
+        MetaRobots: 'noindex, follow',
+      } });
+    expect(document.title).toBe('Unique article title');
+    expect(observedTitles).toEqual(['Unique article title']);
+    expect(window.dataLayer[0].page_title).toBe('Unique article title');
+    expect(document.querySelector('meta[property="og:title"]').content).toBe('Unique article title');
+    expect(document.querySelector('meta[name="description"]').content).toBe('Shared & readable description');
+    expect(document.querySelector('meta[property="og:description"]').content).toBe('Shared & readable description');
+    expect(document.querySelector('meta[name="robots"]').content).toBe('noindex, follow');
+  });
+
+  it.each(['description', 'Description'])('replaces a static %s tag before publishing the page view', async name => {
+    const fallback = document.createElement('meta');
+    fallback.name = name;
+    fallback.content = 'Static site description';
+    document.head.appendChild(fallback);
+    try {
+      await render({ ...article, MetaDescription: 'Article SEO description' });
+      const descriptions = [...document.head.querySelectorAll('meta[name="description" i]')];
+      expect(descriptions.map(node => node.content)).toEqual(['Article SEO description']);
+      expect(observedDescriptions).toEqual([['Article SEO description']]);
+      expect(document.querySelector('meta[property="og:description"]').content).toBe('Article SEO description');
+    } finally {
+      fallback.remove();
+    }
+  });
+
+  it('keeps one description across loading, metadata updates, error and legacy recovery', async () => {
+    const first = document.createElement('meta');
+    first.name = 'description';
+    first.content = 'Static default';
+    const duplicate = first.cloneNode();
+    const unrelated = document.createElement('meta');
+    unrelated.name = 'author';
+    unrelated.content = 'Existing author';
+    document.head.append(first, duplicate, unrelated);
+    const descriptions = () => [...document.head.querySelectorAll('meta[name="description" i]')].map(node => node.content);
+    try {
+      await render(null);
+      expect(descriptions()).toEqual(['Static default', 'Static default']);
+      await render({ ...article, MetaDescription: 'Article SEO' });
+      expect(descriptions()).toEqual(['Article SEO']);
+      await render({ ...article, MetaDescription: 'Updated SEO' });
+      expect(descriptions()).toEqual(['Updated SEO']);
+      await render(null, '/missing', { pageType: 'not_found', pageTitle: 'Missing page' });
+      expect(descriptions()).toEqual(['']);
+      expect(document.querySelector('meta[name="robots"]').content).toBe('noindex');
+      await render({ ...article, Description: '<p>Legacy description</p>' });
+      expect(descriptions()).toEqual(['Legacy description']);
+      expect(document.querySelector('meta[name="robots"]')).toBeNull();
+      expect(unrelated.isConnected).toBe(true);
+      expect(unrelated.content).toBe('Existing author');
+    } finally {
+      first.remove();
+      duplicate.remove();
+      unrelated.remove();
+    }
+  });
+
+  it('removes a previous Layout robots value when navigation resolves legacy metadata', async () => {
+    await render(article, '/books/review', { page: { MetaRobots: 'noindex' } });
+    expect(document.querySelector('meta[name="robots"]').content).toBe('noindex');
+    await act(async () => navigate('/other'));
+    await render({ ...article, Description: 'Other description' });
+    expect(document.querySelector('meta[name="robots"]')).toBeNull();
+    expect(document.querySelector('meta[name="description"]').content).toBe('Other description');
+    expect(window.dataLayer).toHaveLength(2);
+  });
+
+  it.each(['not_found', 'error'])('keeps the system noindex and title on %s views', async pageType => {
+    await render({ ...article, MetaTitle: 'Content SEO title', MetaRobots: 'index, follow' },
+      '/missing', { pageType, pageTitle: 'System status title', page: { MetaRobots: 'all' } });
+    expect(document.title).toBe('System status title');
+    expect(window.dataLayer[0].page_title).toBe('System status title');
+    expect(document.querySelector('meta[name="robots"]').content).toBe('noindex');
+    expect(!!document.querySelector('link[rel="canonical"]')).toBe(pageType !== 'not_found');
   });
 
   it('waits for context and emits once across StrictMode, rerenders, and refreshed content', async () => {

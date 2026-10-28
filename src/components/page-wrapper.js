@@ -178,7 +178,8 @@ const PageWrapper = React.memo(() => {
   return (
     <>
       <PageStylesheets page={current?.page} repositoryUrl={process.env.REACT_APP_API_URL} />
-      <AnalyticsTracker context={current?.context} pageType={current?.pageType} pageTitle={current?.pageTitle} />
+      <AnalyticsTracker context={current?.context} page={current?.page}
+        pageType={current?.pageType} pageTitle={current?.pageTitle} />
       {current && (
         <React.Suspense fallback={null}>
           {current.component}

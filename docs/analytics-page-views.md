@@ -10,7 +10,7 @@ remain per-build configuration. They are not a runtime JSON configuration layer.
 
 `PageWrapper` resolves the route content (including async article data and
 Workspace), then its inherited Layout and Widgets. Only the current navigation's
-resolved context reaches `AnalyticsTracker`. Request generations and an immediate
+resolved context and Layout reach `AnalyticsTracker`. Request generations and an immediate
 render gate prevent stale responses from rendering or publishing a previous page.
 Layout-query failure retains automatic layout fallback. An absent context or HTTP
 404 shows the dedicated not-found template. Network failures, timeouts and other
@@ -40,10 +40,52 @@ An abandoned navigation with no valid content/title sends no event. Returning to
 earlier history entry still sends a fresh event, even if the intervening page failed
 or was still loading. Invalid names produce no synthetic fallback title/event.
 
-`partial-head.js` shares the resolved title for Open Graph metadata, gets descriptions
-from the content/Workspace `Description`, and computes canonical URLs from the
+`partial-head.js` shares the resolved title for Open Graph metadata and computes canonical URLs from the
 configured site host plus the browser route. The login/error layouts no longer write
 competing titles. Both static HTML templates have an empty, site-neutral title.
+
+## Optional SEO fields
+
+Each field resolves independently from the addressed content (`context`), then the
+resolved Layout (`page`):
+
+| Field | Priority | Output |
+| --- | --- | --- |
+| `MetaTitle` | context → Layout → automatic title above | document title, `og:title`, analytics `page_title` |
+| `MetaDescription` | context → Layout → context `Description` → Workspace `Description` | description, `og:description` |
+| `MetaRobots` | context → Layout → no explicit directive | robots |
+
+An explicit `MetaTitle` is the complete title; the site name is not appended.
+Missing, invalid, whitespace-only and empty HTML values are skipped. HTML tags and
+non-content script/style nodes are removed, entities decoded and whitespace
+collapsed before metadata is written. System error/not-found `noindex` overrides
+any editable robots directive.
+
+Layout defaults can apply to many addressed contents, so their text should suit
+that shared role. When the addressed content is itself a Layout, its own fields
+take priority in the same way. No extra repository request is made.
+
+The Layout schema already defines these optional fields. Other content types can
+add `MetaTitle` (ShortText), `MetaDescription` (LongText) and `MetaRobots`
+(ShortText) to their own shared parent schema so descendants inherit them. Treat
+MetaDescription as plain text in the editor. Adding fields does not require
+rewriting existing contents, and repositories without them keep the existing
+fallbacks. Site-specific content type definitions belong to their repository's
+schema deployment; private exports must not be copied into this generic engine.
+For an existing repository, preserve its full CTD and add the optional definitions
+through the documented [CTD upload update](https://docs.sensenet.com/api-docs/content-management/04-upload/#update-a-ctd),
+then verify the installed schema and inheritance before editing any content values.
+
+`Description`, `Lead` and `Body` continue to be rendered by the existing widgets
+without changes. Editing the new SEO fields does not change article introductions,
+list previews, translation descriptions or related-link descriptions.
+
+When hosting injects a static meta description into the initial HTML, it remains
+available while the first context is loading. After Helmet writes the resolved
+description, its synchronous client-state callback removes unmarked default
+description tags, including case variants. The resulting head has one managed
+description before the navigation event is published. Other static metadata is
+left alone; subsequent content, fallback and error updates use the same managed tag.
 
 ## Implementation entry points
 
