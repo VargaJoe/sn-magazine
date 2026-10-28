@@ -67,6 +67,39 @@ Start again with start.ps1 -SkipImport. No script resets databases or removes
 volumes. Inspect Compose logs locally if startup times out. Keep logs/configuration
 out of issues and PRs because private import details may appear in them.
 
+## Optional local presentation themes
+
+After importing a local site fixture, preview the generic `editorial` or `graphic`
+appearance using an explicitly chosen existing repository asset folder:
+
+    node deploy/local/configure-presentation.mjs --site '/Root/Content/<site>' --theme editorial --assets '/Root/Content/<asset-folder>'
+
+The default is a read-only dry run. Repeat with `--apply` to configure the local
+repository. `editorial` uses warm paper and serif headings; `graphic` uses dark
+cards, bright accents and right-side desktop navigation. Both use the existing
+widgets and templates. The helper copies missing shared Layouts and their child
+widgets into the site's `(layout)` folder before styling every Layout under that
+site. Existing site Pages and unrelated stylesheet references are preserved.
+CSS Files use content-hash names, and reapplying replaces only earlier local theme
+references in the explicitly selected assets folder. Other sites remain untouched.
+
+Before writing, the helper saves Page metadata, references and planned copies
+under ignored `runtime/presentation/`. It reads local credentials privately,
+rejects remote origins and redirects, and verifies copied Pages and final
+references, including an anonymous CSS download. No database reset or live-site operation is involved. Use `--help`
+for the command syntax; keep snapshots and local fixture details out of Git.
+
+Run the same app against two imported site roots in separate PowerShell terminals
+(replace these example roots with the local fixtures):
+
+    ./deploy/local/start-app.ps1 -DataPath '/Root/Content/site-a' -Port 3007
+    ./deploy/local/start-app.ps1 -DataPath '/Root/Content/site-b' -Port 3008
+
+Choose `editorial` for one site and `graphic` for the other. Check home → article →
+home and a category on each port. Inspect the selected Page's CSS link: it should
+stay within that site's assets. A missing route removes Page CSS; returning home
+restores it. At 390px width both layouts should fit without horizontal scrolling.
+
 The generated writer URL uses 127.0.0.1. On the tested Windows host, .NET requests
 to localhost incurred about two seconds of IPv6-first connection delay each;
 explicit IPv4 removed that delay. start.ps1 also upgrades its older generated
