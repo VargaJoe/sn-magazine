@@ -69,6 +69,11 @@ out of issues and PRs because private import details may appear in them.
 
 ## Optional local presentation themes
 
+For repository-configured section composition beyond the legacy two-column
+template, see [editorial page composition](../../docs/editorial-page-composition.md).
+The generic `editorial-flow` template uses native child Widgets in `header`,
+`main` and `footer` zones; `themes/sections.css` styles those sections.
+
 After importing a local site fixture, preview the generic `editorial` or `graphic`
 appearance using an explicitly chosen existing repository asset folder:
 
