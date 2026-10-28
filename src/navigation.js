@@ -1,4 +1,4 @@
-import { PageWrapper } from './components/page-wrapper';
+import PageWrapper from './components/page-wrapper';
 import { Missing } from './components/missing';
 
 const Data = {
