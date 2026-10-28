@@ -26,14 +26,14 @@ describe('resolved page analytics', () => {
     return null;
   }
 
-  async function render(context, path = '/books/review') {
+  async function render(context, path = '/books/review', options = {}) {
     await act(async () => {
       root.render(
         <StrictMode>
           <HelmetProvider>
             <MemoryRouter initialEntries={[path]} future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
               <NavigationControl />
-              <AnalyticsTracker context={context} />
+              <AnalyticsTracker context={context} {...options} />
             </MemoryRouter>
           </HelmetProvider>
         </StrictMode>,
@@ -85,6 +85,40 @@ describe('resolved page analytics', () => {
     expect(document.querySelector('meta[property="og:title"]').content).toBe(title);
     expect(document.querySelectorAll('link[rel="canonical"]')).toHaveLength(1);
     expect(new URL(document.querySelector('link[rel="canonical"]').href).pathname).toBe(path);
+  });
+
+  it('uses the same resolved SEO title for the browser, Open Graph and analytics', async () => {
+    await render({ ...article, MetaTitle: 'Unique article title', MetaDescription: '<p>&nbsp;</p>' },
+      '/books/review', { page: {
+        MetaTitle: 'Shared title', MetaDescription: '<p>Shared &amp; readable description</p>',
+        MetaRobots: 'noindex, follow',
+      } });
+    expect(document.title).toBe('Unique article title');
+    expect(observedTitles).toEqual(['Unique article title']);
+    expect(window.dataLayer[0].page_title).toBe('Unique article title');
+    expect(document.querySelector('meta[property="og:title"]').content).toBe('Unique article title');
+    expect(document.querySelector('meta[name="description"]').content).toBe('Shared & readable description');
+    expect(document.querySelector('meta[property="og:description"]').content).toBe('Shared & readable description');
+    expect(document.querySelector('meta[name="robots"]').content).toBe('noindex, follow');
+  });
+
+  it('removes a previous Layout robots value when navigation resolves legacy metadata', async () => {
+    await render(article, '/books/review', { page: { MetaRobots: 'noindex' } });
+    expect(document.querySelector('meta[name="robots"]').content).toBe('noindex');
+    await act(async () => navigate('/other'));
+    await render({ ...article, Description: 'Other description' });
+    expect(document.querySelector('meta[name="robots"]')).toBeNull();
+    expect(document.querySelector('meta[name="description"]').content).toBe('Other description');
+    expect(window.dataLayer).toHaveLength(2);
+  });
+
+  it.each(['not_found', 'error'])('keeps the system noindex and title on %s views', async pageType => {
+    await render({ ...article, MetaTitle: 'Content SEO title', MetaRobots: 'index, follow' },
+      '/missing', { pageType, pageTitle: 'System status title', page: { MetaRobots: 'all' } });
+    expect(document.title).toBe('System status title');
+    expect(window.dataLayer[0].page_title).toBe('System status title');
+    expect(document.querySelector('meta[name="robots"]').content).toBe('noindex');
+    expect(!!document.querySelector('link[rel="canonical"]')).toBe(pageType !== 'not_found');
   });
 
   it('waits for context and emits once across StrictMode, rerenders, and refreshed content', async () => {

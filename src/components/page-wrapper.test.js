@@ -172,6 +172,30 @@ describe('PageWrapper navigation lifecycle', () => {
     expect(container.querySelector('.widget-simpletext')).not.toBeNull();
   });
 
+  it('passes the resolved Layout SEO defaults alongside the context and clears them on navigation', async () => {
+    const firstLayout = layoutResult();
+    Object.assign(firstLayout.d.results[0], {
+      MetaTitle: 'Layout title', MetaDescription: 'Layout SEO description', MetaRobots: 'noindex',
+    });
+    repository.load.mockResolvedValueOnce({ d: contextFor('Review', { MetaTitle: 'Article SEO title' }) });
+    repository.loadCollection.mockResolvedValueOnce(firstLayout);
+    await render();
+    expect(observedTitles).toEqual(['Article SEO title']);
+    expect(document.querySelector('meta[property="og:title"]').content).toBe('Article SEO title');
+    expect(document.querySelector('meta[name="description"]').content).toBe('Layout SEO description');
+    expect(document.querySelector('meta[name="robots"]').content).toBe('noindex');
+    expect(container.textContent).toContain('Resolved widget content');
+
+    repository.load.mockResolvedValueOnce({ d: contextFor('Next', { Description: '<p>Legacy description</p>' }) });
+    await act(async () => navigate('/next'));
+    expect(document.title).toBe('Leisure Magazin - Next');
+    expect(document.querySelector('meta[name="description"]').content).toBe('Legacy description');
+    expect(document.querySelector('meta[name="robots"]')).toBeNull();
+    expect(window.dataLayer.map(event => event.page_title)).toEqual(['Article SEO title', 'Leisure Magazin - Next']);
+    expect(repository.load).toHaveBeenCalledTimes(2);
+    expect(repository.loadCollection).toHaveBeenCalledTimes(2);
+  });
+
   it('publishes once under StrictMode, rerenders, and repository provider refresh', async () => {
     strict = true;
     await render();

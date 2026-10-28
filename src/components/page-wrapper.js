@@ -158,7 +158,8 @@ const PageWrapper = React.memo(() => {
 
   return (
     <>
-      <AnalyticsTracker context={current?.context} pageType={current?.pageType} pageTitle={current?.pageTitle} />
+      <AnalyticsTracker context={current?.context} page={current?.page}
+        pageType={current?.pageType} pageTitle={current?.pageTitle} />
       {current && (
         <React.Suspense fallback={null}>
           {current.component}
