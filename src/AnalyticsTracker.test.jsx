@@ -18,6 +18,7 @@ describe('resolved page analytics', () => {
   let root;
   let navigate;
   let observedTitles;
+  let observedDescriptions;
   const originalDataPath = process.env.REACT_APP_DATA_PATH;
   const originalActEnvironment = global.IS_REACT_ACT_ENVIRONMENT;
 
@@ -49,9 +50,11 @@ describe('resolved page analytics', () => {
     document.body.appendChild(container);
     root = createRoot(container);
     observedTitles = [];
+    observedDescriptions = [];
     window.dataLayer = [];
     jest.spyOn(window.dataLayer, 'push').mockImplementation(event => {
       observedTitles.push(document.title);
+      observedDescriptions.push([...document.head.querySelectorAll('meta[name="description" i]')].map(node => node.content));
       return Array.prototype.push.call(window.dataLayer, event);
     });
   });
@@ -100,6 +103,54 @@ describe('resolved page analytics', () => {
     expect(document.querySelector('meta[name="description"]').content).toBe('Shared & readable description');
     expect(document.querySelector('meta[property="og:description"]').content).toBe('Shared & readable description');
     expect(document.querySelector('meta[name="robots"]').content).toBe('noindex, follow');
+  });
+
+  it.each(['description', 'Description'])('replaces a static %s tag before publishing the page view', async name => {
+    const fallback = document.createElement('meta');
+    fallback.name = name;
+    fallback.content = 'Static site description';
+    document.head.appendChild(fallback);
+    try {
+      await render({ ...article, MetaDescription: 'Article SEO description' });
+      const descriptions = [...document.head.querySelectorAll('meta[name="description" i]')];
+      expect(descriptions.map(node => node.content)).toEqual(['Article SEO description']);
+      expect(observedDescriptions).toEqual([['Article SEO description']]);
+      expect(document.querySelector('meta[property="og:description"]').content).toBe('Article SEO description');
+    } finally {
+      fallback.remove();
+    }
+  });
+
+  it('keeps one description across loading, metadata updates, error and legacy recovery', async () => {
+    const first = document.createElement('meta');
+    first.name = 'description';
+    first.content = 'Static default';
+    const duplicate = first.cloneNode();
+    const unrelated = document.createElement('meta');
+    unrelated.name = 'author';
+    unrelated.content = 'Existing author';
+    document.head.append(first, duplicate, unrelated);
+    const descriptions = () => [...document.head.querySelectorAll('meta[name="description" i]')].map(node => node.content);
+    try {
+      await render(null);
+      expect(descriptions()).toEqual(['Static default', 'Static default']);
+      await render({ ...article, MetaDescription: 'Article SEO' });
+      expect(descriptions()).toEqual(['Article SEO']);
+      await render({ ...article, MetaDescription: 'Updated SEO' });
+      expect(descriptions()).toEqual(['Updated SEO']);
+      await render(null, '/missing', { pageType: 'not_found', pageTitle: 'Missing page' });
+      expect(descriptions()).toEqual(['']);
+      expect(document.querySelector('meta[name="robots"]').content).toBe('noindex');
+      await render({ ...article, Description: '<p>Legacy description</p>' });
+      expect(descriptions()).toEqual(['Legacy description']);
+      expect(document.querySelector('meta[name="robots"]')).toBeNull();
+      expect(unrelated.isConnected).toBe(true);
+      expect(unrelated.content).toBe('Existing author');
+    } finally {
+      first.remove();
+      duplicate.remove();
+      unrelated.remove();
+    }
   });
 
   it('removes a previous Layout robots value when navigation resolves legacy metadata', async () => {

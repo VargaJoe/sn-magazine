@@ -80,6 +80,13 @@ then verify the installed schema and inheritance before editing any content valu
 without changes. Editing the new SEO fields does not change article introductions,
 list previews, translation descriptions or related-link descriptions.
 
+When hosting injects a static meta description into the initial HTML, it remains
+available while the first context is loading. After Helmet writes the resolved
+description, its synchronous client-state callback removes unmarked default
+description tags, including case variants. The resulting head has one managed
+description before the navigation event is published. Other static metadata is
+left alone; subsequent content, fallback and error updates use the same managed tag.
+
 ## Implementation entry points
 
 - `public/index.html`, `public/template.html`: neutral static titles.
