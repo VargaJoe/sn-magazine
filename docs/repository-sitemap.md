@@ -182,9 +182,10 @@ does not bypass the invalid/future PublishDate exclusion rule.
 The lifespan filter covers `ValidFrom`/`ValidTill`; it does not replace the
 explicit PublishDate gate. Anonymous reads retain SenseNet's permission and
 published-version visibility. Omitting an entry from a sitemap does not block
-direct page access or search indexing. The frontend's route resolver has no
-equivalent Hidden/PublishDate guard; a separate noindex/access decision is needed
-if direct URLs must be unindexable or inaccessible.
+direct page access or search indexing. The frontend separately renders
+`noindex, follow` for a future `PublishDate`, then restores the normal MetaRobots
+fallback at publication time. Hidden content and direct access still require
+their own indexing/access policy; see [SEO metadata](analytics-page-views.md).
 
 ## Review changes before uploading
 

@@ -54,6 +54,56 @@ it('does not publish Layout metadata while its context has not resolved', () => 
   expect(buildPageMetadata(null, page, dataPath)).toEqual({ title: '', description: '', robots: '' });
 });
 
+describe('scheduled publication robots', () => {
+  const now = Date.parse('2026-11-02T12:00:00Z');
+  const future = '2026-11-02T12:00:00.001Z';
+
+  it.each(['index, follow', 'noindex', 'nofollow', '', undefined])
+    ('overrides the content and Layout robots before publication: %j', MetaRobots => {
+      const scheduled = Object.freeze({ ...context, PublishDate: future, MetaRobots });
+      const layout = Object.freeze({ ...page, MetaRobots: 'all' });
+      expect(buildPageMetadata(scheduled, layout, dataPath, now)).toEqual({
+        title: 'Layout title', description: 'Layout description', robots: 'noindex, follow',
+      });
+      expect(scheduled.MetaRobots).toBe(MetaRobots);
+      expect(scheduled.PublishDate).toBe(future);
+      expect(layout.MetaRobots).toBe('all');
+    });
+
+  it.each([
+    '2026-11-02T12:00:00Z',
+    '2026-11-02T13:00:00+01:00',
+    '2026-11-02T07:00:00-05:00',
+    `/Date(${now})/`,
+    `/Date(${now}+0100)/`,
+  ])('restores the field at the exact publication instant: %s', PublishDate => {
+    const scheduled = { ...context, PublishDate, MetaRobots: 'index, follow' };
+    expect(buildPageMetadata(scheduled, page, dataPath, now - 1).robots).toBe('noindex, follow');
+    expect(buildPageMetadata(scheduled, page, dataPath, now).robots).toBe('index, follow');
+    expect(buildPageMetadata(scheduled, page, dataPath, now + 1).robots).toBe('index, follow');
+  });
+
+  it.each([
+    ['noindex, nofollow', page, 'noindex, nofollow'],
+    ['', page, 'nofollow'],
+    [undefined, null, ''],
+  ])('preserves the normal robots fallback after publication: %j', (MetaRobots, layout, expected) => {
+    expect(buildPageMetadata({ ...context, PublishDate: future, MetaRobots }, layout, dataPath, now + 1).robots)
+      .toBe(expected);
+  });
+
+  it.each([undefined, null, '', '  ', 42, 'not a date', '/Date(broken)/',
+    '2027-02-29T12:00:00Z', '2027-01-01T25:00:00Z', '2027-01-01T12:00:00',
+    '0001-01-01T00:00:00Z', '/Date(-62135596800000)/'])
+    ('retains the existing fallback for an absent, unset or invalid PublishDate: %j', PublishDate => {
+      expect(buildPageMetadata({ ...context, PublishDate }, page, dataPath, now).robots).toBe('nofollow');
+    });
+
+  it('uses only the addressed content publication date, independently of its inherited Layout', () => {
+    expect(buildPageMetadata(context, { ...page, PublishDate: future }, dataPath, now).robots).toBe('nofollow');
+  });
+});
+
 it('turns repository HTML into readable text without running embedded content', () => {
   expect(metadataText('<p>Árnyék &amp; fény</p><p>Második<br>sor &quot;idézet&quot;.</p>'))
     .toBe('Árnyék & fény Második sor "idézet".');

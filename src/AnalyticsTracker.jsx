@@ -1,7 +1,7 @@
-import { useLayoutEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useReducer, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import CommonHelmet from './components/layouts/partial-head';
-import { buildPageMetadata } from './page-meta';
+import { buildPageMetadata, publicationTime } from './page-meta';
 
 // PageWrapper supplies the resolved context and Page for the current navigation.
 // Keep this instance mounted while loading so StrictMode/re-renders cannot
@@ -10,8 +10,28 @@ export default function AnalyticsTracker({ context, page, pageType = 'content', 
   const location = useLocation();
   const navigationState = useRef(null);
   const navigation = JSON.stringify([location.key, location.pathname, location.search, location.hash]);
-  const metadata = buildPageMetadata(context, page, process.env.REACT_APP_DATA_PATH);
+  const [, refreshPublication] = useReducer(value => value + 1, 0);
+  const now = Date.now();
+  const publishTime = publicationTime(context?.PublishDate);
+  const scheduled = pageType === 'content' && publishTime !== null && publishTime > now;
+  const metadata = buildPageMetadata(context, page, process.env.REACT_APP_DATA_PATH, now);
   const title = pageTitle || metadata.title;
+
+  useEffect(() => {
+    if (!scheduled) return;
+    let timer;
+    const checkPublication = () => {
+      const remaining = publishTime - Date.now();
+      if (remaining > 0) {
+        // Browser timers overflow beyond ~25 days; recheck long schedules.
+        timer = setTimeout(checkPublication, Math.min(remaining, 2147483647));
+      } else {
+        refreshPublication();
+      }
+    };
+    checkPublication();
+    return () => clearTimeout(timer);
+  }, [publishTime, scheduled]);
 
   useLayoutEffect(() => {
     // Observe loading/failed navigations too: POP can reuse an earlier history

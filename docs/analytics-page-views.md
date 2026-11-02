@@ -61,6 +61,19 @@ non-content script/style nodes are removed, entities decoded and whitespace
 collapsed before metadata is written. System error/not-found `noindex` overrides
 any editable robots directive.
 
+An addressed content's valid future `PublishDate` overrides both its own and the
+Layout's `MetaRobots` with `noindex, follow`. From the exact publication timestamp,
+the normal field priority applies again, including an intentionally stored
+`noindex` or no explicit directive. The CMS fields and publication workflow are
+unchanged. An open page also refreshes its robots directive at that time without
+another page-view event or repository request. ISO timezone offsets and legacy
+SenseNet `/Date(milliseconds)/` values are compared as absolute instants; absent,
+unset or malformed dates retain the existing metadata fallback.
+
+The manual sitemap generator already excludes future `PublishDate` values using
+its generation cutoff. A scheduled article can enter the stored XML only after
+publication and another manual generation; see [sitemap visibility](repository-sitemap.md).
+
 Layout defaults can apply to many addressed contents, so their text should suit
 that shared role. When the addressed content is itself a Layout, its own fields
 take priority in the same way. No extra repository request is made.
