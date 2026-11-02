@@ -2,6 +2,12 @@
 
 Layout and widget driven webapp concept for sensenet as a service (snaas) in react. Build and develop webpages easily with sensenet repository contents. 
 
+Per-Page repository CSS references are documented in
+[Repository-managed Page stylesheets](docs/site-presentation.md). The existing
+Context → Page → React PageTemplate → Widgets model stays in place.
+For a fresh local SenseNet repository and optional private fixture import, use
+the [local repository starter](deploy/local/README.md).
+
 The following concepts are covered to generate webapp layout by:
 - predefined layout when page and widget contents completely missing from sensenet repo
 - sensenet repository context layout content and its widget children contents 

@@ -1,13 +1,14 @@
-import { importView, clearLazyComponentCache } from './add-component';
+import { importView, addComponent, clearLazyComponentCache } from './add-component';
 
 describe('Dynamic Component Resolution', () => {
   beforeEach(() => {
     clearLazyComponentCache();
   });
 
-  it('should return a fallback component if type/prefix/component is missing', () => {
+  it('returns null rather than an invalid React element when the folder is missing', () => {
     const Fallback = importView(undefined, 'auto', 'default');
-    expect(Fallback).toBeDefined();
+    expect(Fallback).toBeNull();
+    expect(addComponent(undefined, 'auto', 'default', 1)).toBeNull();
   });
 
   it('should cache components and not duplicate them', () => {

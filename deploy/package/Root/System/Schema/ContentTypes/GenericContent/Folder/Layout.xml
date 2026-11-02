@@ -20,6 +20,16 @@
 			<DisplayName>PageTemplate</DisplayName>
 			<Description>PageTemplate</Description>
 		</Field>
+		<Field name="Stylesheets" type="Reference">
+			<DisplayName>Page stylesheets</DisplayName>
+			<Description>Ordered CSS File contents applied to this Page. Empty keeps the bundled styles.</Description>
+			<Configuration>
+				<AllowMultiple>true</AllowMultiple>
+				<AllowedTypes>
+					<Type>File</Type>
+				</AllowedTypes>
+			</Configuration>
+		</Field>
 		<Field name="Hidden" type="Boolean">
 			<Configuration>
 				<VisibleBrowse>Show</VisibleBrowse>

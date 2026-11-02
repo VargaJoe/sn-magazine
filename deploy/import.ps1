@@ -1,41 +1,63 @@
-Param(
-	[Parameter(Mandatory = $false)]
-	[string]$TargetRepo,
-	[Parameter(Mandatory = $false)]
-	[string]$TargetClientId,
-	[Parameter(Mandatory = $false)]
-	[string]$TargetClientSecret,
-    [Parameter(Mandatory = $false)] 
-	[string]$TargetPath = "/",
-    [Parameter(Mandatory = $false)] 
-	[string]$SourceFolder = "./package/Root",
-	[Parameter(Mandatory = $false)]
-	[string]$PATFile = "./settings/secret-local.json",
-	[Parameter(Mandatory = $false)]
-	[string]$execFile = "./tools/SnIO.exe"
+[CmdletBinding()]
+param(
+    [string]$TargetRepo,
+    [string]$TargetClientId,
+    [string]$TargetClientSecret,
+    [string]$TargetApiKey,
+    [string]$TargetPath = '/',
+    [string]$SourceFolder = (Join-Path $PSScriptRoot 'package/Root'),
+    [string]$PATFile = (Join-Path $PSScriptRoot 'local/runtime/import.json'),
+    [string]$execFile = (Join-Path $PSScriptRoot 'tools/snio.exe'),
+    [string[]]$Skip,
+    [switch]$CreateOnly,
+    [switch]$PrepareTool
 )
-
-# install snio tool
-if ($PrepareTool -or -not (Test-Path $execFile -PathType Leaf)) {
-	$toolFolder = Split-Path -Path $execFile -Parent
-    & $PSScriptRoot/scripts/install-snio.ps1 -ToolFolder $toolFolder
-}
-
-# if PATFile is set, read json with client and secret from file
+$ErrorActionPreference = 'Stop'
 if ($PATFile) {
-	Write-Output "Loading configuration from $PATFile..."
-	$PAT = Get-Content $PATFile | ConvertFrom-Json
-
-	if (-not $TargetRepo) { $TargetRepo = $PAT.repositoryWriter.url	}
-	if (-not $TargetClientId) {	$TargetClientId = $PAT.repositoryWriter.authentication.clientid }
-	if (-not $TargetClientSecret) { $TargetClientSecret = $PAT.repositoryWriter.authentication.clientsecret }
-} else {
-	Write-Output "No config file provided."
+    $config = Get-Content -LiteralPath $PATFile -Raw | ConvertFrom-Json
+    if (-not $TargetRepo) { $TargetRepo=$config.repositoryWriter.url }
+    if (-not $TargetApiKey) { $TargetApiKey=$config.repositoryWriter.authentication.apiKey }
+    if (-not $TargetClientId) { $TargetClientId=$config.repositoryWriter.authentication.clientId }
+    if (-not $TargetClientSecret) { $TargetClientSecret=$config.repositoryWriter.authentication.clientSecret }
 }
-
-$params = "IMPORT", "--DISPLAY:LEVEL", "Verbose", "eol",
-	"-SOURCE", $SourceFolder,
-	"-TARGET", $TargetRepo, $TargetPath, "-CLIENTID", $TargetClientId, "-CLIENTSECRET", $TargetClientSecret, "eol"
-
-Write-Output "$execFile $($params -replace "eol", "$($eolChar)`r`n`t")"
-& $execFile $($params | where-object {$_ -ne "eol"})
+$uri = $null
+if (-not [uri]::TryCreate($TargetRepo, [UriKind]::Absolute, [ref]$uri) -or
+    $uri.Scheme -notin @('http','https') -or -not $uri.IsLoopback -or $uri.UserInfo -or $uri.Query -or $uri.Fragment) {
+    throw 'This development importer only accepts a loopback HTTP(S) repository. Remote imports require a separate deployment workflow.'
+}
+if (-not $TargetApiKey -and (-not $TargetClientId -or -not $TargetClientSecret)) {
+    throw 'An API key or client credentials are required in the local configuration.'
+}
+$source = (Resolve-Path -LiteralPath $SourceFolder).Path
+if (-not (Test-Path -LiteralPath $source -PathType Container)) {
+    throw 'SourceFolder must be an exported directory, not a .Content sidecar file.'
+}
+if ($PrepareTool -or -not (Test-Path -LiteralPath $execFile -PathType Leaf)) {
+    & (Join-Path $PSScriptRoot 'scripts/install-snio.ps1') -ToolFolder (Split-Path -Parent $execFile)
+}
+$tool = (Resolve-Path -LiteralPath $execFile).Path
+$logFolder=Join-Path $PSScriptRoot 'logs'
+New-Item -ItemType Directory -Path $logFolder -Force | Out-Null
+$runId=[guid]::NewGuid().ToString('N')
+$privateConfig=Join-Path $logFolder "$runId.json"
+$logFile=Join-Path $logFolder "$runId.log"
+@{ repositoryWriter=@{ url=$TargetRepo; path=$TargetPath; authentication=@{ apiKey=$TargetApiKey; clientId=$TargetClientId; clientSecret=$TargetClientSecret } } } |
+    ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $privateConfig -Encoding utf8
+$arguments=@('IMPORT','--DISPLAY:LEVEL','Errors','-CONFIG', $privateConfig, '-SOURCE', '-PATH', $source)
+if ($Skip) { $arguments += '-SKIP'; $arguments += $Skip }
+$arguments += @('-TARGET', '-URL', $TargetRepo, '-PATH', $TargetPath)
+if ($CreateOnly) { $arguments += '-CREATEONLY' }
+Write-Output "Importing local content to $TargetRepo$TargetPath"
+Push-Location $PSScriptRoot
+try {
+    & $tool @arguments *> $logFile
+    $exitCode=$LASTEXITCODE
+    $result=Get-Content -LiteralPath $logFile -Raw
+    if ($exitCode -ne 0 -or $result -match '(?im)^\s*(ERROR|Cannot create the application|Unhandled exception)' -or $result -match '(?i)(failed|errors)\s*:\s*[1-9]') {
+        throw "Local import failed. Inspect the private log: $logFile"
+    }
+    Write-Output "Local import completed. Private log: $logFile"
+} finally {
+    Pop-Location
+    Remove-Item -LiteralPath $privateConfig -Force
+}

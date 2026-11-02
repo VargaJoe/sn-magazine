@@ -2,6 +2,10 @@
 
 This folder contains an example Docker Compose setup for deploying the sn-magazine application using a published Docker image.
 
+For local backend development, use [local/README.md](local/README.md). That starter
+creates an isolated SenseNet repository and imports the public app content types.
+The Compose example below starts only the React application.
+
 ## Setup
 
 1. Copy your environment configuration file to this folder as `.env`
