@@ -1,0 +1,30 @@
+﻿<ContentType name="WidgetSimpleText" parentType="Widget" handler="SenseNet.ContentRepository.Folder" xmlns="http://schemas.sensenet.com/SenseNet/ContentRepository/ContentTypeDefinition">
+	<DisplayName>WidgetSimpleText</DisplayName>
+	<Description/>
+	<Icon>Folder</Icon>
+	<AllowedChildTypes>Folder,File</AllowedChildTypes>
+	<Fields>
+		<Field name="Title" type="ShortText">
+			<DisplayName>Title</DisplayName>
+			<Description>Component title</Description>
+		</Field>
+		<Field name="ComponentDescription" type="RichText">
+			<DisplayName>Description</DisplayName>
+			<Description>Component description</Description>
+			<Configuration>
+				<TextType>RichText</TextType>
+			</Configuration>
+		</Field>
+		<Field name="ComponentContent" type="RichText">
+			<DisplayName>Content</DisplayName>
+			<Description>Component content</Description>
+			<Configuration>
+				<TextType>RichText</TextType>
+			</Configuration>
+		</Field>
+		<Field name="PortletZone" type="ShortText">
+			<DisplayName>PortletZone</DisplayName>
+			<Description>Portlet Zone</Description>
+		</Field>
+	</Fields>
+</ContentType>

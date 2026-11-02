@@ -1,17 +1,16 @@
 // import { SideMenu } from "../side-menu";
-import { addComponentsByZone } from '../utils/add-component';
+import { CachedComponentsByZone } from '../utils/add-component';
+import { useSnStore } from "../store/sn-store";
+import React from 'react';
 
-export const DoublePageTemplate = (props) => {
-  const context = props.data;
-  const layout = props.page;
-  const widgets = props.widget;
-  console.log('double layout: ', props, context, layout, widgets);
+export const DoublePageTemplate = React.memo((props) => {
+  const { context, widgets } = useSnStore((state) => state);
 
-  const leftsideboxes = addComponentsByZone('widgets', 'side', context, layout, widgets);
-  const components = addComponentsByZone('widgets', 'content', context, layout, widgets);
-  const rightsideboxes = addComponentsByZone('widgets', 'right', context, layout, widgets);
-
-  console.log(components);
+  // console.log('%cdouble layout render', "font-size:16px;color:green", { contextId: context?.Id, widgetsCount: widgets?.length });
+  
+  if (!widgets || !Array.isArray(widgets)) {
+    return <div>Loading layout...</div>;
+  }
 
   return (
     <div className="App w3-theme-l5">
@@ -20,6 +19,7 @@ export const DoublePageTemplate = (props) => {
           <a
             href="/"
             className="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-theme-d2"
+            aria-label="Menu"
           >
             <i className="fa fa-bars"></i>
           </a>
@@ -102,7 +102,7 @@ export const DoublePageTemplate = (props) => {
           <div className="w3-col m3">
             {/* <SideMenu /> */}
             <br/>
-            {leftsideboxes}
+            <CachedComponentsByZone type="widgets" zone="side" widgets={widgets} context={context} />
           </div>
           {/* End Left Column */}
 
@@ -117,13 +117,13 @@ export const DoublePageTemplate = (props) => {
                 </div>
               </div>
             </div>
-            {components}
+            <CachedComponentsByZone type="widgets" zone="content" widgets={widgets} context={context} />
           </div>
           {/* End Middle Column */}
 
           {/* Right Column */}
           <div className="w3-col m2">
-            {rightsideboxes}
+            <CachedComponentsByZone type="widgets" zone="right" widgets={widgets} context={context} />
           </div>
           {/* End Right Column */}
         </div>
@@ -133,10 +133,6 @@ export const DoublePageTemplate = (props) => {
       {/* End Page Container */}
 
       {/* Footer */}
-      <footer className="w3-container w3-theme-d3 w3-padding-16">
-        <h5>Footer</h5>
-      </footer>
-
       <footer className="w3-container w3-theme-d5">
         <p>
           Powered by{" "}
@@ -148,6 +144,6 @@ export const DoublePageTemplate = (props) => {
       {/* End Footer */}
     </div>
   );
-}
+});
 
 export default DoublePageTemplate;

@@ -1,14 +1,16 @@
 // import { SideMenu } from "../side-menu";
-import { addComponentsByZone } from '../utils/add-component';
+import { CachedComponentsByZone } from '../utils/add-component';
+import { useSnStore } from "../store/sn-store";
+import React from 'react';
 
-export const VanillaPageTemplate = (props) => {
-  console.log('pagetemplate: mirror');
-  console.log(props.data);
+export const MirrorPageTemplate = React.memo((props) => {
+  const { context, widgets } = useSnStore((state) => state);
 
-  const sideboxes = addComponentsByZone('content', 'side', 'side', props.data, props.page);
-  const components = addComponentsByZone('content', 'component', 'content', props.data, props.page);
-
-  console.log(components);
+  // console.log('%cmirror layout render', "font-size:16px;color:green", { contextId: context?.Id, widgetsCount: widgets?.length });
+  
+  if (!widgets || !Array.isArray(widgets)) {
+    return <div>Loading layout...</div>;
+  }
 
   return (
     <div className="App w3-theme-l5">
@@ -17,6 +19,7 @@ export const VanillaPageTemplate = (props) => {
           <a
             href="/"
             className="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-theme-d2"
+            aria-label="Menu"
           >
             <i className="fa fa-bars"></i>
           </a>
@@ -114,13 +117,13 @@ export const VanillaPageTemplate = (props) => {
                 </div>
               </div>
             </div>
-            {components}
+            <CachedComponentsByZone type="widgets" zone="content" widgets={widgets} context={context} />
           </div>
           {/* End Middle Column */}
 
           {/* Right Column */}
           <div className="w3-col m2">
-            {sideboxes}
+            <CachedComponentsByZone type="widgets" zone="side" widgets={widgets} context={context} />
           </div>
           {/* End Right Column */}
         </div>
@@ -130,10 +133,6 @@ export const VanillaPageTemplate = (props) => {
       {/* End Page Container */}
 
       {/* Footer */}
-      <footer className="w3-container w3-theme-d3 w3-padding-16">
-        <h5>Footer</h5>
-      </footer>
-
       <footer className="w3-container w3-theme-d5">
         <p>
           Powered by{" "}
@@ -145,6 +144,6 @@ export const VanillaPageTemplate = (props) => {
       {/* End Footer */}
     </div>
   );
-}
+});
 
-export default VanillaPageTemplate;
+export default MirrorPageTemplate;

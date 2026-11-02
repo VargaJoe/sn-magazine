@@ -1,10 +1,14 @@
 {
-	"apiUrl" : 				"https://eddie.sensenet.cloud",
-	"dataPath" :			"/Root/Content/SampleWorkspace",
+	"apiUrl" : 			"https://repository.example",
+	"authUrl" : 			"https://identity.example",
+	"clientId": 			"your-client-id",
+	"siteHost" :			"https://site.example",
+	"dataPath" :			"/Root/Content/your-data-path",
 	"pagecontainerPath": 	"/Root/Content/(layout)",
 	"layoutType": 			"Layout",
 	"widgetType": 			"Widget",
 	"siteLogo": 			"/(structure)/Site/logo.png",
+	"ogimage": 				"/(structure)/Site/ogimage.png",
 	"autoLayout": {
 		"default": 			"wide",
 		"folder" :			"explore",
@@ -12,5 +16,12 @@
 		"isFolder" :		"explore",
 		"notFolder" : 		"wide"
 		
-	}
-} 
+	},
+	"facebookappid": 		"your-facebook-app-id",
+	"disqusShortname": 		"your-disqus-shortname",
+	"maintenanceTemplate": 	"maintenance",
+	"maintenanceSiteName": 	"Your Site Name",
+	"maintenanceTitle": 	"Maintenance",
+	"maintenanceEmail": 	"your-email@example.com",
+	"maintenanceText": 		"<p>Site is under maintenance. Please check back later.</p>"
+}

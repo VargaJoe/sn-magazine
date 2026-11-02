@@ -1,0 +1,54 @@
+import { Link } from "react-router-dom";
+import Moment from 'moment';
+import ShowDebugInfo from "../utils/show-debuginfo"
+import LazyImage from "../utils/lazyload-image";
+import { useSnStore } from "../store/sn-store";
+
+export function NestedLeisureArticleItem(props) {
+  console.log('%cNestedLeisureArticleItem', "font-size:16px;color:green", { props: props });
+  const context = props.data;
+  const {page, layout} = useSnStore((state) => state);
+  const widget = props.widget;
+
+  const relativePath = context.Path.substr((process.env.REACT_APP_DATA_PATH).length + 1);
+  
+  function newsImage () { 
+    if (!context.Image || context.Image?.Url === "") {
+      return "";
+    }
+
+    return (
+      <div className="news-image w3-left w3-padding">
+        <LazyImage src={process.env.REACT_APP_API_URL + context.Image.Url} alt={context.DisplayName} className="w3-hover-opacity"/>
+      </div>
+    );   
+  };
+  
+
+  return (
+    // <div className="w3-col m9">
+      <div className="w3-row-padding w3-margin-bottom w3-left w3-block m1 news-item">
+        <div className="w3-col">
+          <div className="w3-card w3-round w3-white">
+          <ShowDebugInfo title="leisure article news item" context={context} currentPage={page} widget={widget} />
+            <div className="w3-container w3-padding">
+              <div className="w3-padding-16">
+                <Link key={`news-item-${context.Id}`} to={'/' + relativePath} className="no-score">
+                    {newsImage()}
+                    <div className="w3-left w3-padding news-meta">
+                      <div className="title w3-large">{context.DisplayName}</div>
+                      <div className="small" dangerouslySetInnerHTML={{ __html: context.Subtitle || context.Lead || context.Description }}></div>
+                      <div className="small hidden">{context.Author}</div>
+                      <div>{Moment(context.PublishDate).format('yyyy.MM.DD')}</div>
+                    </div>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    // </div>
+  );
+}
+
+export default NestedLeisureArticleItem;

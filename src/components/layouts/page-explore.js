@@ -1,19 +1,18 @@
-import { Breadcrumb } from "../widgets/manual-list-breadcrumb";
-import { MenuList } from "../widgets/manual-list-menu";
-import { addComponentsByZone } from '../utils/add-component';
+import { BreadcrumbListWidget } from "../widgets/manual-list-breadcrumb";
+import { MenuListWidget } from "../widgets/manual-list-menu";
+import { CachedComponentsByZone } from '../utils/add-component';
 import { Link } from 'react-router-dom';
+import { useSnStore } from "../store/sn-store";
+import React from 'react';
 
-export const ExploreLayout = (props) => {
-  const context = props.data;
-  const layout = props.page;
-  const widgets = props.widget;
-  console.log('explore layout: ', props, context, layout, widgets);
+export const ExploreLayout = React.memo((props) => {
+  const { context, widgets } = useSnStore((state) => state);
 
-  const sideboxes = addComponentsByZone('widgets', 'side', context, layout, widgets);
-  const components = addComponentsByZone('widgets', 'content', context, layout, widgets);
-
-  console.log('explore layout sideboxes', sideboxes);
-  console.log('explore layout components', components);
+  // console.log('%cexplore layout render', "font-size:16px;color:green", { contextId: context?.Id, widgetsCount: widgets?.length });
+  
+  if (!widgets || !Array.isArray(widgets)) {
+    return <div>Loading layout...</div>;
+  }
 
   return (
     <div className="App w3-theme-l5">
@@ -22,6 +21,7 @@ export const ExploreLayout = (props) => {
           <a
             href="/"
             className="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-theme-d2"
+            aria-label="Menu"
           >
             <i className="fa fa-bars"></i>
           </a>
@@ -37,13 +37,6 @@ export const ExploreLayout = (props) => {
           >
             <i className="fa fa-globe"></i>
           </a>
-          {/* <a
-            href="/"
-            className="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white"
-            title="Account Settings"
-          >
-            <i className="fa fa-user"></i>
-          </a> */}
           <a
            href="mailto:info@sensenet.com"
            className="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white"
@@ -51,37 +44,6 @@ export const ExploreLayout = (props) => {
          >
            <i className="fa fa-envelope"></i>
          </a>
-          {/* <div className="w3-dropdown-hover w3-hide-small">
-            <button
-              className="w3-button w3-padding-large"
-              title="Notifications"
-            >
-              <i className="fa fa-bell"></i>
-              <span className="w3-badge w3-right w3-small w3-green">3</span>
-            </button>
-            <div className="w3-dropdown-content w3-card-4 w3-bar-block w3-dropdown-content-custom">
-              <a href="/" className="w3-bar-item w3-button">
-                One new friend request
-              </a>
-              <a href="/" className="w3-bar-item w3-button">
-                John Doe posted on your wall
-              </a>
-              <a href="/" className="w3-bar-item w3-button">
-                Jane likes your post
-              </a>
-            </div>
-          </div> */}
-          {/* <a
-            href="/"
-            className="w3-bar-item w3-button w3-hide-small w3-right w3-padding-large w3-hover-white"
-            title="My Account"
-          >
-            <img
-              src="/w3images/avatar2.png"
-              className="w3-circle w2-circle-custom"
-              alt="Avatar"
-            />
-          </a> */}
         </div>
       </div>
 
@@ -89,10 +51,6 @@ export const ExploreLayout = (props) => {
         id="navDemo"
         className="w3-bar-block w3-theme-d2 w3-hide w3-hide-large w3-hide-medium w3-large"
       >
-        {/* <a href="#" className="w3-bar-item w3-button w3-padding-large">Link 1</a>
-  <a href="#" className="w3-bar-item w3-button w3-padding-large">Link 2</a>
-  <a href="#" className="w3-bar-item w3-button w3-padding-large">Link 3</a>
-  <a href="#" className="w3-bar-item w3-button w3-padding-large">My Profile</a> */}
       </div>
       
       {/* Page Container */}
@@ -101,13 +59,13 @@ export const ExploreLayout = (props) => {
         <div className="w3-row">
           {/* Left Column */}
           <div className="w3-col m3">
-            <MenuList data={props.data} page={props.page} widget={{
+            <MenuListWidget data={null} page={null} widget={{
               ContextBinding: [ "currentcontext" ],
               ContentQuery: ".SORT:Name",
               ChildrenLevel: [ "child" ]
             }}/>
             <br/> 
-            {sideboxes}
+            <CachedComponentsByZone type="widgets" zone="side" widgets={widgets} context={context} />
           </div>
           
           {/* End Left Column */}
@@ -123,20 +81,14 @@ export const ExploreLayout = (props) => {
                 </div>
               </div>
             </div>
-            <Breadcrumb data={props.data} page={props.page} widget={{
+            <BreadcrumbListWidget data={props.data} page={props.page} widget={{
               ContextBinding: [ "currentcontext" ],
               ChildrenLevel: [ "child" ]
             }}/>
-            {components}
+            <CachedComponentsByZone type="widgets" zone="content" widgets={widgets} context={context} />
           </div>
           {/* End Middle Column */}
 
-          {/* Right Column */}
-          {/* <div className="w3-col m2">
-            <SideReviews />
-            <SideTranslations />
-          </div> */}
-          {/* End Right Column */}
         </div>
         {/* End Grid */}
       </div>
@@ -144,10 +96,6 @@ export const ExploreLayout = (props) => {
       {/* End Page Container */}
 
       {/* Footer */}
-      <footer className="w3-container w3-theme-d3 w3-padding-16">
-        <h5>Footer</h5>
-      </footer>
-
       <footer className="w3-container w3-theme-d5">
         <p>
           Powered by{" "}
@@ -159,6 +107,6 @@ export const ExploreLayout = (props) => {
       {/* End Footer */}
     </div>
   );
-}
+});
 
 export default ExploreLayout;
