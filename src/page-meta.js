@@ -30,7 +30,26 @@ export function metadataText(value) {
   return text(template.content.textContent.replace(/[\s\u200b\ufeff]+/g, ' '));
 }
 
-export function buildPageMetadata(context, page, dataPath) {
+// SenseNet dates use an ISO timestamp with a timezone, or legacy /Date(ms)/.
+// Match the sitemap's timestamp semantics, including legacy offset suffixes.
+export function publicationTime(value) {
+  if (typeof value !== 'string') return null;
+  value = value.trim();
+  const dotNet = /^\/Date\((-?\d+)(?:[+-]\d{4})?\)\/$/.exec(value);
+  if (!dotNet) {
+    const iso = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.exec(value);
+    if (!iso) return null;
+    const [year, month, day, hour, minute, second] = iso.slice(1).map(Number);
+    const leap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+    const days = [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    if (month < 1 || month > 12 || day < 1 || day > days[month - 1] || hour > 23 || minute > 59 || second > 59) return null;
+  }
+  const time = dotNet ? Number(dotNet[1]) : Date.parse(value);
+  const date = new Date(time);
+  return !Number.isFinite(time) || Number.isNaN(date.getTime()) || date.getUTCFullYear() < 1 || date.getUTCFullYear() > 9999 ? null : time;
+}
+
+export function buildPageMetadata(context, page, dataPath, now = Date.now()) {
   if (!context) return { title: '', description: '', robots: '' };
   const first = (...values) => {
     for (const value of values) {
@@ -39,10 +58,11 @@ export function buildPageMetadata(context, page, dataPath) {
     }
     return '';
   };
+  const publishTime = publicationTime(context.PublishDate);
   return {
     title: first(context.MetaTitle, page?.MetaTitle) || buildPageTitle(context, dataPath),
     description: first(context.MetaDescription, page?.MetaDescription,
       context.Description, context.Workspace?.Description),
-    robots: first(context.MetaRobots, page?.MetaRobots),
+    robots: publishTime !== null && publishTime > now ? 'noindex, follow' : first(context.MetaRobots, page?.MetaRobots),
   };
 }
