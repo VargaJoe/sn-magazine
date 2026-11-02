@@ -64,6 +64,7 @@ describe('resolved page analytics', () => {
     container.remove();
     delete window.dataLayer;
     jest.restoreAllMocks();
+    jest.useRealTimers();
   });
 
   afterAll(() => {
@@ -164,12 +165,59 @@ describe('resolved page analytics', () => {
   });
 
   it.each(['not_found', 'error'])('keeps the system noindex and title on %s views', async pageType => {
-    await render({ ...article, MetaTitle: 'Content SEO title', MetaRobots: 'index, follow' },
+    await render({ ...article, MetaTitle: 'Content SEO title', MetaRobots: 'index, follow', PublishDate: '9999-01-01T00:00:00Z' },
       '/missing', { pageType, pageTitle: 'System status title', page: { MetaRobots: 'all' } });
     expect(document.title).toBe('System status title');
     expect(window.dataLayer[0].page_title).toBe('System status title');
     expect(document.querySelector('meta[name="robots"]').content).toBe('noindex');
     expect(!!document.querySelector('link[rel="canonical"]')).toBe(pageType !== 'not_found');
+  });
+
+  it.each([
+    ['index, follow', { MetaRobots: 'nofollow' }, 'index, follow'],
+    ['noindex, nofollow', null, 'noindex, nofollow'],
+    ['', { MetaRobots: 'nofollow' }, 'nofollow'],
+    [undefined, null, null],
+  ])('refreshes an open scheduled page at publication without another view: %j', async (MetaRobots, page, expected) => {
+    const now = Date.parse('2026-11-02T12:00:00Z');
+    jest.useFakeTimers().setSystemTime(now);
+    const scheduled = Object.freeze({ ...article, MetaRobots, PublishDate: new Date(now + 1000).toISOString() });
+    await render(scheduled, '/books/review', { page });
+    expect([...document.querySelectorAll('meta[name="robots"]')].map(node => node.content)).toEqual(['noindex, follow']);
+    await act(async () => jest.advanceTimersByTime(999));
+    expect(document.querySelector('meta[name="robots"]').content).toBe('noindex, follow');
+    await act(async () => jest.advanceTimersByTime(1));
+    expect(document.querySelector('meta[name="robots"]')?.content ?? null).toBe(expected);
+    expect(window.dataLayer).toHaveLength(1);
+    expect(document.title).toBe('Leisure Magazin - Árnyék és fény');
+    expect(scheduled.MetaRobots).toBe(MetaRobots);
+  });
+
+  it('waits safely for a publication more than the browser timer limit away', async () => {
+    const now = Date.parse('2026-11-02T12:00:00Z');
+    const timerLimit = 2147483647;
+    jest.useFakeTimers().setSystemTime(now);
+    await render({ ...article, MetaRobots: 'index, follow', PublishDate: `/Date(${now + timerLimit + 1000})/` });
+    await act(async () => jest.advanceTimersByTime(timerLimit));
+    expect(document.querySelector('meta[name="robots"]').content).toBe('noindex, follow');
+    await act(async () => jest.advanceTimersByTime(1000));
+    expect(document.querySelector('meta[name="robots"]').content).toBe('index, follow');
+    expect(window.dataLayer).toHaveLength(1);
+  });
+
+  it('cancels the publication timer when the addressed content changes or unmounts', async () => {
+    const now = Date.parse('2026-11-02T12:00:00Z');
+    jest.useFakeTimers().setSystemTime(now);
+    const scheduled = { ...article, MetaRobots: 'index, follow', PublishDate: new Date(now + 1000).toISOString() };
+    await render(scheduled);
+    expect(jest.getTimerCount()).toBe(1);
+    await render({ ...article, MetaRobots: 'noindex' });
+    expect(jest.getTimerCount()).toBe(0);
+    expect(document.querySelector('meta[name="robots"]').content).toBe('noindex');
+    await render(scheduled);
+    expect(jest.getTimerCount()).toBe(1);
+    await act(async () => root.render(null));
+    expect(jest.getTimerCount()).toBe(0);
   });
 
   it('waits for context and emits once across StrictMode, rerenders, and refreshed content', async () => {
