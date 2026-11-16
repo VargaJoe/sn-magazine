@@ -1,0 +1,13 @@
+<ContentType name="EditorialMembership" parentType="GenericContent" handler="SnMagazine.Editorial.EditorialMembershipHandler" xmlns="http://schemas.sensenet.com/SenseNet/ContentRepository/ContentTypeDefinition">
+  <DisplayName>Editorial membership</DisplayName>
+  <Description>A unique active item/collection relation. Number and position belong to this relation.</Description>
+  <Icon>Content</Icon>
+  <AllowedChildTypes />
+  <Fields>
+    <Field name="Item" type="Reference"><DisplayName>Item</DisplayName><Bind property="EditorialItemReference" /><Configuration><Compulsory>true</Compulsory><AllowMultiple>false</AllowMultiple><AllowedTypes><Type>EditorialItem</Type></AllowedTypes></Configuration></Field>
+    <Field name="Collection" type="Reference"><DisplayName>Collection</DisplayName><Configuration><Compulsory>true</Compulsory><AllowMultiple>false</AllowMultiple><AllowedTypes><Type>EditorialCollection</Type></AllowedTypes></Configuration></Field>
+    <Field name="Position" type="Integer"><DisplayName>Verified position</DisplayName><Description>Zero means unknown. Duplicate positions are reported, never automatically renumbered.</Description><Configuration><MinValue>0</MinValue><DefaultValue>0</DefaultValue></Configuration></Field>
+    <Field name="NumberLabel" type="ShortText"><DisplayName>Number label</DisplayName><Description>Display label only; it does not generate a position.</Description></Field>
+    <Field name="Source" type="ShortText"><DisplayName>Public bibliographic source</DisplayName><Description>Public citation only. Never put private editorial notes in this publicly readable record.</Description></Field>
+  </Fields>
+</ContentType>

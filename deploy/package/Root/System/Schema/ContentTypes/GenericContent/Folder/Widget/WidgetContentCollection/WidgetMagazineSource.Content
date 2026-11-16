@@ -1,0 +1,12 @@
+{
+  "ContentType": "ContentType",
+  "ContentName": "WidgetMagazineSource",
+  "Fields": {
+    "HandlerName": "SnMagazine.Editorial.EditorialSourceHandler",
+    "ParentTypeName": "WidgetContentCollection",
+    "Binary": {
+      "Attachment": "WidgetMagazineSource.xml"
+    },
+    "IsSystemType": false
+  }
+}

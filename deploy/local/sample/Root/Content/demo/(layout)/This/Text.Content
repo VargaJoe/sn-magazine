@@ -1,0 +1,10 @@
+{
+  "ContentType": "WidgetSimpleText",
+  "ContentName": "Text",
+  "Fields": {
+    "Title": "Page home",
+    "PortletZone": "content",
+    "Index": 10,
+    "ComponentContent": "<p>This widget is stored under the selected Page in SenseNet.</p><nav><a href=\"/a\">Page A</a> | <a href=\"/b\">Page B</a> | <a href=\"/legacy\">Bundled styles</a> | <a href=\"/wide\">Wide template</a></nav>"
+  }
+}

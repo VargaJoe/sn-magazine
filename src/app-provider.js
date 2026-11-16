@@ -5,7 +5,7 @@ import {
 import { Repository } from "@sensenet/client-core";
 import { RepositoryContext } from "@sensenet/hooks-react";
 import { configuration, repositoryUrl } from "./configuration";
-import React from "react";
+import React, { useMemo } from "react";
 import { BrowserRouter, useLocation, useNavigate } from "react-router-dom";
 
 export function AppProviders({ children }) {
@@ -35,23 +35,13 @@ export const AuthProvider = ({ children }) => {
 
 export const RepositoryProvider = ({ children }) => {
   const { oidcUser } = useOidcAuthentication();
-  // const { login } = useOidcAuthentication();
-  
-  if (!oidcUser) {
-    return (
-      <RepositoryContext.Provider
-      value={new Repository({ repositoryUrl })}
-    >
-      {/* <button onClick={login}>Login</button> */}
-      {children}
-    </RepositoryContext.Provider>    
-    );
-  }
-  
+  const accessToken = oidcUser?.access_token || undefined;
+  // Presentation navigation must not replace the repository client and trigger
+  // every consumer's data lifecycle. A real credential change still replaces it.
+  const repository = useMemo(() => new Repository({ repositoryUrl,
+    ...(accessToken ? { accessToken } : {}) }), [accessToken]);
   return (
-    <RepositoryContext.Provider
-      value={new Repository({ repositoryUrl, accessToken: oidcUser.access_token })}
-    >
+    <RepositoryContext.Provider value={repository}>
       {children}
     </RepositoryContext.Provider>
   );

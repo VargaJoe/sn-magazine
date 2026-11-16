@@ -1,0 +1,10 @@
+{
+  "ContentType": "ContentType",
+  "ContentName": "EditorialCollection",
+  "Fields": {
+    "HandlerName": "SnMagazine.Editorial.EditorialCollectionHandler",
+    "ParentTypeName": "GenericContent",
+    "Binary": { "Attachment": "EditorialCollection.xml" },
+    "IsSystemType": false
+  }
+}

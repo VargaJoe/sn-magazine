@@ -1,0 +1,28 @@
+name: sn-magazine-preview
+services:
+  preview:
+    image: nginx@sha256:feb6f75a08aa55b44576f98c15b8859819ecf54f3e4d2157f42c2d01cb58a3d2
+    user: '101:101'
+    ports:
+      - '127.0.0.1:${SN_MAGAZINE_PREVIEW_PORT:-3011}:8080'
+    volumes:
+      - type: bind
+        source: ${SN_MAGAZINE_PREVIEW_BUILD:?Set an absolute path to a verified production build}
+        target: /usr/share/nginx/html
+        read_only: true
+      - type: bind
+        source: ./preview.nginx.conf
+        target: /etc/nginx/nginx.conf
+        read_only: true
+    read_only: true
+    tmpfs:
+      - /tmp:uid=101,gid=101,mode=1777
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    healthcheck:
+      test: [CMD, wget, --quiet, --spider, 'http://127.0.0.1:8080/healthz']
+      interval: 5s
+      timeout: 3s
+      start_period: 2s
+      retries: 5
+    restart: unless-stopped

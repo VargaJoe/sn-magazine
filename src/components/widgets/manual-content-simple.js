@@ -13,7 +13,7 @@ export function SimpleContentWidget(props) {
   
   // const layout = props.page;
   // let context = props.data;
-  const {context, page, layout} = useSnStore((state) => state);
+  const {context, page} = useSnStore((state) => state);
   const widget = props.widget;
   const bindedContext = BindedContext(props, true);
 
@@ -31,7 +31,8 @@ export function SimpleContentWidget(props) {
     if (!bindedContext.content) {
       return;
     }
-    const contextPathWorkaround = bindedContext.content?.Path.replace("(", "%28").replace(")", "%29");
+    const contextPathWorkaround = bindedContext.content?.Path?.replace("(", "%28").replace(")", "%29");
+    if (!contextPathWorkaround) return;
     await repo.load({
       idOrPath: `${contextPathWorkaround}`,
       oDataOptions: {

@@ -1,0 +1,18 @@
+<ContentType name="EditorialItem" parentType="GenericContent" handler="SnMagazine.Editorial.EditorialItemHandler" xmlns="http://schemas.sensenet.com/SenseNet/ContentRepository/ContentTypeDefinition">
+  <DisplayName>Editorial item</DisplayName>
+  <Description>Optional site-owned work or edition. Bibliographic labels contain verified public facts only.</Description>
+  <Icon>Content</Icon>
+  <AllowedChildTypes />
+  <Fields>
+    <Field name="DisplayName" type="ShortText"><DisplayName>Title</DisplayName><Configuration><Compulsory>true</Compulsory></Configuration></Field>
+    <Field name="MediaKind" type="Choice"><DisplayName>Media kind</DisplayName><Configuration><AllowMultiple>false</AllowMultiple><AllowExtraValue>false</AllowExtraValue><Compulsory>true</Compulsory><Options><Option value="book">Book</Option><Option value="gamebook">Gamebook</Option><Option value="film">Film</Option><Option value="tvseries">TV series</Option><Option value="manga">Manga</Option><Option value="comic">Comic</Option><Option value="game">Game</Option><Option value="other">Other</Option></Options></Configuration></Field>
+    <Field name="ItemScope" type="Choice"><DisplayName>Work or edition</DisplayName><Description>Defaults to edition; explicitly select work for whole-work film/TV reviews. No work record is generated automatically.</Description><Configuration><AllowMultiple>false</AllowMultiple><AllowExtraValue>false</AllowExtraValue><Compulsory>true</Compulsory><Options><Option value="work">Work</Option><Option value="edition" selected="true">Edition</Option></Options><DefaultValue>edition</DefaultValue></Configuration></Field>
+    <Field name="ParentItem" type="Reference"><DisplayName>Verified parent work</DisplayName><Configuration><AllowMultiple>false</AllowMultiple><AllowedTypes><Type>EditorialItem</Type></AllowedTypes></Configuration></Field>
+    <Field name="EditionLabel" type="ShortText"><DisplayName>Edition label</DisplayName></Field>
+    <Field name="PublisherLabel" type="ShortText"><DisplayName>Publisher</DisplayName></Field>
+    <Field name="ImprintLabel" type="ShortText"><DisplayName>Imprint</DisplayName></Field>
+    <Field name="DistributorLabel" type="ShortText"><DisplayName>Distributor</DisplayName></Field>
+    <Field name="StudioLabel" type="ShortText"><DisplayName>Studio</DisplayName></Field>
+    <Field name="IsListed" type="Boolean"><DisplayName>List independently</DisplayName><Description>Editorial listing intent; native permissions and publication rules still apply.</Description><Configuration><DefaultValue>false</DefaultValue></Configuration></Field>
+  </Fields>
+</ContentType>

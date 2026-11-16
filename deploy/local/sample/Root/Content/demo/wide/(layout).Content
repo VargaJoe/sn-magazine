@@ -1,0 +1,9 @@
+{
+  "ContentType": "Folder",
+  "ContentName": "(layout)",
+  "Fields": {
+    "AllowedChildTypes": [
+      "Layout"
+    ]
+  }
+}

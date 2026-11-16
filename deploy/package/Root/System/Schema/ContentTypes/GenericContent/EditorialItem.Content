@@ -1,0 +1,10 @@
+{
+  "ContentType": "ContentType",
+  "ContentName": "EditorialItem",
+  "Fields": {
+    "HandlerName": "SnMagazine.Editorial.EditorialItemHandler",
+    "ParentTypeName": "GenericContent",
+    "Binary": { "Attachment": "EditorialItem.xml" },
+    "IsSystemType": false
+  }
+}

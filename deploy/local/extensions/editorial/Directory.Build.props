@@ -1,0 +1,6 @@
+<Project>
+  <PropertyGroup>
+    <!-- Set before Microsoft.Common.props so restore and build use one ignored path. -->
+    <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)../../runtime/editorial-extension/obj/</BaseIntermediateOutputPath>
+  </PropertyGroup>
+</Project>

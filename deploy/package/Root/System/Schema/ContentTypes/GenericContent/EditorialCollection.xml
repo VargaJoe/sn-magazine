@@ -1,0 +1,15 @@
+<ContentType name="EditorialCollection" parentType="GenericContent" handler="SnMagazine.Editorial.EditorialCollectionHandler" xmlns="http://schemas.sensenet.com/SenseNet/ContentRepository/ContentTypeDefinition">
+  <DisplayName>Editorial collection</DisplayName>
+  <Description>Optional site-owned series, hub or independent verified order.</Description>
+  <Icon>Content</Icon>
+  <AllowedChildTypes />
+  <Fields>
+    <Field name="DisplayName" type="ShortText"><DisplayName>Title</DisplayName><Configuration><Compulsory>true</Compulsory></Configuration></Field>
+    <Field name="Description" type="LongText"><DisplayName>Introduction</DisplayName></Field>
+    <Field name="Kind" type="Choice"><DisplayName>Collection kind</DisplayName><Configuration><AllowMultiple>false</AllowMultiple><AllowExtraValue>false</AllowExtraValue><Compulsory>true</Compulsory><Options><Option value="series">Series</Option><Option value="publisher-series">Publisher series</Option><Option value="chronology">Chronology</Option><Option value="curated">Curated</Option></Options></Configuration></Field>
+    <Field name="ParentCollection" type="Reference"><DisplayName>Parent hub</DisplayName><Configuration><AllowMultiple>false</AllowMultiple><AllowedTypes><Type>EditorialCollection</Type></AllowedTypes></Configuration></Field>
+    <Field name="OrderMode" type="Choice"><DisplayName>Order mode</DisplayName><Configuration><AllowMultiple>false</AllowMultiple><AllowExtraValue>false</AllowExtraValue><Compulsory>true</Compulsory><Options><Option value="manual" selected="true">Manual verified order</Option><Option value="unordered">Unordered</Option></Options><DefaultValue>manual</DefaultValue></Configuration></Field>
+    <Field name="HubPage" type="Reference"><DisplayName>Hub page</DisplayName><Description>Explicit same-site Page or SmartFolder destination; never inferred by matching names.</Description><Configuration><AllowMultiple>false</AllowMultiple><AllowedTypes><Type>Page</Type><Type>SmartFolder</Type></AllowedTypes></Configuration></Field>
+    <Field name="IsListed" type="Boolean"><DisplayName>List independently</DisplayName><Configuration><DefaultValue>false</DefaultValue></Configuration></Field>
+  </Fields>
+</ContentType>

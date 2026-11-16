@@ -1,0 +1,12 @@
+{
+  "ContentType": "ContentType",
+  "ContentName": "EditorialAnnotation",
+  "Fields": {
+    "HandlerName": "SnMagazine.Editorial.EditorialAnnotationHandler",
+    "ParentTypeName": "Folder",
+    "Binary": {
+      "Attachment": "EditorialAnnotation.xml"
+    },
+    "IsSystemType": false
+  }
+}

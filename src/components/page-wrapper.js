@@ -4,9 +4,21 @@ import { useLocation } from 'react-router-dom';
 import { addComponent, addLayout } from './utils/add-component';
 import { useSnStore } from './store/sn-store';
 import AnalyticsTracker from '../AnalyticsTracker';
+import PageStylesheets from '../presentation/page-stylesheets';
+import InitialPageShell from '../presentation/initial-page-shell';
 import { maintenanceTemplate } from '../configuration';
 import { loadWithTimeout, pageTypeForError } from '../page-load';
 import { errorPageData, siteForContext } from '../error-page';
+import { pageWithWidgetMetadata } from '../presentation/widget-metadata';
+
+function isStylesheetsSchemaMissing(error) {
+  const status = error?.statusCode ?? error?.response?.status;
+  if (status !== undefined && status !== 400 && status !== 500) return false;
+  const message = error?.body?.error?.message?.value || error?.message || '';
+  return /\b(?:unknown|unrecognized|undefined|nonexistent)\s+(?:field|property)(?:\s+name)?\s*[:=]?\s*['"]?Stylesheets\b/i.test(message) ||
+    /\b(?:field|property)\s*['"]?Stylesheets['"]?\s+(?:does not exist|was not found|is not (?:found|defined)|not found|not defined)\b/i.test(message) ||
+    /\bStylesheets['"]?\s+(?:field|property)\s+(?:does not exist|was not found|is not (?:found|defined)|not found|not defined)\b/i.test(message);
+}
 
 // Preserve the existing Context -> inherited Layout (Page) query resolution.
 function pageQuery(context, layoutContentType, widgetContentType) {
@@ -45,8 +57,11 @@ const PageWrapper = React.memo(() => {
   const [retryAttempt, setRetryAttempt] = useState(0);
   const requestGeneration = useRef(0);
   const knownSite = useRef(null);
-  const navigationKey = JSON.stringify([location.key, location.pathname, location.search, location.hash]);
-  // Gate rendering immediately, before the navigation effect starts its loads.
+  // The native context and inherited layout depend on the pathname. Query
+  // filters and fragment targets belong to the mounted page; keep its DOM and
+  // widget state intact while AnalyticsTracker observes every history entry.
+  const navigationKey = location.pathname;
+  // Gate rendering immediately, before a different path starts its loads.
   const current = resolved?.navigationKey === navigationKey && resolved?.repo === repo &&
     resolved?.retryAttempt === retryAttempt ? resolved : null;
   const root = process.env.REACT_APP_DATA_PATH?.replace(/\/+$/, '');
@@ -127,14 +142,23 @@ const PageWrapper = React.memo(() => {
           path: '/Root/Content',
           oDataOptions: {
             query: pageQuery(context, layoutContentType, widgetContentType),
-            expand: ['CustomRoot'],
+            expand: ['CustomRoot', 'Stylesheets'],
             orderby: ['Index'],
             select: 'all',
             enablelifespanfilter: 'on',
             enableautofilters: 'off',
           },
         };
-        const result = await repo.loadCollection(options);
+        let result;
+        try {
+          result = await repo.loadCollection(options);
+        } catch (error) {
+          if (!isCurrent()) return;
+          if (!isStylesheetsSchemaMissing(error)) throw error;
+          // Existing repositories may still have the original Layout CTD.
+          result = await repo.loadCollection({ ...options,
+            oDataOptions: { ...options.oDataOptions, expand: ['CustomRoot'] } });
+        }
         if (!isCurrent()) return;
         const contents = Array.isArray(result?.d?.results) ? result.d.results : [];
         page = contents.filter(content => content.Type === layoutContentType)
@@ -145,6 +169,7 @@ const PageWrapper = React.memo(() => {
         console.error('error on loading page: ', error);
       }
       if (!isCurrent()) return;
+      page = pageWithWidgetMetadata(context, page, widgets);
       setPage(page);
       setWidgets(widgets);
       const selected = !page?.PageTemplate ? null :
@@ -158,6 +183,8 @@ const PageWrapper = React.memo(() => {
 
   return (
     <>
+      <InitialPageShell root={root} pageType={current?.pageType} page={current?.page} />
+      <PageStylesheets page={current?.page} repositoryUrl={process.env.REACT_APP_API_URL} />
       <AnalyticsTracker context={current?.context} page={current?.page}
         pageType={current?.pageType} pageTitle={current?.pageTitle} />
       {current && (
