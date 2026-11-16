@@ -17,7 +17,7 @@ npm run test:packaging
 
 `.npmrc` retains the legacy peer-dependency mode required by the existing React
 18 / Material UI 4 combination. Dependencies are exact and locked. Updating that
-toolchain is a separate change.
+toolchain is a separate change. AJV 8 is an explicit build dependency so a fresh application install cannot hoist AJV 6 beneath ajv-keywords 5.
 
 `engine/manifest.json` lists the neutral core and optional reusable features.
 The package `files` list includes only their sources, public engine assets and

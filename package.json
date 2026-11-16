@@ -20,11 +20,11 @@
     "web-vitals": "3.5.0",
     "zustand": "4.4.4",
     "@babel/parser": "7.27.7",
-    "@babel/traverse": "7.23.2"
+    "@babel/traverse": "7.23.2",
+    "ajv": "8.18.0"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "node scripts/build-site.mjs",
     "engine:export": "node scripts/export-engine.mjs",
     "test": "react-scripts test",
     "test:sitemap": "node --test tests/sitemap.test.mjs tests/repository-sitemap.test.mjs tests/sitemap-comparison.test.mjs tests/sitemap-profile-links.test.mjs",
