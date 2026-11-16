@@ -1,9 +1,18 @@
 import React from 'react';
+import { getComponent, getRegistryRevision } from './component-registry';
 
 // --- Dynamic Component Resolution ---
 // This array acts as a simple in-memory cache for lazy-loaded components.
 const defaultComponent = 'default';
 let lazyComponents = [];
+
+function componentModule(type, prefix, component) {
+  if (!['layouts', 'widgets', 'content'].includes(type) ||
+      !/^[a-z0-9_-]+$/i.test(prefix) || !/^[a-z0-9_-]+$/i.test(component)) {
+    throw new Error('Invalid component request');
+  }
+  return getComponent(`${type}/${prefix}-${component}`);
+}
 
 /**
  * Clears the in-memory cache of lazy-loaded components.
@@ -24,29 +33,31 @@ export function clearLazyComponentCache() {
  * @param {string} prefix - The component prefix (e.g. 'auto', 'manual', 'page')
  * @param {string} component - The component name (without prefix)
  * @param {string} [fallback] - Optional custom fallback component name
- * @returns {React.LazyExoticComponent}
+ * @returns {React.ComponentType|null}
  */
 function importView(type, prefix, component, fallback) {
   if (!type || !prefix || !component) {
     const msg = `importView: Missing type, prefix, or component: type=${type}, prefix=${prefix}, component=${component}`;
     console.error(msg);
     try {
-      return require(`../${type}/auto-${fallback || defaultComponent}`).default;
+      return componentModule(type, 'auto', fallback || defaultComponent);
     } catch (err) {
       console.error('Failed to require fallback component', err);
       return null;
     }
   }
   // Check cache first
-  let lazyView = lazyComponents.find(ptmplt => ptmplt.type === type && ptmplt.prefix === prefix && ptmplt.component === component && ptmplt.fallback === fallback);
+  const revision = getRegistryRevision();
+  let lazyView = lazyComponents.find(ptmplt => ptmplt.revision === revision && ptmplt.type === type && ptmplt.prefix === prefix && ptmplt.component === component && ptmplt.fallback === fallback);
   if (!lazyView) {
     try {
       lazyView = {
+        revision,
         type,
         prefix,
         component,
         fallback,
-        view: require(`../${type}/${prefix}-${component}`).default
+        view: componentModule(type, prefix, component)
       };
     } catch (err) {
       if (fallback) {
@@ -54,11 +65,12 @@ function importView(type, prefix, component, fallback) {
         console.warn(msg, err);
         try {
           lazyView = {
+            revision,
             type,
             prefix,
             component,
             fallback,
-            view: require(`../${type}/${prefix}-${fallback}`).default
+            view: componentModule(type, prefix, fallback)
           };
         } catch (err2) {
           console.error('Failed to require fallback', err2);
@@ -69,11 +81,12 @@ function importView(type, prefix, component, fallback) {
         console.warn(msg, err);
         try {
           lazyView = {
+            revision,
             type,
             prefix,
             component,
             fallback,
-            view: require(`../${type}/auto-${defaultComponent}`).default
+            view: componentModule(type, 'auto', defaultComponent)
           };
         } catch (err2) {
           console.error('Failed to require default', err2);
@@ -102,6 +115,7 @@ function importView(type, prefix, component, fallback) {
  */
 export const addComponent = (type, prefix, component, id, data, page, widget, fallback) => {
   const View = importView(type, prefix, component, fallback);
+  if (!View) return null;
   // widgets can be top level or nested
   // top level widgets usually get context from store
   // nested widgets get context from parent widget
@@ -114,12 +128,10 @@ export const addComponent = (type, prefix, component, id, data, page, widget, fa
 };
 
 export const CachedComponentsByZone = ({ type, zone, widgets, context }) => {
-  const componentsRef = React.useRef(new Map());
-
   if (!widgets || widgets.length === 0) {
     console.log('cached component by zone - widgets undefined: ', {type: type}, {zone: zone}, {context: context});
     if (zone === null || zone === 'content') {
-      return addComponent('content', 'auto', context.Type.toLowerCase(), `${type}-${zone}-err-${context.Id}`, null);
+      return context ? addComponent('content', 'auto', context.Type.toLowerCase(), `${type}-${zone}-err-${context.Id}`, null) : null;
     } else {
       return null;
     }
@@ -127,16 +139,14 @@ export const CachedComponentsByZone = ({ type, zone, widgets, context }) => {
 
   // console.log('cached component by zone - widgets: ', type, zone, context, widgets);
   return (
-    widgets.filter(pcnt => pcnt.PortletZone === zone).map((child) => { 
+    widgets.filter(pcnt => pcnt.PortletZone === zone).map((child) => {
       const componentId = `${child.Id}`;
-      if (!componentsRef.current.has(componentId)) {
-        const isAuto = (child.ClientComponent === undefined || child.ClientComponent === null || child.ClientComponent === '');
-        const compoType = isAuto ? child.Type : child.ClientComponent;
-        const prefix = (isAuto) ? "auto" : "manual";
-        const element = addComponent(type, prefix, compoType.toLowerCase(), componentId, null, null, child);
-        componentsRef.current.set(componentId, element);
-      }
-      return componentsRef.current.get(componentId);
+      // Cache component definitions in importView, not elements with stale props.
+      // Stable keys preserve widget state while repository settings can change.
+      const isAuto = (child.ClientComponent === undefined || child.ClientComponent === null || child.ClientComponent === '');
+      const compoType = isAuto ? child.Type : child.ClientComponent;
+      const prefix = isAuto ? 'auto' : 'manual';
+      return addComponent(type, prefix, compoType.toLowerCase(), componentId, null, null, child);
     })
   );
 };
@@ -146,7 +156,7 @@ export const addComponentsByZone = (type, zone, contextobs, page, widgets, conte
 }
 
 export const ShowComponentsByZone = (type, zone, contextobs, page, widgets, context) => {
-  // if context is not present, use context from store, therefore it can not be a function 
+  // if context is not present, use context from store, therefore it can not be a function
   // const {context} = useSnStore((state) => state);
 
   if (!widgets || widgets.length === 0) {
@@ -160,7 +170,7 @@ export const ShowComponentsByZone = (type, zone, contextobs, page, widgets, cont
 
   console.log('add component by zone - widgets: ', type, zone, context, page, widgets);
   return (
-    widgets.filter(pcnt => pcnt.PortletZone === zone).map((child) => { 
+    widgets.filter(pcnt => pcnt.PortletZone === zone).map((child) => {
       const isAuto = (child.ClientComponent === undefined || child.ClientComponent === null || child.ClientComponent === '');
       const compoType = isAuto ? child.Type : child.ClientComponent;
       const prefix = (isAuto) ? "auto" : "manual";

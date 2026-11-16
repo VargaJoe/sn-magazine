@@ -1,0 +1,22 @@
+name: Engine CI
+on:
+  pull_request:
+  push:
+    branches: ['feature/**', 'develop/review-site']
+permissions:
+  contents: read
+jobs:
+  engine:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm test -- --watchAll=false --runInBand
+        env:
+          CI: 'true'
+      - run: npm run test:packaging

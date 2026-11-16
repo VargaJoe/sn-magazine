@@ -1,3 +1,5 @@
+// ReactDOM fixtures need act; no Testing Library render helper is used in this suite.
+/* eslint testing-library/no-unnecessary-act: "off" */
 import React, { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { act } from 'react-dom/test-utils';
@@ -213,16 +215,51 @@ describe('PageWrapper navigation lifecycle', () => {
     expect(observedTitles).toEqual(['Leisure Magazin - Review']);
   });
 
-  it('publishes one view for each query, hash, same-URL push, back, and forward navigation', async () => {
+  it('preserves the page, focus and widget state across query, hash and history changes while publishing each view', async () => {
+    const result = layoutResult();
+    result.d.results[1].ComponentContent = '<main id="reader-main" tabindex="-1"><details><summary>Reader options</summary><input aria-label="Reader note" /></details></main>';
+    repository.loadCollection.mockResolvedValue(result);
     await render();
-    for (const destination of ['/review?q=one', '/review?q=one#details', '/review?q=one#details', -1, 1]) {
-      await act(async () => navigate(destination));
+    const main = container.querySelector('main');
+    const input = main.querySelector('input');
+    const details = main.querySelector('details');
+    const { context, page, widgets } = useSnStore.getState();
+    input.value = 'Keep this reading state';
+    details.open = true;
+    main.focus();
+    for (const destination of ['/review?q=one', '/review?q=one#reader-main', '/review?q=one#reader-main', -1, 1]) {
+      const currentNavigate = navigate;
+      await act(async () => currentNavigate(destination));
+      expect(container.querySelector('main')).toBe(main);
+      expect(document.activeElement).toBe(main);
+      expect(input.value).toBe('Keep this reading state');
+      expect(details.open).toBe(true);
+      expect(useSnStore.getState()).toMatchObject({ context, page, widgets });
+      expect(useSnStore.getState().widgets).toBe(widgets);
     }
-    expect(repository.load).toHaveBeenCalledTimes(6);
-    expect(repository.loadCollection).toHaveBeenCalledTimes(6);
+    expect(repository.load).toHaveBeenCalledTimes(1);
+    expect(repository.loadCollection).toHaveBeenCalledTimes(1);
     expect(window.dataLayer).toHaveLength(6);
     expect(window.dataLayer.map(event => event.page_path)).toEqual(Array(6).fill('/review'));
     expect(observedTitles).toEqual(Array(6).fill('Leisure Magazin - Review'));
+  });
+
+  it('keeps an in-flight native context request when only query and hash change', async () => {
+    const pending = deferred();
+    repository.load.mockReturnValueOnce(pending.promise);
+    await render();
+    const signal = repository.load.mock.calls[0][0].requestInit.signal;
+
+    await act(async () => navigate('/review?category=books#reader-main'));
+    expect(repository.load).toHaveBeenCalledTimes(1);
+    expect(signal.aborted).toBe(false);
+    expect(window.dataLayer).toHaveLength(0);
+
+    await resolve(pending, { d: contextFor() });
+    expect(repository.loadCollection).toHaveBeenCalledTimes(1);
+    expect(container.textContent).toContain('Resolved widget content');
+    expect(window.dataLayer).toHaveLength(1);
+    expect(window.dataLayer[0].page_path).toBe('/review');
   });
 
   it('ignores an old context response after a faster navigation completes', async () => {
@@ -286,8 +323,8 @@ describe('PageWrapper navigation lifecycle', () => {
     await act(async () => navigate('/unavailable'));
     if (status === 'failed') {
       await act(async () => interrupted.reject(new Error('Offline')));
-      expect(container.textContent).toContain('Temporarily unavailable');
     }
+    expect(container.textContent.includes('Temporarily unavailable')).toBe(status === 'failed');
     expect(window.dataLayer).toHaveLength(status === 'failed' ? 2 : 1);
 
     await act(async () => navigate(-1));
@@ -392,6 +429,7 @@ describe('PageWrapper navigation lifecycle', () => {
 
   it('ignores late not-found branding after navigating away', async () => {
     const oldSite = deferred();
+    initialPath = '/missing';
     repository.load.mockRejectedValueOnce({ statusCode: 404 }).mockReturnValueOnce(oldSite.promise)
       .mockResolvedValue({ d: contextFor() });
     await render();

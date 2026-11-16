@@ -2,6 +2,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { buildRouting } from './lib/build-routing.mjs';
 import { loadEnvironment } from './lib/load-environment.mjs';
+import { prepareInitialReaderHeader } from './lib/initial-reader-header.mjs';
 
 loadEnvironment();
 const output = resolve(process.env.BUILD_PATH || 'build');
@@ -13,4 +14,5 @@ await Promise.all([
   writeFile(resolve(output, '_redirects'), generated.redirects, 'utf8'),
   writeFile(resolve(output, 'robots.txt'), generated.robots, 'utf8'),
 ]);
+await prepareInitialReaderHeader(output, process.env.READER_INITIAL_HEADER_CONFIG);
 console.log(`Prepared Netlify routing (sitemap proxy ${process.env.REACT_APP_SITEMAP_PATH?.trim() ? 'enabled' : 'disabled'}).`);

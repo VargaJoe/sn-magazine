@@ -1,0 +1,645 @@
+{
+  "schemaVersion": 1,
+  "name": "@vargajoe/sn-magazine-engine",
+  "version": "0.1.0",
+  "core": [
+    {
+      "source": "src/AnalyticsTracker.jsx",
+      "target": "src/AnalyticsTracker.jsx"
+    },
+    {
+      "source": "src/App-Custom.css",
+      "target": "src/App-Custom.css"
+    },
+    {
+      "source": "src/App.css",
+      "target": "src/App.css"
+    },
+    {
+      "source": "src/App.js",
+      "target": "src/App.js"
+    },
+    {
+      "source": "src/app-provider.js",
+      "target": "src/app-provider.js"
+    },
+    {
+      "source": "src/component-loaders.js",
+      "target": "src/component-loaders.js"
+    },
+    {
+      "source": "src/components/content/auto-article.js",
+      "target": "src/components/content/auto-article.js",
+      "component": "content/auto-article"
+    },
+    {
+      "source": "src/components/content/auto-default.js",
+      "target": "src/components/content/auto-default.js",
+      "component": "content/auto-default"
+    },
+    {
+      "source": "src/components/content/auto-genericcontent.js",
+      "target": "src/components/content/auto-genericcontent.js",
+      "component": "content/auto-genericcontent"
+    },
+    {
+      "source": "src/components/content/auto-memo.js",
+      "target": "src/components/content/auto-memo.js",
+      "component": "content/auto-memo"
+    },
+    {
+      "source": "src/components/content/auto-memolist.js",
+      "target": "src/components/content/auto-memolist.js",
+      "component": "content/auto-memolist"
+    },
+    {
+      "source": "src/components/content/auto-missing.js",
+      "target": "src/components/content/auto-missing.js",
+      "component": "content/auto-missing"
+    },
+    {
+      "source": "src/components/content/auto-workspace.js",
+      "target": "src/components/content/auto-workspace.js",
+      "component": "content/auto-workspace"
+    },
+    {
+      "source": "src/components/editorial/body.js",
+      "target": "src/components/editorial/body.js"
+    },
+    {
+      "source": "src/components/editorial/related-links.js",
+      "target": "src/components/editorial/related-links.js"
+    },
+    {
+      "source": "src/components/editorial/repository.js",
+      "target": "src/components/editorial/repository.js"
+    },
+    {
+      "source": "src/components/editorial/sections.js",
+      "target": "src/components/editorial/sections.js"
+    },
+    {
+      "source": "src/components/layouts/page-double.js",
+      "target": "src/components/layouts/page-double.js",
+      "component": "layouts/page-double"
+    },
+    {
+      "source": "src/components/layouts/page-editorial-flow.js",
+      "target": "src/components/layouts/page-editorial-flow.js",
+      "component": "layouts/page-editorial-flow"
+    },
+    {
+      "source": "src/components/layouts/page-error.js",
+      "target": "src/components/layouts/page-error.js",
+      "component": "layouts/page-error"
+    },
+    {
+      "source": "src/components/layouts/page-explore.js",
+      "target": "src/components/layouts/page-explore.js",
+      "component": "layouts/page-explore"
+    },
+    {
+      "source": "src/components/layouts/page-leisure-error.js",
+      "target": "src/components/layouts/page-leisure-error.js",
+      "component": "layouts/page-leisure-error"
+    },
+    {
+      "source": "src/components/layouts/page-leisure-simple-login.js",
+      "target": "src/components/layouts/page-leisure-simple-login.js",
+      "component": "layouts/page-leisure-simple-login"
+    },
+    {
+      "source": "src/components/layouts/page-leisure-simple.js",
+      "target": "src/components/layouts/page-leisure-simple.js",
+      "component": "layouts/page-leisure-simple"
+    },
+    {
+      "source": "src/components/layouts/page-maintenance-leisure.js",
+      "target": "src/components/layouts/page-maintenance-leisure.js",
+      "component": "layouts/page-maintenance-leisure"
+    },
+    {
+      "source": "src/components/layouts/page-maintenance.js",
+      "target": "src/components/layouts/page-maintenance.js",
+      "component": "layouts/page-maintenance"
+    },
+    {
+      "source": "src/components/layouts/page-mirror.js",
+      "target": "src/components/layouts/page-mirror.js",
+      "component": "layouts/page-mirror"
+    },
+    {
+      "source": "src/components/layouts/page-not-found.js",
+      "target": "src/components/layouts/page-not-found.js",
+      "component": "layouts/page-not-found"
+    },
+    {
+      "source": "src/components/layouts/page-vanilla.js",
+      "target": "src/components/layouts/page-vanilla.js",
+      "component": "layouts/page-vanilla"
+    },
+    {
+      "source": "src/components/layouts/page-wide.js",
+      "target": "src/components/layouts/page-wide.js",
+      "component": "layouts/page-wide"
+    },
+    {
+      "source": "src/components/layouts/partial-head.js",
+      "target": "src/components/layouts/partial-head.js",
+      "component": "layouts/partial-head"
+    },
+    {
+      "source": "src/components/missing.js",
+      "target": "src/components/missing.js"
+    },
+    {
+      "source": "src/components/page-wrapper.js",
+      "target": "src/components/page-wrapper.js"
+    },
+    {
+      "source": "src/components/store/sn-store.js",
+      "target": "src/components/store/sn-store.js"
+    },
+    {
+      "source": "src/components/utils/add-component.js",
+      "target": "src/components/utils/add-component.js"
+    },
+    {
+      "source": "src/components/utils/component-registry.js",
+      "target": "src/components/utils/component-registry.js"
+    },
+    {
+      "source": "src/components/utils/context-binding.js",
+      "target": "src/components/utils/context-binding.js"
+    },
+    {
+      "source": "src/components/utils/deep-equal.js",
+      "target": "src/components/utils/deep-equal.js"
+    },
+    {
+      "source": "src/components/utils/lazyload-image.js",
+      "target": "src/components/utils/lazyload-image.js"
+    },
+    {
+      "source": "src/components/utils/show-debuginfo.js",
+      "target": "src/components/utils/show-debuginfo.js"
+    },
+    {
+      "source": "src/components/utils/use-list-sorting.js",
+      "target": "src/components/utils/use-list-sorting.js"
+    },
+    {
+      "source": "src/components/widgets/auto-default.js",
+      "target": "src/components/widgets/auto-default.js",
+      "component": "widgets/auto-default"
+    },
+    {
+      "source": "src/components/widgets/auto-widgetcontentcollection.js",
+      "target": "src/components/widgets/auto-widgetcontentcollection.js",
+      "component": "widgets/auto-widgetcontentcollection"
+    },
+    {
+      "source": "src/components/widgets/auto-widgetcontentview.js",
+      "target": "src/components/widgets/auto-widgetcontentview.js",
+      "component": "widgets/auto-widgetcontentview"
+    },
+    {
+      "source": "src/components/widgets/auto-widgetlogin.js",
+      "target": "src/components/widgets/auto-widgetlogin.js",
+      "component": "widgets/auto-widgetlogin"
+    },
+    {
+      "source": "src/components/widgets/auto-widgetsimpletext.js",
+      "target": "src/components/widgets/auto-widgetsimpletext.js",
+      "component": "widgets/auto-widgetsimpletext"
+    },
+    {
+      "source": "src/components/widgets/manual-content-simple.js",
+      "target": "src/components/widgets/manual-content-simple.js",
+      "component": "widgets/manual-content-simple"
+    },
+    {
+      "source": "src/components/widgets/manual-editorial-feature.js",
+      "target": "src/components/widgets/manual-editorial-feature.js",
+      "component": "widgets/manual-editorial-feature"
+    },
+    {
+      "source": "src/components/widgets/manual-editorial-intro.js",
+      "target": "src/components/widgets/manual-editorial-intro.js",
+      "component": "widgets/manual-editorial-intro"
+    },
+    {
+      "source": "src/components/widgets/manual-editorial-navigation.js",
+      "target": "src/components/widgets/manual-editorial-navigation.js",
+      "component": "widgets/manual-editorial-navigation"
+    },
+    {
+      "source": "src/components/widgets/manual-editorial-note.js",
+      "target": "src/components/widgets/manual-editorial-note.js",
+      "component": "widgets/manual-editorial-note"
+    },
+    {
+      "source": "src/components/widgets/manual-editorial-stories.js",
+      "target": "src/components/widgets/manual-editorial-stories.js",
+      "component": "widgets/manual-editorial-stories"
+    },
+    {
+      "source": "src/components/widgets/manual-editorial-timeline.js",
+      "target": "src/components/widgets/manual-editorial-timeline.js",
+      "component": "widgets/manual-editorial-timeline"
+    },
+    {
+      "source": "src/components/widgets/manual-editorial-topics.js",
+      "target": "src/components/widgets/manual-editorial-topics.js",
+      "component": "widgets/manual-editorial-topics"
+    },
+    {
+      "source": "src/components/widgets/manual-list-banner.js",
+      "target": "src/components/widgets/manual-list-banner.js",
+      "component": "widgets/manual-list-banner"
+    },
+    {
+      "source": "src/components/widgets/manual-list-breadcrumb.js",
+      "target": "src/components/widgets/manual-list-breadcrumb.js",
+      "component": "widgets/manual-list-breadcrumb"
+    },
+    {
+      "source": "src/components/widgets/manual-list-menu-logo.js",
+      "target": "src/components/widgets/manual-list-menu-logo.js",
+      "component": "widgets/manual-list-menu-logo"
+    },
+    {
+      "source": "src/components/widgets/manual-list-menu.js",
+      "target": "src/components/widgets/manual-list-menu.js",
+      "component": "widgets/manual-list-menu"
+    },
+    {
+      "source": "src/components/widgets/manual-list-news-half.js",
+      "target": "src/components/widgets/manual-list-news-half.js",
+      "component": "widgets/manual-list-news-half"
+    },
+    {
+      "source": "src/components/widgets/manual-list-news-third.js",
+      "target": "src/components/widgets/manual-list-news-third.js",
+      "component": "widgets/manual-list-news-third"
+    },
+    {
+      "source": "src/components/widgets/manual-list-news.js",
+      "target": "src/components/widgets/manual-list-news.js",
+      "component": "widgets/manual-list-news"
+    },
+    {
+      "source": "src/components/widgets/manual-list-review.js",
+      "target": "src/components/widgets/manual-list-review.js",
+      "component": "widgets/manual-list-review"
+    },
+    {
+      "source": "src/components/widgets/manual-list-test.js",
+      "target": "src/components/widgets/manual-list-test.js",
+      "component": "widgets/manual-list-test"
+    },
+    {
+      "source": "src/components/widgets/manual-news-half.js",
+      "target": "src/components/widgets/manual-news-half.js",
+      "component": "widgets/manual-news-half"
+    },
+    {
+      "source": "src/components/widgets/manual-plugin-disqus.js",
+      "target": "src/components/widgets/manual-plugin-disqus.js",
+      "component": "widgets/manual-plugin-disqus"
+    },
+    {
+      "source": "src/components/widgets/manual-plugin-fbcomments.js",
+      "target": "src/components/widgets/manual-plugin-fbcomments.js",
+      "component": "widgets/manual-plugin-fbcomments"
+    },
+    {
+      "source": "src/components/widgets/manual-review-simple.js",
+      "target": "src/components/widgets/manual-review-simple.js",
+      "component": "widgets/manual-review-simple"
+    },
+    {
+      "source": "src/components/widgets/nested-list-news-item-leisurearticle.js",
+      "target": "src/components/widgets/nested-list-news-item-leisurearticle.js",
+      "component": "widgets/nested-list-news-item-leisurearticle"
+    },
+    {
+      "source": "src/components/widgets/nested-list-news-item-leisurebookreview.js",
+      "target": "src/components/widgets/nested-list-news-item-leisurebookreview.js",
+      "component": "widgets/nested-list-news-item-leisurebookreview"
+    },
+    {
+      "source": "src/components/widgets/nested-list-news-item.js",
+      "target": "src/components/widgets/nested-list-news-item.js",
+      "component": "widgets/nested-list-news-item"
+    },
+    {
+      "source": "src/components/widgets/nested-news-item.js",
+      "target": "src/components/widgets/nested-news-item.js",
+      "component": "widgets/nested-news-item"
+    },
+    {
+      "source": "src/components/widgets/nested-review-list-image.js",
+      "target": "src/components/widgets/nested-review-list-image.js",
+      "component": "widgets/nested-review-list-image"
+    },
+    {
+      "source": "src/components/widgets/nested-review-list-item.js",
+      "target": "src/components/widgets/nested-review-list-item.js",
+      "component": "widgets/nested-review-list-item"
+    },
+    {
+      "source": "src/components/widgets/nested-review-related-softlink.js",
+      "target": "src/components/widgets/nested-review-related-softlink.js",
+      "component": "widgets/nested-review-related-softlink"
+    },
+    {
+      "source": "src/configuration.js",
+      "target": "src/configuration.js"
+    },
+    {
+      "source": "src/error-page.js",
+      "target": "src/error-page.js"
+    },
+    {
+      "source": "src/images/logo.png",
+      "target": "src/images/logo.png"
+    },
+    {
+      "source": "src/index.css",
+      "target": "src/index.css"
+    },
+    {
+      "source": "src/index.js",
+      "target": "src/index.js"
+    },
+    {
+      "source": "src/logo.svg",
+      "target": "src/logo.svg"
+    },
+    {
+      "source": "src/navigation.js",
+      "target": "src/navigation.js"
+    },
+    {
+      "source": "src/page-load.js",
+      "target": "src/page-load.js"
+    },
+    {
+      "source": "src/page-meta.js",
+      "target": "src/page-meta.js"
+    },
+    {
+      "source": "src/presentation/initial-page-shell.js",
+      "target": "src/presentation/initial-page-shell.js"
+    },
+    {
+      "source": "src/presentation/page-stylesheets.js",
+      "target": "src/presentation/page-stylesheets.js"
+    },
+    {
+      "source": "src/presentation/widget-metadata.js",
+      "target": "src/presentation/widget-metadata.js"
+    },
+    {
+      "source": "src/reportWebVitals.js",
+      "target": "src/reportWebVitals.js"
+    }
+  ],
+  "features": {
+    "magazine-reader": [
+      {
+        "source": "src/components/layouts/page-reader-magazine.js",
+        "target": "src/components/layouts/page-reader-magazine.js",
+        "component": "layouts/page-reader-magazine"
+      },
+      {
+        "source": "src/components/magazine/body.js",
+        "target": "src/components/magazine/body.js"
+      },
+      {
+        "source": "src/components/magazine/branding.js",
+        "target": "src/components/magazine/branding.js"
+      },
+      {
+        "source": "src/components/magazine/editorial-layer.js",
+        "target": "src/components/magazine/editorial-layer.js"
+      },
+      {
+        "source": "src/components/magazine/editorial-loader.js",
+        "target": "src/components/magazine/editorial-loader.js"
+      },
+      {
+        "source": "src/components/magazine/editorial-sections.js",
+        "target": "src/components/magazine/editorial-sections.js"
+      },
+      {
+        "source": "src/components/magazine/initial-header.js",
+        "target": "src/components/magazine/initial-header.js"
+      },
+      {
+        "source": "src/components/magazine/model.js",
+        "target": "src/components/magazine/model.js"
+      },
+      {
+        "source": "src/components/magazine/primitives.js",
+        "target": "src/components/magazine/primitives.js"
+      },
+      {
+        "source": "src/components/magazine/provider.js",
+        "target": "src/components/magazine/provider.js"
+      },
+      {
+        "source": "src/components/magazine/sections.js",
+        "target": "src/components/magazine/sections.js"
+      },
+      {
+        "source": "src/components/magazine/settings.js",
+        "target": "src/components/magazine/settings.js"
+      },
+      {
+        "source": "src/components/widgets/manual-magazine-about.js",
+        "target": "src/components/widgets/manual-magazine-about.js",
+        "component": "widgets/manual-magazine-about"
+      },
+      {
+        "source": "src/components/widgets/manual-magazine-archive.js",
+        "target": "src/components/widgets/manual-magazine-archive.js",
+        "component": "widgets/manual-magazine-archive"
+      },
+      {
+        "source": "src/components/widgets/manual-magazine-article.js",
+        "target": "src/components/widgets/manual-magazine-article.js",
+        "component": "widgets/manual-magazine-article"
+      },
+      {
+        "source": "src/components/widgets/manual-magazine-books.js",
+        "target": "src/components/widgets/manual-magazine-books.js",
+        "component": "widgets/manual-magazine-books"
+      },
+      {
+        "source": "src/components/widgets/manual-magazine-category-preview.js",
+        "target": "src/components/widgets/manual-magazine-category-preview.js",
+        "component": "widgets/manual-magazine-category-preview"
+      },
+      {
+        "source": "src/components/widgets/manual-magazine-category.js",
+        "target": "src/components/widgets/manual-magazine-category.js",
+        "component": "widgets/manual-magazine-category"
+      },
+      {
+        "source": "src/components/widgets/manual-magazine-collections.js",
+        "target": "src/components/widgets/manual-magazine-collections.js",
+        "component": "widgets/manual-magazine-collections"
+      },
+      {
+        "source": "src/components/widgets/manual-magazine-hub.js",
+        "target": "src/components/widgets/manual-magazine-hub.js",
+        "component": "widgets/manual-magazine-hub"
+      },
+      {
+        "source": "src/components/widgets/manual-magazine-identity.js",
+        "target": "src/components/widgets/manual-magazine-identity.js",
+        "component": "widgets/manual-magazine-identity"
+      },
+      {
+        "source": "src/components/widgets/manual-magazine-latest.js",
+        "target": "src/components/widgets/manual-magazine-latest.js",
+        "component": "widgets/manual-magazine-latest"
+      },
+      {
+        "source": "src/components/widgets/manual-magazine-navigation.js",
+        "target": "src/components/widgets/manual-magazine-navigation.js",
+        "component": "widgets/manual-magazine-navigation"
+      },
+      {
+        "source": "src/components/widgets/manual-magazine-news.js",
+        "target": "src/components/widgets/manual-magazine-news.js",
+        "component": "widgets/manual-magazine-news"
+      },
+      {
+        "source": "src/components/widgets/manual-magazine-search.js",
+        "target": "src/components/widgets/manual-magazine-search.js",
+        "component": "widgets/manual-magazine-search"
+      },
+      {
+        "source": "src/components/widgets/manual-magazine-start.js",
+        "target": "src/components/widgets/manual-magazine-start.js",
+        "component": "widgets/manual-magazine-start"
+      },
+      {
+        "source": "src/components/widgets/manual-magazine-text.js",
+        "target": "src/components/widgets/manual-magazine-text.js",
+        "component": "widgets/manual-magazine-text"
+      }
+    ],
+    "translation-reading": [
+      {
+        "source": "src/components/widgets/manual-editorial-reading-feature.js",
+        "target": "src/components/widgets/manual-editorial-reading-feature.js",
+        "component": "widgets/manual-editorial-reading-feature"
+      },
+      {
+        "source": "src/components/widgets/manual-editorial-reading.js",
+        "target": "src/components/widgets/manual-editorial-reading.js",
+        "component": "widgets/manual-editorial-reading"
+      },
+      {
+        "source": "src/features/translation-reading/repository.js",
+        "target": "src/features/translation-reading/repository.js"
+      },
+      {
+        "source": "src/features/translation-reading/sections.js",
+        "target": "src/features/translation-reading/sections.js"
+      }
+    ]
+  },
+  "publicFiles": [
+    {
+      "source": "public/App-Custom.css",
+      "target": "public/App-Custom.css"
+    },
+    {
+      "source": "public/App.css",
+      "target": "public/App.css"
+    },
+    {
+      "source": "public/_redirects",
+      "target": "public/_redirects"
+    },
+    {
+      "source": "public/favicon.ico",
+      "target": "public/favicon.ico"
+    },
+    {
+      "source": "public/index.css",
+      "target": "public/index.css"
+    },
+    {
+      "source": "public/index.html",
+      "target": "public/index.html"
+    },
+    {
+      "source": "public/logo192.png",
+      "target": "public/logo192.png"
+    },
+    {
+      "source": "public/logo512.png",
+      "target": "public/logo512.png"
+    },
+    {
+      "source": "public/manifest.json",
+      "target": "public/manifest.json"
+    },
+    {
+      "source": "public/robots.txt",
+      "target": "public/robots.txt"
+    },
+    {
+      "source": "public/template.html",
+      "target": "public/template.html"
+    }
+  ],
+  "tooling": [
+    {
+      "source": "scripts/build-site.mjs",
+      "target": "scripts/build-site.mjs"
+    },
+    {
+      "source": "scripts/lib/site-packages.mjs",
+      "target": "scripts/lib/site-packages.mjs"
+    },
+    {
+      "source": "scripts/prepare-netlify.mjs",
+      "target": "scripts/prepare-netlify.mjs"
+    },
+    {
+      "source": "scripts/lib/build-routing.mjs",
+      "target": "scripts/lib/build-routing.mjs"
+    },
+    {
+      "source": "scripts/lib/load-environment.mjs",
+      "target": "scripts/lib/load-environment.mjs"
+    },
+    {
+      "source": "scripts/lib/initial-reader-header.mjs",
+      "target": "scripts/lib/initial-reader-header.mjs"
+    },
+    {
+      "source": "scripts/lib/site-settings.mjs",
+      "target": "scripts/lib/site-settings.mjs"
+    },
+    {
+      "source": "scripts/verify-site-build.mjs",
+      "target": "scripts/verify-site-build.mjs"
+    },
+    {
+      "source": "scripts/run-site.mjs",
+      "target": "scripts/run-site.mjs"
+    },
+    {
+      "source": "scripts/test-site.mjs",
+      "target": "scripts/test-site.mjs"
+    }
+  ]
+}

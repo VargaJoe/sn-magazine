@@ -1,0 +1,19 @@
+<ContentType name="EditorialAnnotation" parentType="Folder" handler="SnMagazine.Editorial.EditorialAnnotationHandler" xmlns="http://schemas.sensenet.com/SenseNet/ContentRepository/ContentTypeDefinition">
+  <DisplayName>Editorial annotation</DisplayName>
+  <Description>Optional site-owned editorial metadata; existing article schemas remain independent.</Description>
+  <Icon>Content</Icon>
+  <AllowedChildTypes />
+  <Fields>
+    <Field name="AccentColor" type="ShortText"><DisplayName>Category accent</DisplayName><Description>Optional six-digit hexadecimal colour, for example #2c4f52.</Description></Field>
+    <Field name="Target" type="Reference"><DisplayName>Target</DisplayName><Configuration><AllowMultiple>false</AllowMultiple><AllowedTypes><Type>GenericContent</Type></AllowedTypes></Configuration></Field>
+    <Field name="Items" type="Reference"><DisplayName>Discussed editorial items</DisplayName><Description>Optional distinct items within this site's editorial root. Existing legacy grouping fields remain independent.</Description><Configuration><AllowMultiple>true</AllowMultiple><AllowedTypes><Type>EditorialItem</Type></AllowedTypes></Configuration></Field>
+    <Field name="Series" type="ShortText"><DisplayName>Series</DisplayName></Field>
+    <Field name="PublisherGroup" type="ShortText"><DisplayName>PublisherGroup</DisplayName></Field>
+    <Field name="SequenceNumber" type="Integer"><DisplayName>SequenceNumber</DisplayName><Description>Positive sequence; zero means unassigned. Do not infer an edition order.</Description><Configuration><MinValue>0</MinValue><DefaultValue>0</DefaultValue></Configuration></Field>
+    <Field name="PublisherSequence" type="Integer"><DisplayName>PublisherSequence</DisplayName><Description>Positive sequence; zero means unassigned. Do not infer an edition order.</Description><Configuration><MinValue>0</MinValue><DefaultValue>0</DefaultValue></Configuration></Field>
+    <Field name="OriginalSequence" type="Integer"><DisplayName>OriginalSequence</DisplayName><Description>Positive sequence; zero means unassigned. Do not infer an edition order.</Description><Configuration><MinValue>0</MinValue><DefaultValue>0</DefaultValue></Configuration></Field>
+    <Field name="TimelineSequence" type="Integer"><DisplayName>TimelineSequence</DisplayName><Description>Positive sequence; zero means unassigned. Do not infer an edition order.</Description><Configuration><MinValue>0</MinValue><DefaultValue>0</DefaultValue></Configuration></Field>
+    <Field name="Featured" type="Boolean"><DisplayName>Featured</DisplayName><Configuration><DefaultValue>false</DefaultValue></Configuration></Field>
+    <Field name="StartHere" type="Boolean"><DisplayName>StartHere</DisplayName><Configuration><DefaultValue>false</DefaultValue></Configuration></Field>
+  </Fields>
+</ContentType>

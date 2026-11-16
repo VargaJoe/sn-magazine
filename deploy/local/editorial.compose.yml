@@ -1,0 +1,9 @@
+# Opt in alongside the existing stack's base Compose and environment files.
+# An absolute path avoids resolving a worktree DLL relative to another checkout.
+services:
+  repository:
+    volumes:
+      - type: bind
+        source: ${SN_MAGAZINE_EDITORIAL_DLL:?Set an absolute path to the built SnMagazine.Editorial.dll}
+        target: /app/SnMagazine.Editorial.dll
+        read_only: true

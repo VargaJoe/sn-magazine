@@ -1,0 +1,111 @@
+// Neutral engine defaults. Consumer builds generate their own literal registry.
+import Component0 from "./components/content/auto-article.js";
+import Component1 from "./components/content/auto-default.js";
+import Component2 from "./components/content/auto-genericcontent.js";
+import Component3 from "./components/content/auto-memo.js";
+import Component4 from "./components/content/auto-memolist.js";
+import Component5 from "./components/content/auto-missing.js";
+import Component6 from "./components/content/auto-workspace.js";
+import Component7 from "./components/layouts/page-double.js";
+import Component8 from "./components/layouts/page-editorial-flow.js";
+import Component9 from "./components/layouts/page-error.js";
+import Component10 from "./components/layouts/page-explore.js";
+import Component11 from "./components/layouts/page-leisure-error.js";
+import Component12 from "./components/layouts/page-leisure-simple-login.js";
+import Component13 from "./components/layouts/page-leisure-simple.js";
+import Component14 from "./components/layouts/page-maintenance-leisure.js";
+import Component15 from "./components/layouts/page-maintenance.js";
+import Component16 from "./components/layouts/page-mirror.js";
+import Component17 from "./components/layouts/page-not-found.js";
+import Component18 from "./components/layouts/page-vanilla.js";
+import Component19 from "./components/layouts/page-wide.js";
+import Component20 from "./components/layouts/partial-head.js";
+import Component21 from "./components/widgets/auto-default.js";
+import Component22 from "./components/widgets/auto-widgetcontentcollection.js";
+import Component23 from "./components/widgets/auto-widgetcontentview.js";
+import Component24 from "./components/widgets/auto-widgetlogin.js";
+import Component25 from "./components/widgets/auto-widgetsimpletext.js";
+import Component26 from "./components/widgets/manual-content-simple.js";
+import Component27 from "./components/widgets/manual-editorial-feature.js";
+import Component28 from "./components/widgets/manual-editorial-intro.js";
+import Component29 from "./components/widgets/manual-editorial-navigation.js";
+import Component30 from "./components/widgets/manual-editorial-note.js";
+import Component31 from "./components/widgets/manual-editorial-stories.js";
+import Component32 from "./components/widgets/manual-editorial-timeline.js";
+import Component33 from "./components/widgets/manual-editorial-topics.js";
+import Component34 from "./components/widgets/manual-list-banner.js";
+import Component35 from "./components/widgets/manual-list-breadcrumb.js";
+import Component36 from "./components/widgets/manual-list-menu-logo.js";
+import Component37 from "./components/widgets/manual-list-menu.js";
+import Component38 from "./components/widgets/manual-list-news-half.js";
+import Component39 from "./components/widgets/manual-list-news-third.js";
+import Component40 from "./components/widgets/manual-list-news.js";
+import Component41 from "./components/widgets/manual-list-review.js";
+import Component42 from "./components/widgets/manual-list-test.js";
+import Component43 from "./components/widgets/manual-news-half.js";
+import Component44 from "./components/widgets/manual-plugin-disqus.js";
+import Component45 from "./components/widgets/manual-plugin-fbcomments.js";
+import Component46 from "./components/widgets/manual-review-simple.js";
+import Component47 from "./components/widgets/nested-list-news-item-leisurearticle.js";
+import Component48 from "./components/widgets/nested-list-news-item-leisurebookreview.js";
+import Component49 from "./components/widgets/nested-list-news-item.js";
+import Component50 from "./components/widgets/nested-news-item.js";
+import Component51 from "./components/widgets/nested-review-list-image.js";
+import Component52 from "./components/widgets/nested-review-list-item.js";
+import Component53 from "./components/widgets/nested-review-related-softlink.js";
+export default {
+  "content/auto-article": () => Component0,
+  "content/auto-default": () => Component1,
+  "content/auto-genericcontent": () => Component2,
+  "content/auto-memo": () => Component3,
+  "content/auto-memolist": () => Component4,
+  "content/auto-missing": () => Component5,
+  "content/auto-workspace": () => Component6,
+  "layouts/page-double": () => Component7,
+  "layouts/page-editorial-flow": () => Component8,
+  "layouts/page-error": () => Component9,
+  "layouts/page-explore": () => Component10,
+  "layouts/page-leisure-error": () => Component11,
+  "layouts/page-leisure-simple-login": () => Component12,
+  "layouts/page-leisure-simple": () => Component13,
+  "layouts/page-maintenance-leisure": () => Component14,
+  "layouts/page-maintenance": () => Component15,
+  "layouts/page-mirror": () => Component16,
+  "layouts/page-not-found": () => Component17,
+  "layouts/page-vanilla": () => Component18,
+  "layouts/page-wide": () => Component19,
+  "layouts/partial-head": () => Component20,
+  "widgets/auto-default": () => Component21,
+  "widgets/auto-widgetcontentcollection": () => Component22,
+  "widgets/auto-widgetcontentview": () => Component23,
+  "widgets/auto-widgetlogin": () => Component24,
+  "widgets/auto-widgetsimpletext": () => Component25,
+  "widgets/manual-content-simple": () => Component26,
+  "widgets/manual-editorial-feature": () => Component27,
+  "widgets/manual-editorial-intro": () => Component28,
+  "widgets/manual-editorial-navigation": () => Component29,
+  "widgets/manual-editorial-note": () => Component30,
+  "widgets/manual-editorial-stories": () => Component31,
+  "widgets/manual-editorial-timeline": () => Component32,
+  "widgets/manual-editorial-topics": () => Component33,
+  "widgets/manual-list-banner": () => Component34,
+  "widgets/manual-list-breadcrumb": () => Component35,
+  "widgets/manual-list-menu-logo": () => Component36,
+  "widgets/manual-list-menu": () => Component37,
+  "widgets/manual-list-news-half": () => Component38,
+  "widgets/manual-list-news-third": () => Component39,
+  "widgets/manual-list-news": () => Component40,
+  "widgets/manual-list-review": () => Component41,
+  "widgets/manual-list-test": () => Component42,
+  "widgets/manual-news-half": () => Component43,
+  "widgets/manual-plugin-disqus": () => Component44,
+  "widgets/manual-plugin-fbcomments": () => Component45,
+  "widgets/manual-review-simple": () => Component46,
+  "widgets/nested-list-news-item-leisurearticle": () => Component47,
+  "widgets/nested-list-news-item-leisurebookreview": () => Component48,
+  "widgets/nested-list-news-item": () => Component49,
+  "widgets/nested-news-item": () => Component50,
+  "widgets/nested-review-list-image": () => Component51,
+  "widgets/nested-review-list-item": () => Component52,
+  "widgets/nested-review-related-softlink": () => Component53,
+};

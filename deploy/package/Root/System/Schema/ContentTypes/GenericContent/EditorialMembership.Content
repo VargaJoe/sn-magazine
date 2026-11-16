@@ -1,0 +1,10 @@
+{
+  "ContentType": "ContentType",
+  "ContentName": "EditorialMembership",
+  "Fields": {
+    "HandlerName": "SnMagazine.Editorial.EditorialMembershipHandler",
+    "ParentTypeName": "GenericContent",
+    "Binary": { "Attachment": "EditorialMembership.xml" },
+    "IsSystemType": false
+  }
+}

@@ -4,6 +4,10 @@ import ReactDOM from "react-dom/client";
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { AppProviders } from "./app-provider";
+import { registerComponentLoaders } from './components/utils/component-registry';
+import componentLoaders from './component-loaders';
+
+registerComponentLoaders(componentLoaders);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
