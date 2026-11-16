@@ -9,6 +9,46 @@ const ownRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const usage = 'Usage: node run-site.mjs --manifest PATH [--engine EXPORTED_ENGINE] [--initial-header PATH]';
 const publicKey = /^(?:REACT_APP_[A-Z0-9_]+|CI|GENERATE_SOURCEMAP)$/;
 
+function gitCommit(specification) {
+  if (typeof specification !== 'string' || !/^(?:git(?:\+[^:]+)?:|ssh:|github:|gitlab:|bitbucket:|gist:|git@|https?:\/\/[^#]+\.git(?:#|$)|[^\s/:]+\/[^\s/#]+#)/i.test(specification)) return null;
+  return /#([a-f0-9]{40})$/i.exec(specification)?.[1].toLowerCase() || null;
+}
+
+// npm can retain an older Git resolution when only a same-version package's pin
+// changes. Check the installed lock record, rather than trusting the root spec.
+export async function verifyEnginePin(cwd, { engineOverride = false } = {}) {
+  const ownPackage = JSON.parse(await readFile(path.join(ownRoot, 'package.json'), 'utf8'));
+  const name = ownPackage.name;
+  if (typeof name !== 'string' || !name) throw new Error('Engine package name is missing');
+  const packagePath = path.join(cwd, 'package.json');
+  await assertNoSymlinks(packagePath);
+  const consumer = JSON.parse(await readFile(packagePath, 'utf8'));
+  const groups = ['dependencies', 'devDependencies', 'optionalDependencies'];
+  const declarations = groups.filter(group => Object.hasOwn(consumer[group] || {}, name));
+  if (!declarations.length && engineOverride) return null;
+  const specification = consumer[declarations[0]]?.[name];
+  const commit = gitCommit(specification);
+  if (!commit || declarations.some(group => consumer[group][name] !== specification)) {
+    throw new Error(`Engine dependency ${name} must use one Git URL pinned to a full 40-character commit SHA; mutable refs are not allowed`);
+  }
+  const lockPath = path.join(cwd, 'package-lock.json');
+  await assertNoSymlinks(lockPath);
+  let lock;
+  try { lock = JSON.parse(await readFile(lockPath, 'utf8')); }
+  catch (error) {
+    if (error.code === 'ENOENT') throw new Error(`Engine Git pin check requires package-lock.json for ${name}`);
+    throw error;
+  }
+  const installed = lock.packages?.[`node_modules/${name}`];
+  if (!installed || (installed.name !== undefined && installed.name !== name)) throw new Error(`Engine lock is missing a matching installed package record for ${name}`);
+  const installedCommit = gitCommit(installed.resolved);
+  if (installedCommit !== commit) throw new Error(`Engine lock mismatch for ${name}: installed commit does not match the declared Git SHA; regenerate package-lock.json before building or testing`);
+  if (declarations.some(group => lock.packages?.['']?.[group]?.[name] !== specification)) {
+    throw new Error(`Engine lock root declaration for ${name} differs from package.json; regenerate package-lock.json before building or testing`);
+  }
+  return { name, commit };
+}
+
 export function parseOptions(values, allowed, help) {
   if (values.length === 1 && ['--help', '-h'].includes(values[0])) return { help: true };
   const options = {};
@@ -79,6 +119,7 @@ export function runChild(filename, args, cwd, env) {
 
 export async function runSite(options, cwd = process.cwd()) {
   cwd = path.resolve(cwd);
+  await verifyEnginePin(cwd, { engineOverride: Boolean(options.engine) });
   const manifestPath = path.resolve(cwd, options.manifest);
   const descriptor = await readSiteDescriptor(manifestPath);
   const env = await loadPublicEnvironment(cwd, process.env, options.initialHeader);

@@ -7,7 +7,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 import { exportEnginePackage } from '../scripts/lib/site-packages.mjs';
-import { loadPublicEnvironment } from '../scripts/run-site.mjs';
+import { loadPublicEnvironment, verifyEnginePin } from '../scripts/run-site.mjs';
 
 const ownRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const exec = promisify(execFile);
@@ -118,6 +118,48 @@ test('CLI usage is available and rejects missing, unknown and repeated options',
       await assert.rejects(exec(process.execPath, [cli(name), ...args]), error => /Usage:/.test(error.stderr));
     }
   }
+});
+
+test('same-version Git dependency update rejects a stale installed lock SHA before either workflow starts', async () => {
+  const setup = await fixture();
+  const { name } = JSON.parse(await readFile(path.join(ownRoot, 'package.json'), 'utf8'));
+  const commit = '0123456789abcdef0123456789abcdef01234567';
+  const oldCommit = 'abcdef0123456789abcdef0123456789abcdef01';
+  const specification = `git+https://example.invalid/neutral/engine.git#${commit}`;
+  await put(setup.app, 'package.json', { private: true, dependencies: { [name]: specification } });
+  await put(setup.app, 'package-lock.json', {
+    lockfileVersion: 3,
+    packages: {
+      '': { dependencies: { [name]: specification } },
+      [`node_modules/${name}`]: { name, version: '0.1.0', resolved: `git+https://example.invalid/neutral/engine.git#${oldCommit}` },
+    },
+  });
+  for (const tool of ['run-site', 'test-site']) {
+    await assert.rejects(invoke(tool, setup), error => /Engine lock mismatch/.test(error.stderr));
+  }
+  await assert.rejects(readdir(path.join(setup.app, 'temp')), { code: 'ENOENT' });
+  const lock = JSON.parse(await readFile(path.join(setup.app, 'package-lock.json'), 'utf8'));
+  lock.packages[`node_modules/${name}`].resolved = specification;
+  await put(setup.app, 'package-lock.json', lock);
+  assert.deepEqual(await verifyEnginePin(setup.app), { name, commit });
+  assert.equal(result((await invoke('test-site', setup, ['--assemble-only'])).stdout).status, 'assembled');
+});
+
+test('Git pin gate rejects missing locks, mutable refs and an installed package with the wrong name', async () => {
+  const setup = await fixture();
+  const { name } = JSON.parse(await readFile(path.join(ownRoot, 'package.json'), 'utf8'));
+  const specification = `git+https://example.invalid/neutral/engine.git#${'a'.repeat(40)}`;
+  await put(setup.app, 'package.json', { dependencies: { [name]: specification } });
+  await assert.rejects(verifyEnginePin(setup.app), /requires package-lock.json/);
+  await put(setup.app, 'package-lock.json', {
+    lockfileVersion: 3, packages: {
+      '': { dependencies: { [name]: specification } },
+      [`node_modules/${name}`]: { name: 'another-package', resolved: specification },
+    },
+  });
+  await assert.rejects(verifyEnginePin(setup.app), /matching installed package record/);
+  await put(setup.app, 'package.json', { dependencies: { [name]: 'git+https://example.invalid/neutral/engine.git#main' } });
+  await assert.rejects(verifyEnginePin(setup.app), /full 40-character commit SHA; mutable refs/);
 });
 
 test('rejected private environment input leaves the last build pointer intact without logging its value', async () => {

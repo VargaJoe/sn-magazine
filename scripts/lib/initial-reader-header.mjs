@@ -3,7 +3,7 @@ import { resolve } from 'node:path';
 
 const escape = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 
-// Opt-in, local build input. Site-specific artwork and configuration stay out of source control.
+// Opt-in application build input. Artwork and configuration stay out of the engine package.
 export async function prepareInitialReaderHeader(output, configPath) {
   if (!configPath) return;
   const config = JSON.parse(await readFile(configPath, 'utf8'));

@@ -3,7 +3,7 @@ import { lstat, mkdir, mkdtemp, readFile, readdir, writeFile } from 'node:fs/pro
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { assembleSite, assertNoSymlinks, exportEnginePackage } from './lib/site-packages.mjs';
-import { loadPublicEnvironment, parseOptions, readSiteDescriptor, runChild } from './run-site.mjs';
+import { loadPublicEnvironment, parseOptions, readSiteDescriptor, runChild, verifyEnginePin } from './run-site.mjs';
 
 const ownRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const usage = 'Usage: node test-site.mjs --manifest PATH [--engine EXPORTED_ENGINE] [--source-root APP_SRC] [--assemble-only]';
@@ -27,6 +27,7 @@ async function ownTests(root, relative = '') {
 
 export async function testSite(options, cwd = process.cwd()) {
   cwd = path.resolve(cwd);
+  await verifyEnginePin(cwd, { engineOverride: Boolean(options.engine) });
   const manifestPath = path.resolve(cwd, options.manifest);
   const descriptor = await readSiteDescriptor(manifestPath);
   const sourceRoot = path.resolve(cwd, options.sourceRoot || 'src');
